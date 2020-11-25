@@ -8,7 +8,7 @@
 #include "cli_streams.hpp"
 #include "cli_command.hpp"
 #include "cli_input.hpp"
-#include "../../tools/string_tools.hpp"
+#include "../string_tools.hpp"
 
 template<typename CustomState>
 class CLIMenu

@@ -1,0 +1,6 @@
+help
+help TestShellCommand1
+help TestShellCommand2
+TestShellCommand1
+TestShellCommand2
+exit

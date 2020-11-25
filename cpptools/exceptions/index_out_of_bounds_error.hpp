@@ -1,7 +1,7 @@
 #ifndef TOOLS__EXCEPTIONS__INDEX_OUT_OF_BOUNDS_ERROR_HPP
 #define TOOLS__EXCEPTIONS__INDEX_OUT_OF_BOUNDS_ERROR_HPP
 
-#include "../../tools/make_basic_exception.hpp"
+#include "../make_basic_exception.hpp"
 
 DECLARE_BASIC_EXCEPTION(IndexOutOfBoundsError)
 
