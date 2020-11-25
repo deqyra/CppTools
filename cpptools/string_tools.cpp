@@ -4,8 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "../tools/exceptions/file_not_found_error.hpp"
-#include "../tools/exceptions/range_bounds_exceeded_error.hpp"
+#include "exceptions/file_not_found_error.hpp"
+#include "exceptions/range_bounds_exceeded_error.hpp"
 
 namespace std
 {

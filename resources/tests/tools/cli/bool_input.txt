@@ -1,0 +1,7 @@
+hello
+y
+yes
+true
+n
+no
+false
