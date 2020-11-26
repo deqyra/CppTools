@@ -67,7 +67,7 @@ void CLIMenu<CustomState>::show(CustomState& state, CLIStreams& streams)
         streams.out() << allOptionsString();
 
         // Prompt the user.
-        int nOptions = _commands.size();
+        int nOptions = (int)_commands.size();
         int input = CLIInput::askForBoundedInput<int>("Please make a choice: ", 0, nOptions, streams);
 
         // Handle exit if required.

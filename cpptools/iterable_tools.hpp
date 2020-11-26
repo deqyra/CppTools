@@ -7,13 +7,13 @@ namespace IterTools
 {
     // Given two iterators to an iterable of iterables, returns the maximum length of the contained iterables.
     template<typename Iter>
-    int maxIterableLength(Iter first, Iter last)
+    size_t maxIterableLength(Iter first, Iter last)
     {
         // Classic max algorithm.
-        int maxSize = 0;
+        size_t maxSize = 0;
         for (Iter it = first; it != last; it++)
         {
-            int size = it->size();
+            size_t size = it->size();
             if (size > maxSize)
             {
                 maxSize = size;
@@ -25,7 +25,7 @@ namespace IterTools
 
     // Given an iterable of iterables, returns the maximum length of the contained iterables.
     template<typename Iterable>
-    int maxIterableLength(const Iterable& container)
+    size_t maxIterableLength(const Iterable& container)
     {
         return maxIterableLength(container.begin(), container.end());
     }
@@ -56,7 +56,7 @@ namespace IterTools
  
     // Given two iterators to a range of comparable values, returns the index of the element with the maximum value.
     template<typename Iter>
-    int indexOfMaxElement(Iter first, Iter last)
+    size_t indexOfMaxElement(Iter first, Iter last)
     {
         // Type-aware distance between vector start pointer and max element pointer = max index.
         return std::distance(first, std::max_element(first, last));
@@ -64,7 +64,7 @@ namespace IterTools
 
     // Given an iterator to comparable values and an element count, returns the index of the element with the maximum value.
     template<typename Iter>
-    int indexOfMaxElement(Iter first, int count)
+    size_t indexOfMaxElement(Iter first, int count)
     {
         // Type-aware distance between vector start pointer and max element pointer = max index.
         return std::distance(first, std::max_element(first, first + count));
@@ -72,7 +72,7 @@ namespace IterTools
 
     // Given an iterable with comparable values, returns the index of the element with the maximum value.
     template<typename Iterable>
-    int indexOfMaxElement(const Iterable& container)
+    size_t indexOfMaxElement(const Iterable& container)
     {
         return indexOfMaxElement(container.begin(), container.end());
     }

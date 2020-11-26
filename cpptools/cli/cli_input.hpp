@@ -50,7 +50,7 @@ namespace CLIInput
                 streams.out() << title;
                 return waitForInput<T>(streams);
             }
-            catch(const std::invalid_argument& e)
+            catch(const std::invalid_argument&)
             {
                 streams.out() << "Invalid input, please enter a " << typeName<T>() << "." << std::endl;
             }            
