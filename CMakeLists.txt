@@ -99,7 +99,7 @@ set( CPPTOOLS_SOURCE_FILES
     )
 
 # Build and run tests
-if( not CPPTOOLS_SKIP_TESTS )
+if( !CPPTOOLS_SKIP_TESTS )
     enable_testing( )
     add_executable( "cpptools_tests"
         tests/catch2_custom_generators.hpp
