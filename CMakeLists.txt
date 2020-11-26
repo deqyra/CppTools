@@ -48,27 +48,32 @@ include_directories( ${CMAKE_SOURCE_DIR}/include )
 
 # Project info
 set( CPPTOOLS_HEADER_FILES
-    "cpptools/string_tools.hpp"
-    "cpptools/lambda_maker.hpp"
+    "cpptools/enum_map.hpp"
     "cpptools/iterable_tools.hpp"
+    "cpptools/lambda_maker.hpp"
+    "cpptools/make_basic_exception.hpp"
+    "cpptools/notifier.hpp"
+    "cpptools/sine_generator.hpp"
+    "cpptools/string_tools.hpp"
     "cpptools/tree.hpp"
     "cpptools/tree_node.hpp"
-    "cpptools/sine_generator.hpp"
-    "cpptools/make_basic_exception.hpp"
-    "cpptools/enum_map.hpp"
-    "cpptools/exceptions/index_out_of_bounds_error.hpp"
-    "cpptools/exceptions/file_not_found_error.hpp "
-    "cpptools/exceptions/range_bounds_exceeded_error.hpp "
-    "cpptools/exceptions/unmatched_array_size_error.hpp"
     "cpptools/cli/cli_streams.hpp"
     "cpptools/cli/cli_input.hpp"
     "cpptools/cli/cli_command.hpp"
     "cpptools/cli/cli_menu.hpp"
     "cpptools/cli/menu_command.hpp"
     "cpptools/cli/command_sequence.hpp"
+    "cpptools/exceptions/bad_syntax_error.hpp "
+    "cpptools/exceptions/file_not_found_error.hpp "
+    "cpptools/exceptions/index_out_of_bounds_error.hpp"
+    "cpptools/exceptions/range_bounds_exceeded_error.hpp "
+    "cpptools/exceptions/unmatched_array_size_error.hpp"
     "cpptools/micro_shell/micro_shell.hpp"
     "cpptools/micro_shell/micro_shell_codes.hpp"
     "cpptools/micro_shell/micro_shell_command.hpp"
+    "cpptools/parse/token.hpp"
+    "cpptools/parse/c_preprocessor/c_preprocessor.hpp"
+    "cpptools/parse/c_preprocessor/c_preprocessor_token_type.hpp"
 )
 
 set( CPPTOOLS_SOURCE_FILES
@@ -93,29 +98,25 @@ set( CPPTOOLS_SOURCE_FILES
         ${CPPTOOLS_SOURCE_FILES}
     )
 
-    set_target_properties( "cpptools" PROPERTIES
-        PUBLIC_HEADER "${CPPTOOLS_HEADER_FILES}"
-    )
-
 # Build and run tests
 enable_testing( )
 add_executable( "cpptools_tests"
-    tests/main.cpp
     tests/catch2_custom_generators.hpp
     tests/debugging_tools.cpp
     tests/debugging_tools.hpp
-    tests/tools/cli/test_cli_input.cpp
-    tests/tools/cli/test_cli_streams.cpp
-    tests/tools/cli/cli_test_classes.cpp
-    tests/tools/cli/cli_test_classes.hpp
-    tests/tools/cli/test_cli_menu.cpp
-    tests/tools/cli/test_cli_menu_command.cpp
-    tests/tools/cli/test_cli_command_sequence.cpp
+    tests/main.cpp
     tests/tools/test_string_tools.cpp
     tests/tools/test_iterable_tools.cpp
     tests/tools/test_lambda_maker.cpp
-    tests/tools/micro_shell/test_micro_shell.cpp
+    tests/tools/cli/cli_test_classes.cpp
+    tests/tools/cli/cli_test_classes.hpp
+    tests/tools/cli/test_cli_command_sequence.cpp
+    tests/tools/cli/test_cli_input.cpp
+    tests/tools/cli/test_cli_menu.cpp
+    tests/tools/cli/test_cli_menu_command.cpp
+    tests/tools/cli/test_cli_streams.cpp
     tests/tools/micro_shell/shell_test_classes.hpp
+    tests/tools/micro_shell/test_micro_shell.cpp
 )
 
 target_include_directories( "cpptools_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
@@ -142,7 +143,7 @@ add_custom_command(
 # Install
 
 if( NOT DEFINED CPPTOOLS_EXTERNAL_INSTALL_PREFIX OR NOT ${CPPTOOLS_EXTERNAL_INSTALL_PREFIX} )
-    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/" )
+    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
     message( STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}" )
 else(  )
     message( STATUS "Provided install prefix: ${CMAKE_INSTALL_PREFIX}" )
@@ -151,5 +152,13 @@ endif( )
 install(
     TARGETS "cpptools"
     LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cpptools"
-    PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cpptools"
+)
+
+install(
+    DIRECTORY "${CMAKE_SOURCE_DIR}/cpptools"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
+    FILES_MATCHING 
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+    PATTERN "*.hxx"
 )
