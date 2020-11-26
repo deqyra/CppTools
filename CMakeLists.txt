@@ -38,7 +38,6 @@ set( CMAKE_CXX_STANDARD 17 )
 if( UNIX )
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g")
 endif( )
-
     
 # Setup directories
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
@@ -99,49 +98,50 @@ set( CPPTOOLS_SOURCE_FILES
     )
 
 # Build and run tests
-enable_testing( )
-add_executable( "cpptools_tests"
-    tests/catch2_custom_generators.hpp
-    tests/debugging_tools.cpp
-    tests/debugging_tools.hpp
-    tests/main.cpp
-    tests/tools/test_string_tools.cpp
-    tests/tools/test_iterable_tools.cpp
-    tests/tools/test_lambda_maker.cpp
-    tests/tools/cli/cli_test_classes.cpp
-    tests/tools/cli/cli_test_classes.hpp
-    tests/tools/cli/test_cli_command_sequence.cpp
-    tests/tools/cli/test_cli_input.cpp
-    tests/tools/cli/test_cli_menu.cpp
-    tests/tools/cli/test_cli_menu_command.cpp
-    tests/tools/cli/test_cli_streams.cpp
-    tests/tools/micro_shell/shell_test_classes.hpp
-    tests/tools/micro_shell/test_micro_shell.cpp
-)
+if( not defined CPPTOOLS_SKIP_TESTS )
+    enable_testing( )
+    add_executable( "cpptools_tests"
+        tests/catch2_custom_generators.hpp
+        tests/debugging_tools.cpp
+        tests/debugging_tools.hpp
+        tests/main.cpp
+        tests/tools/test_string_tools.cpp
+        tests/tools/test_iterable_tools.cpp
+        tests/tools/test_lambda_maker.cpp
+        tests/tools/cli/cli_test_classes.cpp
+        tests/tools/cli/cli_test_classes.hpp
+        tests/tools/cli/test_cli_command_sequence.cpp
+        tests/tools/cli/test_cli_input.cpp
+        tests/tools/cli/test_cli_menu.cpp
+        tests/tools/cli/test_cli_menu_command.cpp
+        tests/tools/cli/test_cli_streams.cpp
+        tests/tools/micro_shell/shell_test_classes.hpp
+        tests/tools/micro_shell/test_micro_shell.cpp
+    )
 
-target_include_directories( "cpptools_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
-target_link_libraries( "cpptools_tests" "cpptools" )
-add_dependencies( "cpptools_tests" "copy_resources" )
+    target_include_directories( "cpptools_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
+    target_link_libraries( "cpptools_tests" "cpptools" )
+    add_dependencies( "cpptools_tests" "copy_resources" )
 
-set( TESTS_RUNTIME_NAME "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpptools_tests" )
-if( WIN32 )
-    set( TESTS_RUNTIME_NAME "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/cpptools_tests.exe" )
+    set( TESTS_RUNTIME_NAME "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpptools_tests" )
+    if( WIN32 )
+        set( TESTS_RUNTIME_NAME "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/cpptools_tests.exe" )
+    endif(  )
+
+    add_test(
+        NAME "tests"
+        COMMAND "cpptools_tests"
+    )
+
+    add_custom_command(
+        TARGET "cpptools_tests"
+        COMMENT "Running tests"
+        POST_BUILD
+        COMMAND ${TESTS_RUNTIME_NAME}
+    )
 endif(  )
 
-add_test(
-    NAME "tests"
-    COMMAND "cpptools_tests"
-)
-
-add_custom_command(
-    TARGET "cpptools_tests"
-    COMMENT "Running tests"
-    POST_BUILD
-    COMMAND ${TESTS_RUNTIME_NAME}
-)
-
 # Install
-
 if( NOT DEFINED CPPTOOLS_EXTERNAL_INSTALL_PREFIX OR NOT ${CPPTOOLS_EXTERNAL_INSTALL_PREFIX} )
     set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
     message( STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}" )
