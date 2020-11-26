@@ -12,8 +12,9 @@ project( "CppTools"
 )
 
 # Toggles
-option( BUILD_STATIC_LIBS "Build libraries as static libraries" OFF )
+option( BUILD_STATIC_LIBS "Whether to build library as static or shared library" OFF )
 option( BUILD_RELEASE "Whether to build for a debug or release profile" OFF)
+option( CPPTOOLS_SKIP_TESTS "Whether or not to skip tests" OFF )
 
 if ( ${BUILD_RELEASE} )
     set( CMAKE_BUILD_TYPE "Release" )
@@ -98,7 +99,7 @@ set( CPPTOOLS_SOURCE_FILES
     )
 
 # Build and run tests
-if( not defined CPPTOOLS_SKIP_TESTS )
+if( CPPTOOLS_SKIP_TESTS )
     enable_testing( )
     add_executable( "cpptools_tests"
         tests/catch2_custom_generators.hpp
