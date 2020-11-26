@@ -1,5 +1,5 @@
-#ifndef TOOLS__SINE_GENERATOR_HPP
-#define TOOLS__SINE_GENERATOR_HPP
+#ifndef CPPTOOLS__SINE_GENERATOR_HPP
+#define CPPTOOLS__SINE_GENERATOR_HPP
 
 #include <chrono>
 #include <cmath>
@@ -105,4 +105,4 @@ void SineGenerator<P>::runningCycleModulo2Pi()
     while (_runningCycle > M_PI) _runningCycle -= (P)(2.0) * (P)M_PI;
 }
 
-#endif//TOOLS__SINE_GENERATOR_HPP
+#endif//CPPTOOLS__SINE_GENERATOR_HPP

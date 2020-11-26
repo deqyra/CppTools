@@ -1,5 +1,5 @@
-#ifndef TOOLS__CLI__MENU_COMMAND_HPP
-#define TOOLS__CLI__MENU_COMMAND_HPP
+#ifndef CPPTOOLS__CLI__MENU_COMMAND_HPP
+#define CPPTOOLS__CLI__MENU_COMMAND_HPP
 
 #include "cli_command.hpp"
 
@@ -51,4 +51,4 @@ int MenuCommand<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-#endif//TOOLS__CLI__MENU_COMMAND_HPP
+#endif//CPPTOOLS__CLI__MENU_COMMAND_HPP

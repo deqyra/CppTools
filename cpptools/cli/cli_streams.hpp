@@ -1,5 +1,5 @@
-#ifndef TOOLS__CLI__CLI_STREAMS_HPP
-#define TOOLS__CLI__CLI_STREAMS_HPP
+#ifndef CPPTOOLS__CLI__CLI_STREAMS_HPP
+#define CPPTOOLS__CLI__CLI_STREAMS_HPP
 
 #include <iostream>
 
@@ -18,4 +18,4 @@ class CLIStreams
         std::ostream& err();
 };
 
-#endif//TOOLS__CLI__CLI_STREAMS_HPP
+#endif//CPPTOOLS__CLI__CLI_STREAMS_HPP

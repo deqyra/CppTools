@@ -1,5 +1,5 @@
-#ifndef MAKE_BASIC_EXCEPTION_HPP
-#define MAKE_BASIC_EXCEPTION_HPP
+#ifndef CPPTOOLS__MAKE_BASIC_EXCEPTION_HPP
+#define CPPTOOLS__MAKE_BASIC_EXCEPTION_HPP
 
 #include <stdexcept>
 #include <string>
@@ -33,4 +33,4 @@
         return _message.c_str();            \
     }
 
-#endif//MAKE_BASIC_EXCEPTION_HPP
+#endif//CPPTOOLS__MAKE_BASIC_EXCEPTION_HPP

@@ -1,5 +1,5 @@
-#ifndef TOOLS__MICRO_SHELL__MICRO_SHELL_HPP
-#define TOOLS__MICRO_SHELL__MICRO_SHELL_HPP
+#ifndef CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP
+#define CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP
 
 #include <string>
 #include <deque>
@@ -298,4 +298,4 @@ int MicroShell<CustomState>::handleExit(const std::string& command, CustomState&
     return _exitCommand->processInput(command, state, streams);
 }
 
-#endif//TOOLS__MICRO_SHELL__MICRO_SHELL_HPP
+#endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP

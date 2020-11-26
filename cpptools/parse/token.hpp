@@ -1,5 +1,5 @@
-#ifndef TOOLS__PARSE__TOKEN_HPP
-#define TOOLS__PARSE__TOKEN_HPP
+#ifndef CPPTOOLS__PARSE__TOKEN_HPP
+#define CPPTOOLS__PARSE__TOKEN_HPP
 
 #include <string>
 
@@ -16,4 +16,4 @@ struct Token
     Token<T>* matchingTokenBackward;
 };
 
-#endif//TOOLS__PARSE__TOKEN_HPP
+#endif//CPPTOOLS__PARSE__TOKEN_HPP

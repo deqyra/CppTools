@@ -1,5 +1,5 @@
-#ifndef TOOLS__CLI__CLI_MENU_HPP
-#define TOOLS__CLI__CLI_MENU_HPP
+#ifndef CPPTOOLS__CLI__CLI_MENU_HPP
+#define CPPTOOLS__CLI__CLI_MENU_HPP
 
 #include <string>
 #include <vector>
@@ -119,4 +119,4 @@ std::string CLIMenu<CustomState>::allOptionsString()
     return s;
 }
 
-#endif//TOOLS__CLI__CLI_MENU_HPP
+#endif//CPPTOOLS__CLI__CLI_MENU_HPP

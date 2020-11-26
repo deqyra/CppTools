@@ -1,5 +1,5 @@
-#ifndef TOOLS__ITERABLE_TOOLS_HPP
-#define TOOLS__ITERABLE_TOOLS_HPP
+#ifndef CPPTOOLS__ITERABLE_TOOLS_HPP
+#define CPPTOOLS__ITERABLE_TOOLS_HPP
 
 #include <algorithm>
 
@@ -94,4 +94,4 @@ namespace IterTools
     }
 } // namespace IterTools
 
-#endif//TOOLS__ITERABLE_TOOLS_HPP
+#endif//CPPTOOLS__ITERABLE_TOOLS_HPP

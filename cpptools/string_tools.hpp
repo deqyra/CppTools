@@ -1,5 +1,5 @@
-#ifndef TOOLS__STRING_TOOLS_HPP
-#define TOOLS__STRING_TOOLS_HPP
+#ifndef CPPTOOLS__STRING_TOOLS_HPP
+#define CPPTOOLS__STRING_TOOLS_HPP
 
 #include <string>
 #include <vector>
@@ -102,4 +102,4 @@ namespace StringTools
     }
 } // namespace StringTools
 
-#endif//TOOLS__STRING_TOOLS_HPP
+#endif//CPPTOOLS__STRING_TOOLS_HPP

@@ -1,5 +1,5 @@
-#ifndef TOOLS__TREE_NODE_HPP
-#define TOOLS__TREE_NODE_HPP
+#ifndef CPPTOOLS__TREE_NODE_HPP
+#define CPPTOOLS__TREE_NODE_HPP
 
 #include <algorithm>
 #include <functional>
@@ -248,7 +248,7 @@ void TreeNode<T>::removeChild(unsigned int id)
 template<typename T>
 void TreeNode<T>::removeAllChildren()
 {
-    for (unsigned int i = _wChildren.size(); i > 0; i--)
+    for (size_t i = _wChildren.size(); i > 0; i--)
     {
         TreeNodePtr child = _wChildren[i-1].lock();
         child->setParent(nullptr);
@@ -301,4 +301,4 @@ void TreeNode<T>::generateParentChains()
     }
 }
 
-#endif//TOOLS__TREE_NODE_HPP
+#endif//CPPTOOLS__TREE_NODE_HPP

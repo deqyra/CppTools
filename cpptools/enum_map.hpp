@@ -1,5 +1,5 @@
-#ifndef TOOLS__ENUM_MAP_HPP
-#define TOOLS__ENUM_MAP_HPP
+#ifndef CPPTOOLS__ENUM_MAP_HPP
+#define CPPTOOLS__ENUM_MAP_HPP
 
 #include <unordered_map>
 
@@ -18,4 +18,4 @@ namespace std
     using enum_map = unordered_map<Key, T, EnumClassHash>;
 }
 
-#endif//TOOLS__ENUM_MAP_HPP
+#endif//CPPTOOLS__ENUM_MAP_HPP
