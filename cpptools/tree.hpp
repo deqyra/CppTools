@@ -1,5 +1,5 @@
-#ifndef TREE_HPP
-#define TREE_HPP
+#ifndef CPPTOOLS__TREE_HPP
+#define CPPTOOLS__TREE_HPP
 
 #include <string>
 #include <unordered_map>
@@ -481,4 +481,4 @@ unsigned int Tree<T>::countValueRoutine(const T& value, NodePtr startingNode)
     return count;
 }
 
-#endif//TREE_HPP
+#endif//CPPTOOLS__TREE_HPP

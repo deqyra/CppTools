@@ -1,5 +1,5 @@
-#ifndef TOOLS__NOTIFIER_HPP
-#define TOOLS__NOTIFIER_HPP
+#ifndef CPPTOOLS__NOTIFIER_HPP
+#define CPPTOOLS__NOTIFIER_HPP
 
 #include <functional>
 #include <unordered_map>

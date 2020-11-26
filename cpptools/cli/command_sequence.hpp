@@ -1,5 +1,5 @@
-#ifndef TOOLS__CLI__COMMAND_SEQUENCE_HPP
-#define TOOLS__CLI__COMMAND_SEQUENCE_HPP
+#ifndef CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
+#define CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
 
 #include <vector>
 #include <string>
@@ -87,4 +87,4 @@ int CommandSequence<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-#endif//TOOLS__CLI__COMMAND_SEQUENCE_HPP
+#endif//CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP

@@ -1,5 +1,5 @@
-#ifndef TOOLS__LAMBDA_MAKER_HPP
-#define TOOLS__LAMBDA_MAKER_HPP
+#ifndef CPPTOOLS__LAMBDA_MAKER_HPP
+#define CPPTOOLS__LAMBDA_MAKER_HPP
 
 #include <functional>
 
@@ -60,4 +60,4 @@ namespace LambdaMaker
     }
 } // namespace LambdaMaker
 
-#endif//TOOLS__LAMBDA_MAKER_HPP
+#endif//CPPTOOLS__LAMBDA_MAKER_HPP

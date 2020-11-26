@@ -14,4 +14,5 @@ CppTools:
         ✔ Documentation @done(20-10-25 02:50)
         ☐ Keep shared pointers even between nodes, manage proper destruction
     C preprocessor:
-        ☐ Build upon the stub in StringTools
+        ✘ Build upon the stub in StringTools @cancelled(20-11-26 02:12)
+        ☐ Implement functions defined in header

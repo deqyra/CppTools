@@ -1,5 +1,5 @@
-#ifndef TOOLS__CLI__CLI_COMMAND_HPP
-#define TOOLS__CLI__CLI_COMMAND_HPP
+#ifndef CPPTOOLS__CLI__CLI_COMMAND_HPP
+#define CPPTOOLS__CLI__CLI_COMMAND_HPP
 
 #include <string>
 #include <memory>
@@ -28,4 +28,4 @@ CLICommand<CustomState>::~CLICommand()
 inline static const int CLI_COMMAND_SUCCESS = 0;
 inline static const int CLI_COMMAND_FAILURE = -1;
 
-#endif//TOOLS__CLI__CLI_COMMAND_HPP
+#endif//CPPTOOLS__CLI__CLI_COMMAND_HPP
