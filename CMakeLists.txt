@@ -141,9 +141,15 @@ add_custom_command(
 
 # Install
 
-set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/" )
+if( NOT DEFINED CPPTOOLS_EXTERNAL_INSTALL_PREFIX OR NOT ${CPPTOOLS_EXTERNAL_INSTALL_PREFIX} )
+    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/" )
+    message( STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}" )
+else(  )
+    message( STATUS "Provided install prefix: ${CMAKE_INSTALL_PREFIX}" )
+endif( )
+
 install(
     TARGETS "cpptools"
-    LIBRARY DESTINATION "lib/cpptools"
-    PUBLIC_HEADER DESTINATION "include/cpptools"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cpptools"
+    PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cpptools"
 )
