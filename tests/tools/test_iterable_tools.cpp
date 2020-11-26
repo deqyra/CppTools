@@ -14,7 +14,7 @@ TEST_CASE("Max iterable length", TAGS)
         std::vector<int>(7)
     };
 
-    REQUIRE(IterTools::maxIterableLength(vecs) == 10);
+    REQUIRE(IterTools::maxIterableLength(vecs) == (size_t)10);
 }
 
 TEST_CASE("Sum 2nd-order nested iterables", TAGS)

@@ -42,17 +42,17 @@ class MicroShell
     // Command chain manipulation methods
         void clearCommands();
         void addCommand(CommandPtr command);
-        void removeCommand(int index);
+        void removeCommand(size_t index);
         void removeCommand(const std::string& name);
         void setExitCommand(CommandPtr command);
 
     // Getter methods
-        CommandPtr getCommand(int index);
+        CommandPtr getCommand(size_t index);
         CommandPtr getCommand(const std::string& name);
         CommandPtr getExitCommand();
 
     // Useful checks
-        int indexOf(const std::string& name);
+        size_t indexOf(const std::string& name);
         bool hasCommand(const std::string& name);
 
         // Run the shell.
@@ -94,7 +94,7 @@ template<typename CustomState>
 void MicroShell<CustomState>::removeCommand(const std::string& name)
 {
     // Find the index of the command with the provided name.
-    int index = indexOf(name);
+    size_t index = indexOf(name);
 
     // Throw if not found.
     if (index == -1)
@@ -108,7 +108,7 @@ void MicroShell<CustomState>::removeCommand(const std::string& name)
 }
 
 template<typename CustomState>
-void MicroShell<CustomState>::removeCommand(int index)
+void MicroShell<CustomState>::removeCommand(size_t index)
 {
     // Try to erase the command at provided index.
     if (_chain.begin() + index >= _chain.end())
@@ -127,7 +127,7 @@ void MicroShell<CustomState>::clearCommands()
 }
 
 template<typename CustomState>
-int MicroShell<CustomState>::indexOf(const std::string& name)
+size_t MicroShell<CustomState>::indexOf(const std::string& name)
 {
     // Find a command with given name.
     MicroShell<CustomState>::ChainIter it = std::find_if(_chain.begin(), _chain.end(), _lambda_commandNameIs(name));
@@ -140,7 +140,7 @@ template<typename CustomState>
 bool MicroShell<CustomState>::hasCommand(const std::string& name)
 {
     // Command exists if a valid index is found.
-    return indexOf(name) != -1;
+    return indexOf(name) != (size_t)-1;
 }
 
 template<typename CustomState>
@@ -150,7 +150,7 @@ void MicroShell<CustomState>::setExitCommand(MicroShell<CustomState>::CommandPtr
 }
 
 template<typename CustomState>
-typename MicroShell<CustomState>::CommandPtr MicroShell<CustomState>::getCommand(int index)
+typename MicroShell<CustomState>::CommandPtr MicroShell<CustomState>::getCommand(size_t index)
 {
     // Try to fetch the command at provided index.
     if (index >= _chain.size())
@@ -166,7 +166,7 @@ template<typename CustomState>
 typename MicroShell<CustomState>::CommandPtr MicroShell<CustomState>::getCommand(const std::string& name)
 {
     // Try to fetch the command at provided index.
-    int index = indexOf(name);
+    size_t index = indexOf(name);
     if (index == -1)
     {
         std::string s = "MicroShell<" + std::to_string(typeid(CustomState).name()) + ">: Command with name " + name + " is not part of the shell and cannot be fetched.";
@@ -228,7 +228,7 @@ int MicroShell<CustomState>::processInput(const std::string& input, CustomState&
     }
 
     // Otherwise, search for a command sharing the name of the first token...
-    int index = indexOf(tokens[0]);
+    size_t index = indexOf(tokens[0]);
     if (index == - 1)
     {
         streams.out() << tokens[0] << ": command not found.\n";
@@ -269,7 +269,7 @@ template<typename CustomState>
 std::string MicroShell<CustomState>::commandHelpString(const std::string& commandName)
 {
     // Find command.
-    int index = indexOf(commandName);
+    size_t index = indexOf(commandName);
 
     std::string s;
     // Handle command not found.

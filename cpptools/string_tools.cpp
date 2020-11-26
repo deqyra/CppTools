@@ -307,13 +307,13 @@ namespace StringTools
         std::string result;
 
         // Find and remove multiline comments
-        unsigned int offset = str.find("/*", 0);
+        size_t offset = str.find("/*", 0);
         while (offset != std::string::npos)
         {
             // Find end of multiline comment
-            unsigned int end = str.find("*/", offset);
+            size_t end = str.find("*/", offset);
             // Find total length of comment
-            unsigned int len = std::string::npos;
+            size_t len = std::string::npos;
             if (end != std::string::npos)
             {
                 // Account for extra 2 chars in "*/"
@@ -331,9 +331,9 @@ namespace StringTools
         while (offset != std::string::npos)
         {
             // Find end of multiline comment
-            unsigned int end = str.find('\n', offset);
+            size_t end = str.find('\n', offset);
             // Find total length of comment
-            unsigned int len = std::string::npos;
+            size_t len = std::string::npos;
             if (end != std::string::npos)
             {
                 // Do not account for extra 1 char '\n', leave as is
