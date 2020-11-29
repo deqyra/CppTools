@@ -7,7 +7,7 @@
 
 #include "../../tree.hpp"
 #include "../token.hpp"
-#include "c_preprocessor_token.hpp"
+#include "c_preprocessor_token_type.hpp"
 
 /// @brief Perform preprocessing operations on C / C++ source files.
 class CPreprocessor
