@@ -7,7 +7,7 @@
 
 #include "../../tree.hpp"
 #include "../token.hpp"
-#include "c_preprocessor_token.hpp"
+#include "c_preprocessor_token_type.hpp"
 
 /// @brief Perform preprocessing operations on C / C++ source files.
 class CPreprocessor
@@ -16,19 +16,11 @@ class CPreprocessor
         using CPreprocessorToken = Token<CPreprocessorTokenType>;
         using IncludeLookupTable = std::unordered_map<std::string, std::string>;
 
-        /// @param source Path to the file to parse.
+        /// @param source Path to the file from which to read source code.
         ///
         /// @exception If the source code contains invalid preprocessor syntax,
         /// the function will throw a BadSyntaxError.
-        CPreprocessor(std::string source);
-
-        /// @brief Parse source code.
-        ///
-        /// @param source Source code to parse.
-        ///
-        /// @exception If the source code contains invalid preprocessor syntax,
-        /// the function will throw a BadSyntaxError.
-        void parseSource(const std::string& source);
+        CPreprocessor(std::string filename);
 
         /// @brief Recursively expand all macros present in the parsed source 
         /// code.
@@ -114,6 +106,17 @@ class CPreprocessor
         /// @brief Array of paths to folders in which to look for files to 
         /// include.
         std::vector<std::string> _includePaths;
+
+        /// @brief Path to the file from which soruce code was read.
+        std::string _filename;
+
+        /// @brief Parse source code.
+        ///
+        /// @param source Source code to parse.
+        ///
+        /// @exception If the source code contains invalid preprocessor syntax,
+        /// the function will throw a BadSyntaxError.
+        void parseSource(const std::string& source);
 };
 
 #endif//CPPTOOLS__PARSE__C_PREPROCESSOR__C_PREPROCESSOR_HPP

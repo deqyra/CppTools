@@ -45,6 +45,8 @@ namespace StringTools
     // Open the file located at the provided path and returns a string filled with all of its contents.
     std::string readFileIntoString(const std::string& path, bool stripCarriageReturns = true);
 
+    void dumpStringToFile(const std::string& content, const std::string& filename);
+
     // Takes in two multi-line strings, concatenates them line by line and returns the result in one string.
     std::string multilineConcatenation(const std::string& first, const std::string& second);
 

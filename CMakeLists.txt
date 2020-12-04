@@ -106,18 +106,18 @@ if( !CPPTOOLS_SKIP_TESTS )
         tests/debugging_tools.cpp
         tests/debugging_tools.hpp
         tests/main.cpp
-        tests/tools/test_string_tools.cpp
-        tests/tools/test_iterable_tools.cpp
-        tests/tools/test_lambda_maker.cpp
-        tests/tools/cli/cli_test_classes.cpp
-        tests/tools/cli/cli_test_classes.hpp
-        tests/tools/cli/test_cli_command_sequence.cpp
-        tests/tools/cli/test_cli_input.cpp
-        tests/tools/cli/test_cli_menu.cpp
-        tests/tools/cli/test_cli_menu_command.cpp
-        tests/tools/cli/test_cli_streams.cpp
-        tests/tools/micro_shell/shell_test_classes.hpp
-        tests/tools/micro_shell/test_micro_shell.cpp
+        tests/cpptools/test_string_tools.cpp
+        tests/cpptools/test_iterable_tools.cpp
+        tests/cpptools/test_lambda_maker.cpp
+        tests/cpptools/cli/cli_test_classes.cpp
+        tests/cpptools/cli/cli_test_classes.hpp
+        tests/cpptools/cli/test_cli_command_sequence.cpp
+        tests/cpptools/cli/test_cli_input.cpp
+        tests/cpptools/cli/test_cli_menu.cpp
+        tests/cpptools/cli/test_cli_menu_command.cpp
+        tests/cpptools/cli/test_cli_streams.cpp
+        tests/cpptools/micro_shell/shell_test_classes.hpp
+        tests/cpptools/micro_shell/test_micro_shell.cpp
     )
 
     target_include_directories( "cpptools_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
