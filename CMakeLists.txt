@@ -160,7 +160,7 @@ endif( )
 
 install(
     TARGETS "cpptools"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cpptools"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 )
 
 install(
