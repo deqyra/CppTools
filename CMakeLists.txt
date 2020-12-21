@@ -48,6 +48,7 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 # Project info
 set( CPPTOOLS_HEADER_FILES
     cpptools/enum_map.hpp
+    cpptools/hash_combine.hpp
     cpptools/iterable_tools.hpp
     cpptools/lambda_maker.hpp
     cpptools/make_basic_exception.hpp
