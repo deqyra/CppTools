@@ -48,6 +48,7 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 # Project info
 set( CPPTOOLS_HEADER_FILES
     cpptools/enum_map.hpp
+    cpptools/hash_combine.hpp
     cpptools/iterable_tools.hpp
     cpptools/lambda_maker.hpp
     cpptools/make_basic_exception.hpp
@@ -150,17 +151,9 @@ if( !CPPTOOLS_SKIP_TESTS )
     )
 endif(  )
 
-# Install target
-if( NOT DEFINED CPPTOOLS_EXTERNAL_INSTALL_PREFIX OR NOT ${CPPTOOLS_EXTERNAL_INSTALL_PREFIX} )
-    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
-    message( STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}" )
-else(  )
-    message( STATUS "Provided install prefix: ${CMAKE_INSTALL_PREFIX}" )
-endif( )
-
 install(
     TARGETS "cpptools"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cpptools"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 )
 
 install(
