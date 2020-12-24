@@ -10,7 +10,7 @@ namespace std
     class EnumHash
     {
         public:
-            template <typename T, std::enable_if_t<std::is_enum<T>::value>>
+            template <typename T>
             std::size_t operator()(T t) const
             {
                 return static_cast<std::size_t>(t);
