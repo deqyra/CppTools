@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <utility>
 
-template<typename Key, typename Val, typename Hash, template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc> typename T>
-bool mapContainsPair(const T<Key, Val, Hash>& map, const std::pair<const Key, Val>& pair)
+template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc, template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc> typename T>
+bool mapContainsPair(const T<Key, Val, Hash, Pred, Alloc>& map, const std::pair<const Key, Val>& pair)
 {
     using Iter = T<Key, Val, Hash>::iterator;
     std::pair<Iter, Iter> range = map.equal_range(pair.first);
