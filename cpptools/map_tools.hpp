@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <utility>
 
-template<typename Key, typename Val, typename Hash, template<typename Key, typename Val, typename Hash> typename T>
+template<typename Key, typename Val, typename Hash, template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc> typename T>
 bool mapContainsPair(const T<Key, Val, Hash>& map, const std::pair<const Key, Val>& pair)
 {
     using Iter = T<Key, Val, Hash>::iterator;
