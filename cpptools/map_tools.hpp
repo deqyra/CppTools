@@ -6,7 +6,7 @@
 #include <utility>
 
 template<typename Key, typename Val, typename Hash, template<typename Key, typename Val, typename Hash> typename T>
-bool mapContainsPair(const T<Key, Val, Hash>& map, std::pair<const Key, Val> pair)
+bool mapContainsPair(const T<Key, Val, Hash>& map, const std::pair<const Key, Val>& pair)
 {
     using Iter = T<Key, Val, Hash>::iterator;
     std::pair<Iter, Iter> range = map.equal_range(pair.first);
