@@ -7,7 +7,7 @@
 
 namespace std
 {
-    class EnumHash
+    class enum_hash
     {
         public:
             template <typename T>
@@ -18,16 +18,16 @@ namespace std
     };
 
     template<typename Key, typename T>
-    using unordered_enum_map = unordered_map<Key, T, EnumHash>;
+    using unordered_enum_map = unordered_map<Key, T, enum_hash>;
 
     template<typename Key, typename T>
-    using enum_map = map<Key, T, EnumHash>;
+    using enum_map = map<Key, T, enum_hash>;
 
     template<typename Key, typename T>
-    using unordered_enum_multimap = unordered_multimap<Key, T, EnumHash>;
+    using unordered_enum_multimap = unordered_multimap<Key, T, enum_hash>;
 
     template<typename Key, typename T>
-    using enum_multimap = multimap<Key, T, EnumHash>;
+    using enum_multimap = multimap<Key, T, enum_hash>;
 }
 
 #endif//CPPTOOLS__ENUM_MAP_HPP
