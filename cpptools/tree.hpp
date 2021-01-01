@@ -88,6 +88,13 @@ class Tree
         /// @return A pointer to the node if found, or nullptr otherwise.
         NodePtr operator[](unsigned int id);
 
+        /// @brief Get a pointer to the node with provided ID.
+        ///
+        /// @param id ID of the node to retrieve.
+        ///
+        /// @return A pointer to the node if found, or nullptr otherwise.
+        NodePtr operator[](unsigned int id) const;
+
         /// @brief Returns whether the contains has a node with provided ID.
         ///
         /// @param id ID of the node to check.
@@ -248,6 +255,18 @@ typename Tree<T>::NodePtr Tree<T>::getRoot()
 
 template<typename T>
 typename Tree<T>::NodePtr Tree<T>::operator[](unsigned int id)
+{
+    auto it = _nodes.find(id);
+    if (it == _nodes.end())
+    {
+        return nullptr;
+    }
+
+    return it->second;
+}
+
+template<typename T>
+typename Tree<T>::NodePtr Tree<T>::operator[](unsigned int id) const
 {
     auto it = _nodes.find(id);
     if (it == _nodes.end())

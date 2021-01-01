@@ -8,7 +8,7 @@ template <typename ...ArgTypes>
 class Notifier
 {
     public:
-        using ListenerType = std::function<void(ArgTypes&&...)>;
+        using ListenerType = std::function<void(ArgTypes...)>;
 
     private:
         std::unordered_map<unsigned int, ListenerType> _listeners;
@@ -20,7 +20,7 @@ class Notifier
         unsigned int addSubscriber(ListenerType callback);
         void deleteSubscriber(unsigned int id);
 
-        void notify(ArgTypes&&... args) const;
+        void notify(ArgTypes... args) const;
 };
 
 template<typename ...ArgTypes>
@@ -32,7 +32,7 @@ Notifier<ArgTypes...>::Notifier() :
 }
 
 template<typename ...ArgTypes>
-unsigned int Notifier<ArgTypes...>::addSubscriber(std::function<void(ArgTypes&&...)> callback)
+unsigned int Notifier<ArgTypes...>::addSubscriber(std::function<void(ArgTypes...)> callback)
 {
     _listeners[_count] = callback;
     return _count++;
@@ -45,7 +45,7 @@ void Notifier<ArgTypes...>::deleteSubscriber(unsigned int id)
 }
 
 template<typename ...ArgTypes>
-void Notifier<ArgTypes...>::notify(ArgTypes&&... args) const
+void Notifier<ArgTypes...>::notify(ArgTypes... args) const
 {
     for (auto it = _listeners.begin(); it != _listeners.end(); it++)
     {
