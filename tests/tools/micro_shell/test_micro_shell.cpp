@@ -13,6 +13,9 @@
 
 #define TAGS "[micro_shell]"
 
+namespace CppTools
+{
+
 TEST_CASE("MicroShell")
 {
     TestShell shell = TestShell();
@@ -68,8 +71,10 @@ TEST_CASE("MicroShell")
         CLIStreams s = CLIStreams(f, ss, ss);
         TestShellState state = TestShellState();
 
-        std::string expected = StringTools::readFileIntoString("resources/tests/tools/micro_shell/micro_shell_output.txt");
+        std::string expected = String::readFileIntoString("resources/tests/tools/micro_shell/micro_shell_output.txt");
         REQUIRE_NOTHROW(shell.run(state, s));
         REQUIRE(ss.str() == expected);
     }
 }
+
+}//namespace CppTools

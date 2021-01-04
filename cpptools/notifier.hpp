@@ -4,6 +4,9 @@
 #include <functional>
 #include <unordered_map>
 
+namespace CppTools
+{
+
 template <typename ...ArgTypes>
 class Notifier
 {
@@ -53,5 +56,7 @@ void Notifier<ArgTypes...>::notify(ArgTypes... args) const
         listener(std::forward<ArgTypes>(args)...);
     }
 }
+
+}//namespace CppTools
 
 #endif //TOOLS__NOTIFIER_HPP

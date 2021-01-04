@@ -6,6 +6,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+namespace CppTools
+{
+
 template<typename P = float>
 class SineGenerator
 {
@@ -104,5 +107,7 @@ void SineGenerator<P>::runningCycleModulo2Pi()
 {
     while (_runningCycle > M_PI) _runningCycle -= (P)(2.0) * (P)M_PI;
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__SINE_GENERATOR_HPP

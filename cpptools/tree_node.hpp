@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+namespace CppTools
+{
+
 template<typename T>
 // A node to be used in a tree, stores a T-type value and weak pointers to surronding nodes
 class TreeNode : public std::enable_shared_from_this<TreeNode<T>>
@@ -300,5 +303,7 @@ void TreeNode<T>::generateParentChains()
         child->generateParentChains();
     }
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__TREE_NODE_HPP

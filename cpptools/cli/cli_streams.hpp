@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+namespace CppTools
+{
+
 class CLIStreams
 {
     private:    // Attributes
@@ -17,5 +20,7 @@ class CLIStreams
         std::ostream& out();
         std::ostream& err();
 };
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__CLI__CLI_STREAMS_HPP

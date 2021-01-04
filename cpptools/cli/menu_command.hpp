@@ -8,6 +8,9 @@
 #include "cli_menu.hpp"
 #include "cli_streams.hpp"
 
+namespace CppTools
+{
+
 // Extended command wrapping a menu.
 template<typename CustomState>
 class MenuCommand : public CLICommand<CustomState>
@@ -50,5 +53,7 @@ int MenuCommand<CustomState>::run(CustomState& state, CLIStreams& streams)
     _innerMenu.show(state, streams);
     return CLI_COMMAND_SUCCESS;
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__CLI__MENU_COMMAND_HPP

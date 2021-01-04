@@ -8,6 +8,9 @@
 #include <cpptools/cli/menu_command.hpp>
 #include <cpptools/cli/command_sequence.hpp>
 
+namespace CppTools
+{
+
 class TestCLIState {};
 
 using TestCLIMenu = CLIMenu<TestCLIState>;
@@ -54,5 +57,7 @@ class TestCLIExitCommand : public TestCLICommand
 
 TestCLIMenu makeBasicTestMenu();
 TestCLICommandSequence makeBasicTestCommandSequence();
+
+}//namespace CppTools
 
 #endif//TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP

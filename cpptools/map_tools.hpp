@@ -5,7 +5,11 @@
 #include <unordered_map>
 #include <utility>
 
-template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc, template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc> typename T>
+namespace CppTools
+{
+
+template<template<typename, typename, typename, typename, typename> typename T, typename Key, typename Val, typename Hash, typename Pred, typename Alloc>
+//template<, template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc> typename T>
 bool mapContainsPair(const T<Key, Val, Hash, Pred, Alloc>& map, const std::pair<const Key, Val>& pair)
 {
     using Iter = T<Key, Val, Hash, Pred, Alloc>::const_iterator;
@@ -17,5 +21,7 @@ bool mapContainsPair(const T<Key, Val, Hash, Pred, Alloc>& map, const std::pair<
 
     return false;
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__MULTIMAP_TOOLS_HPP

@@ -7,6 +7,9 @@
 
 #define TAGS "[cli][cli_streams]"
 
+namespace CppTools
+{
+
 TEST_CASE("CLI stream wrapper", TAGS)
 {
     CLIStreams streams = CLIStreams(std::cin, std::cout, std::cerr);
@@ -17,3 +20,5 @@ TEST_CASE("CLI stream wrapper", TAGS)
     REQUIRE(streams.out().rdbuf() == std::cout.rdbuf());
     REQUIRE(streams.err().rdbuf() == std::cerr.rdbuf());
 }
+
+}//namespace CppTools

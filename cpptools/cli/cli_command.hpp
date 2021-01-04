@@ -7,6 +7,9 @@
 #include "cli_streams.hpp"
 #include "cli_input.hpp"
 
+namespace CppTools
+{
+
 template<typename CustomState>
 class CLICommand
 {
@@ -27,5 +30,7 @@ CLICommand<CustomState>::~CLICommand()
 // Command exit codes
 inline static const int CLI_COMMAND_SUCCESS = 0;
 inline static const int CLI_COMMAND_FAILURE = -1;
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__CLI__CLI_COMMAND_HPP

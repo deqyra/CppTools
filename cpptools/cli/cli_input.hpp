@@ -7,6 +7,9 @@
 #include "cli_streams.hpp"
 #include "../string_tools.hpp"
 
+namespace CppTools
+{
+
 namespace CLIInput
 {
     // Default streams to be used
@@ -133,7 +136,7 @@ namespace CLIInput
     template<>
     int parseString(const std::string& input)
     {
-        if (!StringTools::stringIsNum(input))
+        if (!String::stringIsNum(input))
         {
             throw std::invalid_argument("parseString<int>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
         }
@@ -178,5 +181,7 @@ namespace CLIInput
         return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
     }
 } // namespace CLIInput
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__CLI__CLI_INPUT

@@ -11,6 +11,9 @@
 
 #define TAGS "[cli][cli_command]"
 
+namespace CppTools
+{
+
 TEST_CASE("CLIMenu end-to-end", TAGS)
 {
     std::ifstream f = std::ifstream("resources/tests/tools/cli/menu_input.txt", std::ios::in);
@@ -23,9 +26,11 @@ TEST_CASE("CLIMenu end-to-end", TAGS)
     TestCLIMenu menu = makeBasicTestMenu();
     menu.show(state, s);
 
-    std::string expected = StringTools::readFileIntoString("resources/tests/tools/cli/menu_output.txt");
+    std::string expected = String::readFileIntoString("resources/tests/tools/cli/menu_output.txt");
 
     REQUIRE(ss.str() == expected);
 
     f.close();
 }
+
+}//namespace CppTools

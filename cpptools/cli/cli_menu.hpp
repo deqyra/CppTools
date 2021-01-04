@@ -10,6 +10,9 @@
 #include "cli_input.hpp"
 #include "../string_tools.hpp"
 
+namespace CppTools
+{
+
 template<typename CustomState>
 class CLIMenu
 {
@@ -118,5 +121,7 @@ std::string CLIMenu<CustomState>::allOptionsString()
 
     return s;
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__CLI__CLI_MENU_HPP

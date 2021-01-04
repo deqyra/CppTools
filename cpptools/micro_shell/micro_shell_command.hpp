@@ -9,6 +9,9 @@
 #define HELP_KEYWORD "help"
 #define EXIT_KEYWORD "exit"
 
+namespace CppTools
+{
+
 template<typename CustomState>
 class MicroShellCommand
 {
@@ -35,5 +38,6 @@ MicroShellCommand<CustomState>::~MicroShellCommand()
 
 }
 
+}//namespace CppTools
 
 #endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
