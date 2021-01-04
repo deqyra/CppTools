@@ -7,6 +7,9 @@
 #include <cpptools/micro_shell/micro_shell_command.hpp>
 #include <cpptools/micro_shell/micro_shell_codes.hpp>
 
+namespace CppTools
+{
+
 class TestShellState {};
 
 using TestShell = MicroShell<TestShellState>;
@@ -54,5 +57,7 @@ class TestShellExitCommand : public TestShellCommand
             return SHELL_EXIT;
         }
 };
+
+}//namespace CppTools
 
 #endif//TESTS__TOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP

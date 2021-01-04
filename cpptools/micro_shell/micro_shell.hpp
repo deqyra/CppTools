@@ -13,6 +13,9 @@
 #include "../string_tools.hpp"
 #include "../exceptions/index_out_of_bounds_error.hpp"
 
+namespace CppTools
+{
+
 template<typename CustomState>
 class MicroShell
 {
@@ -297,5 +300,7 @@ int MicroShell<CustomState>::handleExit(const std::string& command, CustomState&
     // Otherwise run the provided exit command.
     return _exitCommand->processInput(command, state, streams);
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP

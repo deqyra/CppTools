@@ -7,6 +7,9 @@
 #include <cpptools/cli/menu_command.hpp>
 #include <cpptools/cli/command_sequence.hpp>
 
+namespace CppTools
+{
+
 TestCLIMenu makeBasicTestMenu()
 {
     std::vector<TestCLICommandPtr> commands = {
@@ -29,3 +32,5 @@ TestCLICommandSequence makeBasicTestCommandSequence()
 
     return TestCLICommandSequence(sequenceCommands, "Test sequence");
 }
+
+}//namespace CppTools

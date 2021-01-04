@@ -4,6 +4,11 @@
 
 #define TAGS "[iterable][tools]"
 
+namespace CppTools
+{
+namespace Iterable
+{
+
 TEST_CASE("Max iterable length", TAGS)
 {
     std::vector<std::vector<int>> vecs = {
@@ -14,7 +19,7 @@ TEST_CASE("Max iterable length", TAGS)
         std::vector<int>(7)
     };
 
-    REQUIRE(IterTools::maxIterableLength(vecs) == (size_t)10);
+    REQUIRE(maxIterableLength(vecs) == (size_t)10);
 }
 
 TEST_CASE("Sum 2nd-order nested iterables", TAGS)
@@ -25,7 +30,7 @@ TEST_CASE("Sum 2nd-order nested iterables", TAGS)
     vectors.push_back({2, 7});
     vectors.push_back({9, 12, 5, 8});
 
-    REQUIRE(IterTools::sum2NestedIterables<int>(vectors) == 64);
+    REQUIRE(sum2NestedIterables<int>(vectors) == 64);
 }
 
 TEST_CASE("Index of max element can be found within a vectors and arrays alike", TAGS)
@@ -35,16 +40,16 @@ TEST_CASE("Index of max element can be found within a vectors and arrays alike",
 
     SECTION("Int vector")
     {
-        REQUIRE(IterTools::indexOfMaxElement(vec) == 5);
+        REQUIRE(indexOfMaxElement(vec) == 5);
         vec[3] = 100;
-        REQUIRE(IterTools::indexOfMaxElement(vec) == 3);
+        REQUIRE(indexOfMaxElement(vec) == 3);
     }
 
     SECTION("Int array")
     {
-        REQUIRE(IterTools::indexOfMaxElement(arr, 7) == 5);
+        REQUIRE(indexOfMaxElement(arr, 7) == 5);
         arr[3] = 100;
-        REQUIRE(IterTools::indexOfMaxElement(arr, 7) == 3);
+        REQUIRE(indexOfMaxElement(arr, 7) == 3);
     }
 }
 
@@ -54,10 +59,13 @@ TEST_CASE("Elements can be stripped from a vector", TAGS)
     std::vector<int> ref = std::vector<int>({2, 854, -123, 2759});
 
     // Make sure it works.
-    IterTools::stripElementFromIterable(vec, 0);
+    stripElementFromIterable(vec, 0);
     REQUIRE(vec == ref);
 
     // Make sure it is a no-op when no element is present.
-    IterTools::stripElementFromIterable(vec, 0);
+    stripElementFromIterable(vec, 0);
     REQUIRE(vec == ref);
 }
+
+}//namespace Iterable
+}//namespace CppTools

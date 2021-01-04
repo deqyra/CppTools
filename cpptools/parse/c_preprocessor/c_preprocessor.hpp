@@ -9,6 +9,9 @@
 #include "../token.hpp"
 #include "c_preprocessor_token_type.hpp"
 
+namespace CppTools
+{
+
 /// @brief Perform preprocessing operations on C / C++ source files.
 class CPreprocessor
 {
@@ -115,5 +118,7 @@ class CPreprocessor
         /// include.
         std::vector<std::string> _includePaths;
 };
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__PARSE__C_PREPROCESSOR__C_PREPROCESSOR_HPP

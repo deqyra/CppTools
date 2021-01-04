@@ -11,6 +11,9 @@
 
 #define TAGS "[cli][cli_command]"
 
+namespace CppTools
+{
+
 TEST_CASE("CommandSequence end-to-end", TAGS)
 {
     std::ifstream f = std::ifstream("resources/tests/tools/cli/menu_input.txt", std::ios::in);
@@ -24,7 +27,7 @@ TEST_CASE("CommandSequence end-to-end", TAGS)
 
     commandSequence.run(state, s);
 
-    std::string expected = StringTools::readFileIntoString("resources/tests/tools/cli/menu_output.txt");
+    std::string expected = String::readFileIntoString("resources/tests/tools/cli/menu_output.txt");
     expected += "TestCLICommand1 was run.\n"
                 "TestCLICommand2 was run.\n";
 
@@ -34,3 +37,5 @@ TEST_CASE("CommandSequence end-to-end", TAGS)
 
     f.close();
 }
+
+}//namespace CppTools

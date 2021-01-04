@@ -9,6 +9,9 @@
 
 #include "tree_node.hpp"
 
+namespace CppTools
+{
+
 /// @brief A tree managing nodes organized in a hierarchical structure, in which
 /// one node may only have one parent.
 ///
@@ -499,5 +502,7 @@ unsigned int Tree<T>::countValueRoutine(const T& value, NodePtr startingNode)
 
     return count;
 }
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__TREE_HPP

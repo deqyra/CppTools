@@ -3,6 +3,9 @@
 
 #include <string>
 
+namespace CppTools
+{
+
 template<typename T>
 struct Token
 {
@@ -15,5 +18,7 @@ struct Token
     Token<T>* matchingTokenForward;
     Token<T>* matchingTokenBackward;
 };
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__PARSE__TOKEN_HPP

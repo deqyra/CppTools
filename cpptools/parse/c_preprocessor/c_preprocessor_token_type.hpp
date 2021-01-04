@@ -1,6 +1,9 @@
 #ifndef CPPTOOLS__PARSE__C_PREPROCESSOR__C_PREPROCESSOR_TOKEN_TYPE_HPP
 #define CPPTOOLS__PARSE__C_PREPROCESSOR__C_PREPROCESSOR_TOKEN_TYPE_HPP
 
+namespace CppTools
+{
+
 enum class CPreprocessorTokenType
 {
     DirectiveDefine,
@@ -22,6 +25,8 @@ enum class CPreprocessorTokenType
     Macro,
     Comment,
     Text
-}
+};
+
+}//namespace CppTools
 
 #endif//CPPTOOLS__PARSE__C_PREPROCESSOR__C_PREPROCESSOR_TOKEN_TYPE_HPP
