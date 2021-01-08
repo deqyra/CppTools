@@ -1,6 +1,7 @@
 #include "string_tools.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <sstream>
