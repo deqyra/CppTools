@@ -12,7 +12,7 @@ template<template<typename, typename, typename, typename, typename> typename T, 
 //template<, template<typename Key, typename Val, typename Hash, typename Pred, typename Alloc> typename T>
 bool mapContainsPair(const T<Key, Val, Hash, Pred, Alloc>& map, const std::pair<const Key, Val>& pair)
 {
-    using Iter = T<Key, Val, Hash, Pred, Alloc>::const_iterator;
+    using Iter = typename T<Key, Val, Hash, Pred, Alloc>::const_iterator;
     std::pair<Iter, Iter> range = map.equal_range(pair.first);
     for (Iter it = range.first; it != range.second; it++)
     {
