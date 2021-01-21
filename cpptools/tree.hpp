@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <numeric>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -16,7 +17,7 @@ namespace CppTools
 {
 
 /// @brief A tree managing nodes organized in a hierarchical structure, in which
-/// one node may have several children but only one parent.
+/// one node may have several children but only one parent. Fully STL-compatible.
 ///
 /// @tparam T The type of elements which the tree will store.
 template<typename T>
@@ -26,6 +27,11 @@ public:
     using Node = TreeNode<T>;
     using NodePtr = std::shared_ptr<Node>;
     using NodeWPtr = std::weak_ptr<Node>;
+
+    using value_type = T;
+    using reference = T&;
+    using const_reference = const T&;
+    using size_type = std::unordered_map<unsigned int, NodePtr>::size_type;
 
 private:
     /// @brief Pointer to the root node of the tree.
@@ -88,7 +94,9 @@ public:
     Tree(T rootValue = T());
 
     Tree(const Tree<T>& other);
+    Tree(Tree<T>&& other);
     Tree<T>& operator=(const Tree<T>& other);
+    Tree<T>& operator=(Tree<T>&& other);
     ~Tree();
 
     /// @brief Get a pointer to the root node of the tree.
@@ -199,6 +207,31 @@ public:
     /// @return The count of matched elements.
     unsigned int countValue(const T& value, unsigned int branchRootId);
 
+    bool operator==(const Tree<T>& rhs);
+
+    bool operator!=(const Tree<T>& rhs);
+
+    /// @brief Swap this tree with another.
+    ///
+    /// @param other Tree to swap content with.
+    void swap(Tree<T>& other);
+
+    /// @brief Get the number of elements in the tree.
+    ///
+    /// @return The number of elements in the tree.
+    size_t size();
+
+    /// @brief Get the maximum number of elements there can be in the tree.
+    ///
+    /// @return The maximum number of elements in the tree.
+    size_t max_size();
+
+    /// @brief Whether or not the tree is empty. As it always contains a root 
+    /// node, the tree is never empty.
+    ///
+    /// @return False.
+    bool empty();
+
     /// @brief Iterator to an element in the tree. Implements traversal in DFS
     /// order. Invalidated when the iterated node no longer belongs to the tree 
     /// from which the iterator was instantiated.
@@ -250,14 +283,22 @@ public:
         /// @brief Iterate over the next element in a DFS traversal of the tree.
         void next() const;
     };
+    using const_iterator = const iterator;
+    using difference_type = iterator::difference_type;
 
     friend class iterator;
 
     /// @brief Get an iterator to start a DFS traversal of the tree.
-    iterator dfsBegin();
+    iterator begin();
 
     /// @brief Get the iterator past the end of a DFS traversal of the tree.
-    iterator dfsEnd();
+    iterator end();
+
+    /// @brief Get an iterator to start a DFS traversal of the tree.
+    const_iterator cbegin();
+
+    /// @brief Get the iterator past the end of a DFS traversal of the tree.
+    const_iterator cend();
 };
 
 template<typename T>
@@ -284,6 +325,14 @@ Tree<T>::Tree(const Tree<T>& other) :
 }
 
 template<typename T>
+Tree<T>::Tree(Tree<T>&& other) :
+    _root(std::move(other._root)),
+    _nodes(std::move(other._nodes))
+{
+
+}
+
+template<typename T>
 Tree<T>& Tree<T>::operator=(const Tree<T>& other)
 {
     // As this tree is being assigned to, its current content must be deleted
@@ -296,6 +345,17 @@ Tree<T>& Tree<T>::operator=(const Tree<T>& other)
     copyNodeStructure(other._root, _root);
     // Compute the new node map
     _nodes = nodeMapFromBranch(_root);
+}
+
+template<typename T>
+Tree<T>& Tree<T>::operator=(Tree<T>&& other)
+{
+    // As this tree is being assigned to, its current content must be deleted
+    destructBranch(_root);
+    _nodes.clear();
+
+    _root = std::move(other._root);
+    _nodes = std::move(other._nodes);
 }
 
 template<typename T>
@@ -362,6 +422,11 @@ bool Tree<T>::hasNode(unsigned int id)
 template<typename T>
 unsigned int Tree<T>::addNode(T value, unsigned int parentId)
 {
+    if (size() == max_size())
+    {
+        throw std::runtime_error("Tree: max size reached, cannot add node.");
+    }
+
     auto it = _nodes.find(parentId);
     if (it == _nodes.end())
     {
@@ -379,6 +444,15 @@ unsigned int Tree<T>::addNode(T value, unsigned int parentId)
 template<typename T>
 unsigned int Tree<T>::addBranch(const Tree<T>& tree, unsigned int parentId)
 {
+    size_type remainingSpace = max_size() - size();
+    if (tree.size() > remainingSpace)
+    {
+        std::string s = "Tree: only " + std::to_string(remainingSpace) + " additional nodes can be added, "
+            "cannot add branch with " + std::to_string(tree.size()) + " nodes.";
+
+        throw std::runtime_error(s.c_str());
+    }
+
     auto it = _nodes.find(parentId);
     if (it == _nodes.end())
     {
@@ -485,7 +559,9 @@ void Tree<T>::moveBranch(unsigned int branchRootId, unsigned int newParentId)
     auto parentIt = _nodes.find(newParentId);
     if (parentIt == _nodes.end())
     {
-        std::string s = "Tree: no node with ID " + std::to_string(newParentId) + ", cannot move branch " + std::to_string(branchRootId) + " to it.";
+        std::string s = "Tree: no node with ID " + std::to_string(newParentId) + ", "
+            "cannot move branch " + std::to_string(branchRootId) + " to it.";
+
         throw std::runtime_error(s.c_str());
     }
 
@@ -515,15 +591,86 @@ unsigned int Tree<T>::countValue(const T& value, unsigned int branchRootId)
 }
 
 template<typename T>
-Tree<T>::iterator Tree<T>::dfsBegin()
+bool Tree<T>::operator==(const Tree<T>& rhs)
+{
+    if (&rhs == this) return true;
+
+    if (_nodes.size() != rhs._nodes.size()) return false;
+
+    const_iterator thisIt = cbegin();
+    const_iterator otherIt = rhs.cbegin();
+
+    while (thisIt != cend() && otherIt != rhs.cend())
+    {
+        // Compare structure
+        if (thisIt._node._wChildren.size() != otherIt._node._wChildren.size()) return false;
+
+        // Compare value
+        if (*thisIt != *otherIt) return false;
+
+        thisIt++;
+        otherIt++;
+    }
+    if (thisIt != cend() || otherIt != rhs.cend()) return false;
+
+    return true;
+}
+
+template<typename T>
+bool Tree<T>::operator!=(const Tree<T>& rhs)
+{
+    return !(operator==(rhs));
+}
+
+template<typename T>
+void Tree<T>::swap(Tree<T>& other)
+{
+    using std::swap;
+
+    swap(_root, other._root);
+    swap(_nodes, other._nodes);
+}
+
+template<typename T>
+size_t Tree<T>::size()
+{
+    return _nodes.size() + 1;
+}
+
+template<typename T>
+size_t Tree<T>::max_size()
+{
+    return _nodes.size();
+}
+
+template<typename T>
+bool Tree<T>::empty()
+{
+    return false;
+}
+
+template<typename T>
+Tree<T>::iterator Tree<T>::begin()
 {
     return iterator(_root, shared_from_this());
 }
 
 template<typename T>
-Tree<T>::iterator Tree<T>::dfsEnd()
+Tree<T>::iterator Tree<T>::end()
 {
     return iterator(nullptr, shared_from_this());
+}
+
+template<typename T>
+Tree<T>::const_iterator Tree<T>::cbegin()
+{
+    return const_iterator(_root, shared_from_this());
+}
+
+template<typename T>
+Tree<T>::const_iterator Tree<T>::cend()
+{
+    return const_iterator(nullptr, shared_from_this());
 }
 
 template<typename T>
@@ -724,9 +871,12 @@ void advance(CppTools::Tree<T>::iterator& it, std::iterator_traits<CppTools::Tre
 }
 
 template<typename T>
-CppTools::Tree<T>::iterator next(CppTools::Tree<T>::iterator it, std::iterator_traits<CppTools::Tree<T>::iterator>::difference_type n)
+CppTools::Tree<T>::iterator next(
+    CppTools::Tree<T>::iterator it,
+    std::iterator_traits<CppTools::Tree<T>::iterator>::difference_type n
+)
 {
-    advance(it);
+    advance(it, n);
     return it;
 }
 
