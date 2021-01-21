@@ -31,7 +31,7 @@ public:
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
-    using size_type = std::unordered_map<unsigned int, NodePtr>::size_type;
+    using size_type = typename std::unordered_map<unsigned int, NodePtr>::size_type;
 
 private:
     /// @brief Pointer to the root node of the tree.
@@ -232,6 +232,10 @@ public:
     /// @return False.
     bool empty();
 
+    class iterator;
+    friend class iterator;
+    using const_iterator = const iterator;
+
     /// @brief Iterator to an element in the tree. Implements traversal in DFS
     /// order. Invalidated when the iterated node no longer belongs to the tree 
     /// from which the iterator was instantiated.
@@ -254,8 +258,9 @@ public:
     public:
         iterator();
         iterator(const iterator& other) = default;
-        iterator& operator=(const iterator other) = default;
         ~iterator() = default;
+        
+        iterator& operator=(const iterator& other);
 
         using value_type = T;
         using difference_type = std::ptrdiff_t;
@@ -283,10 +288,7 @@ public:
         /// @brief Iterate over the next element in a DFS traversal of the tree.
         void next() const;
     };
-    using const_iterator = const iterator;
-    using difference_type = iterator::difference_type;
-
-    friend class iterator;
+    using difference_type = typename iterator::difference_type;
 
     /// @brief Get an iterator to start a DFS traversal of the tree.
     iterator begin();
@@ -295,10 +297,10 @@ public:
     iterator end();
 
     /// @brief Get an iterator to start a DFS traversal of the tree.
-    const_iterator cbegin();
+    const_iterator cbegin() const;
 
     /// @brief Get the iterator past the end of a DFS traversal of the tree.
-    const_iterator cend();
+    const_iterator cend() const;
 };
 
 template<typename T>
@@ -650,27 +652,27 @@ bool Tree<T>::empty()
 }
 
 template<typename T>
-Tree<T>::iterator Tree<T>::begin()
+typename Tree<T>::iterator Tree<T>::begin()
 {
-    return iterator(_root, shared_from_this());
+    return iterator(_root, this->shared_from_this());
 }
 
 template<typename T>
-Tree<T>::iterator Tree<T>::end()
+typename Tree<T>::iterator Tree<T>::end()
 {
-    return iterator(nullptr, shared_from_this());
+    return iterator(nullptr, this->shared_from_this());
 }
 
 template<typename T>
-Tree<T>::const_iterator Tree<T>::cbegin()
+const typename Tree<T>::iterator Tree<T>::cbegin() const
 {
-    return const_iterator(_root, shared_from_this());
+    return const_iterator(_root, this->shared_from_this());
 }
 
 template<typename T>
-Tree<T>::const_iterator Tree<T>::cend()
+const typename Tree<T>::iterator Tree<T>::cend() const
 {
-    return const_iterator(nullptr, shared_from_this());
+    return const_iterator(nullptr, this->shared_from_this());
 }
 
 template<typename T>
@@ -735,7 +737,7 @@ unsigned int Tree<T>::countValueRoutine(const T& value, NodePtr startingNode)
 }
 
 template<typename T>
-Tree<T>::NodePtr Tree<T>::next(unsigned int id)
+typename Tree<T>::NodePtr Tree<T>::next(unsigned int id)
 {
     auto it = _nodes.find(id);
     if (it == _nodes.end())
@@ -771,6 +773,13 @@ Tree<T>::iterator::iterator() :
 }
 
 template<typename T>
+typename Tree<T>::iterator& Tree<T>::iterator::operator=(const iterator& other)
+{
+    _node = other._node;
+    _tree = other._tree;
+}
+
+template<typename T>
 Tree<T>::iterator::iterator(NodePtr node, TreePtr tree) :
     _node(node),
     _tree(tree)
@@ -779,21 +788,21 @@ Tree<T>::iterator::iterator(NodePtr node, TreePtr tree) :
 }
 
 template<typename T>
-Tree<T>::iterator& Tree<T>::iterator::operator++()
+typename Tree<T>::iterator& Tree<T>::iterator::operator++()
 {
     next();
     return *this;
 }
 
 template<typename T>
-const Tree<T>::iterator& Tree<T>::iterator::operator++() const
+const typename Tree<T>::iterator& Tree<T>::iterator::operator++() const
 {
     next();
     return *this;
 }
 
 template<typename T>
-Tree<T>::iterator& Tree<T>::iterator::operator++(int)
+typename Tree<T>::iterator& Tree<T>::iterator::operator++(int _)
 {
     iterator tmp = *this;
     next();
@@ -801,7 +810,7 @@ Tree<T>::iterator& Tree<T>::iterator::operator++(int)
 }
 
 template<typename T>
-const Tree<T>::iterator& Tree<T>::iterator::operator++(int) const
+const typename Tree<T>::iterator& Tree<T>::iterator::operator++(int _) const
 {
     iterator tmp = *this;
     next();
@@ -811,25 +820,25 @@ const Tree<T>::iterator& Tree<T>::iterator::operator++(int) const
 template<typename T>
 T& Tree<T>::iterator::operator->()
 {
-    return node->value;
+    return _node->value;
 }
 
 template<typename T>
 const T& Tree<T>::iterator::operator->() const
 {
-    return node->value;
+    return _node->value;
 }
 
 template<typename T>
 T& Tree<T>::iterator::operator*()
 {
-    return node->value;
+    return _node->value;
 }
 
 template<typename T>
 const T& Tree<T>::iterator::operator*() const
 {
-    return node->value;
+    return _node->value;
 }
 
 template<typename T>
@@ -853,7 +862,7 @@ void Tree<T>::iterator::next() const
 }//namespace CppTools
 
 template<typename T>
-void swap(CppTools::Tree<T>::iterator& lhs, CppTools::Tree<T>::iterator& rhs)
+void swap(typename CppTools::Tree<T>::iterator& lhs, typename CppTools::Tree<T>::iterator& rhs)
 {
     using std::swap;
 
@@ -865,15 +874,18 @@ namespace std
 {
 
 template<typename T>
-void advance(CppTools::Tree<T>::iterator& it, std::iterator_traits<CppTools::Tree<T>::iterator>::difference_type n)
+void advance(
+    typename CppTools::Tree<T>::iterator& it,
+    typename std::iterator_traits<typename CppTools::Tree<T>::iterator>::difference_type n
+)
 {
     for (auto i = 0; i < n; i++) ++it;
 }
 
 template<typename T>
-CppTools::Tree<T>::iterator next(
-    CppTools::Tree<T>::iterator it,
-    std::iterator_traits<CppTools::Tree<T>::iterator>::difference_type n
+typename CppTools::Tree<T>::iterator next(
+    typename CppTools::Tree<T>::iterator it,
+    typename std::iterator_traits<typename CppTools::Tree<T>::iterator>::difference_type n
 )
 {
     advance(it, n);

@@ -214,7 +214,7 @@ bool TreeNode<T>::hasChild(unsigned int childId)
 }
 
 template<typename T>
-TreeNode<T>::TreeNodePtr TreeNode<T>::getNextSibling(unsigned int childId)
+typename TreeNode<T>::TreeNodePtr TreeNode<T>::getNextSibling(unsigned int childId)
 {
     auto it = std::find(_childrenIds.begin(), _childrenIds.end(), childId);
 
