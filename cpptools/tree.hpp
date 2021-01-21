@@ -1,11 +1,14 @@
 #ifndef CPPTOOLS__TREE_HPP
 #define CPPTOOLS__TREE_HPP
 
-#include <string>
-#include <unordered_map>
-#include <stdexcept>
-#include <vector>
 #include <iostream>
+#include <iterator>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <type_traits>
+#include <unordered_map>
+#include <vector>
 
 #include "tree_node.hpp"
 
@@ -13,179 +16,248 @@ namespace CppTools
 {
 
 /// @brief A tree managing nodes organized in a hierarchical structure, in which
-/// one node may only have one parent.
+/// one node may have several children but only one parent.
 ///
 /// @tparam T The type of elements which the tree will store.
 template<typename T>
-class Tree
+class Tree : public std::enable_shared_from_this<Tree<T>>
 {
-    public:
-        using Node = TreeNode<T>;
-        using NodePtr = std::shared_ptr<Node>;
-        using NodeWPtr = std::weak_ptr<Node>;
+public:
+    using Node = TreeNode<T>;
+    using NodePtr = std::shared_ptr<Node>;
+    using NodeWPtr = std::weak_ptr<Node>;
+
+private:
+    /// @brief Pointer to the root node of the tree.
+    NodePtr _root;
+    
+    /// @brief Structure mapping node pointers to their node IDs.
+    std::unordered_map<unsigned int, NodePtr> _nodes;
+
+    /// @param root Pointer to the root node.
+    Tree(NodePtr root);
+
+    /// @param root Pointer to the root node.
+    /// @param nodeMap Pre-filled map containing pointers to all tree nodes.
+    Tree(NodePtr root, std::unordered_map<unsigned int, NodePtr> nodeMap);
+
+    /// @brief Recursively destruct a node as well as all of its children.
+    ///
+    /// @param branchRoot Pointer to the node which is root of the branch.
+    void destructBranch(NodePtr branchRoot);
+
+    /// @brief Get a structure mapping node pointers to their node IDs, for 
+    /// the branch whose root is the provided node pointer, as well as all 
+    /// of its children.
+    ///
+    /// @param branchRoot Pointer to the node which is root of the branch.
+    ///
+    /// @return The node map of the branch.
+    std::unordered_map<unsigned int, NodePtr> nodeMapFromBranch(NodePtr branchRoot);
+
+    /// @brief Given a source root node and a destination root node, 
+    /// recursively copy all source children nodes as children of the 
+    /// destination node.
+    ///
+    /// @param source Pointer to the node from which to start copying.
+    /// @param destination Pointer to the node to which to append the copied
+    /// nodes.
+    void copyNodeStructure(NodePtr source, NodePtr destination);
+
+    /// @brief Count all elements with a certain value from a starting node,
+    /// going downwards.
+    ///
+    /// @param value Value the elements must have in order to be counted.
+    /// @param startingNode Pointer to the node from which to start 
+    /// counting.
+    ///
+    /// @return The count of matched elements.
+    unsigned int countValueRoutine(const T& value, NodePtr startingNode);
+
+    /// @brief Return a pointer to the node which is the next one from the node
+    /// with provided ID in a DFS traversal of the tree.
+    ///
+    /// @param id ID of the node whose next node in the traversal needs to be
+    /// retrieved.
+    ///
+    /// @return Pointer to the next node in the traversal of the tree.
+    NodePtr next(unsigned int id);
+
+public:
+    /// @param rootValue Value which the root node of the tree should hold
+    Tree(T rootValue = T());
+
+    Tree(const Tree<T>& other);
+    Tree<T>& operator=(const Tree<T>& other);
+    ~Tree();
+
+    /// @brief Get a pointer to the root node of the tree.
+    ///
+    /// @return A pointer to the root node.
+    NodePtr getRoot();
+
+    /// @brief Get a pointer to the node with provided ID.
+    ///
+    /// @param id ID of the node to retrieve.
+    ///
+    /// @return A pointer to the node if found, or nullptr otherwise.
+    NodePtr operator[](unsigned int id);
+
+    /// @brief Get a pointer to the node with provided ID.
+    ///
+    /// @param id ID of the node to retrieve.
+    ///
+    /// @return A pointer to the node if found, or nullptr otherwise.
+    NodePtr operator[](unsigned int id) const;
+
+    /// @brief Returns whether the contains has a node with provided ID.
+    ///
+    /// @param id ID of the node to check.
+    ///
+    /// @return Whether the tree contains a node with provided ID.
+    bool hasNode(unsigned int id);
+
+    /// @brief Add a node to the tree.
+    ///
+    /// @param value Value which the new node should hold.
+    /// @param parentId ID of the node which should be parent of the newly
+    /// created node.
+    ///
+    /// @return ID of the newly created node.
+    ///
+    /// @exception If the provided parent ID does not match that of a node 
+    /// contained within the tree, the function will throw a 
+    /// std::runtim_error.
+    unsigned int addNode(T value, unsigned int parentId);
+
+    /// @brief Add a whole to the tree, as a new branch.
+    ///
+    /// @param tree Tree whose structure will be copied to form the new 
+    /// @param parentId ID of the node which should be parent of the newly
+    /// created branch.
+    ///
+    /// @return ID of the root of the newly created branch.
+    ///
+    /// @exception If the provided parent ID does not match that of a node 
+    /// contained within the tree, the function will throw a 
+    /// std::runtim_error.
+    unsigned int addBranch(const Tree<T>& tree, unsigned int parentId);
+
+    /// @brief Remove a branch from the tree.
+    ///
+    /// @param branchRootId ID of the node which is root of the branch to
+    /// remove.
+    ///
+    /// @exception If the provided ID is the ID of the root of the tree, or
+    /// if it otherwise does not match that of node contained within the 
+    /// tree, the function will throw a std::runtime_error.
+    void removeBranch(unsigned int branchRootId);
+
+    /// @brief Remove a branch from the tree, and return it.
+    ///
+    /// @param branchRootId ID of the node which is root of the branch to
+    /// remove.
+    ///
+    /// @return The removed branch, as a new tree.
+    /// 
+    /// @exception If the provided ID is the ID of the root of the tree, or
+    /// if it otherwise does not match that of node contained within the 
+    /// tree, the function will throw a std::runtime_error.
+    Tree<T> popBranch(unsigned int branchRootId);
+
+    /// @brief Get a branch from the tree.
+    ///
+    /// @param branchRootId ID of the node which is root of the branch to
+    /// retrieve.
+    ///
+    /// @return The branch copied in a new tree.
+    Tree<T> getBranch(unsigned int branchRootId);
+
+    /// @brief Move a branch in the tree (change its parent).
+    ///
+    /// @param branchRootId ID of the node which is root of the branch to
+    /// move.
+    /// @param newParentId ID of the node which should be the new parent of
+    /// the moved branch.
+    ///
+    /// @exception If the branch root ID is the ID of the root of the tree, 
+    /// or if any of the provided IDs do not match that of nodes contained 
+    /// within the tree, the function will throw a std::runtime_error.
+    void moveBranch(unsigned int branchRootId, unsigned int newParentId);
+
+    /// @brief Remove all nodes in the tree, keeping the root and resetting
+    /// it with a default-constructed value.
+    void clear();
+
+    /// @brief Count all elements with a certain value from a starting node,
+    /// going downwards.
+    ///
+    /// @param value Value the elements must have in order to be counted.
+    /// @param branchRootId Pointer to the node from which to start 
+    /// counting.
+    ///
+    /// @return The count of matched elements.
+    unsigned int countValue(const T& value, unsigned int branchRootId);
+
+    /// @brief Iterator to an element in the tree. Implements traversal in DFS
+    /// order. Invalidated when the iterated node no longer belongs to the tree 
+    /// from which the iterator was instantiated.
+    class iterator
+    {
+    friend class Tree;
+    using TreePtr = std::shared_ptr<Tree<T>>;
 
     private:
-        /// @brief Pointer to the root node of the tree.
-        NodePtr _root;
-        
-        /// @brief Structure mapping node pointers to their node IDs.
-        std::unordered_map<unsigned int, NodePtr> _nodes;
+        /// @brief Pointer to the tree node currently being iterated.
+        mutable NodePtr _node;
 
-        /// @param root Pointer to the root node.
-        Tree(NodePtr root);
+        /// @brief Pointer to the tree being traversed.
+        const TreePtr _tree;
 
-        /// @param root Pointer to the root node.
-        /// @param nodeMap Pre-filled map containing pointers to all tree nodes.
-        Tree(NodePtr root, std::unordered_map<unsigned int, NodePtr> nodeMap);
-
-        /// @brief Recursively destruct a node as well as all of its children.
-        ///
-        /// @param branchRoot Pointer to the node which is root of the branch.
-        void destructBranch(NodePtr branchRoot);
-
-        /// @brief Get a structure mapping node pointers to their node IDs, for 
-        /// the branch whose root is the provided node pointer, as well as all 
-        /// of its children.
-        ///
-        /// @param branchRoot Pointer to the node which is root of the branch.
-        ///
-        /// @return The node map of the branch.
-        std::unordered_map<unsigned int, NodePtr> nodeMapFromBranch(NodePtr branchRoot);
-
-        /// @brief Given a source root node and a destination root node, 
-        /// recursively copy all source children nodes as children of the 
-        /// destination node.
-        ///
-        /// @param source Pointer to the node from which to start copying.
-        /// @param destination Pointer to the node to which to append the copied
-        /// nodes.
-        void copyNodeStructure(NodePtr source, NodePtr destination);
-
-        /// @brief Count all elements with a certain value from a starting node,
-        /// going downwards.
-        ///
-        /// @param value Value the elements must have in order to be counted.
-        /// @param startingNode Pointer to the node from which to start 
-        /// counting.
-        ///
-        /// @return The count of matched elements.
-        unsigned int countValueRoutine(const T& value, NodePtr startingNode);
+        /// @param node Pointer to the node to start iterating with.
+        /// @param tree Pointer to the tree being traversed.
+        iterator(NodePtr node, TreePtr tree);
 
     public:
-        /// @param rootValue Value which the root node of the tree should hold
-        Tree(T rootValue = T());
+        iterator();
+        iterator(const iterator& other) = default;
+        iterator& operator=(const iterator other) = default;
+        ~iterator() = default;
 
-        Tree(const Tree<T>& other);
-        Tree<T>& operator=(const Tree<T>& other);
-        ~Tree();
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+        using reference = value_type&;
+        using pointer = value_type*;
+        using iterator_category = std::forward_iterator_tag;
 
-        /// @brief Get a pointer to the root node of the tree.
-        ///
-        /// @return A pointer to the root node.
-        NodePtr getRoot();
+        friend void swap(iterator& lhs, iterator& rhs);
 
-        /// @brief Get a pointer to the node with provided ID.
-        ///
-        /// @param id ID of the node to retrieve.
-        ///
-        /// @return A pointer to the node if found, or nullptr otherwise.
-        NodePtr operator[](unsigned int id);
+        iterator& operator++();
+        const iterator& operator++() const;
 
-        /// @brief Get a pointer to the node with provided ID.
-        ///
-        /// @param id ID of the node to retrieve.
-        ///
-        /// @return A pointer to the node if found, or nullptr otherwise.
-        NodePtr operator[](unsigned int id) const;
+        iterator& operator++(int);
+        const iterator& operator++(int) const;
 
-        /// @brief Returns whether the contains has a node with provided ID.
-        ///
-        /// @param id ID of the node to check.
-        ///
-        /// @return Whether the tree contains a node with provided ID.
-        bool hasNode(unsigned int id);
+        T& operator->();
+        const T& operator->() const;
 
-        /// @brief Add a node to the tree.
-        ///
-        /// @param value Value which the new node should hold.
-        /// @param parentId ID of the node which should be parent of the newly
-        /// created node.
-        ///
-        /// @return ID of the newly created node.
-        ///
-        /// @exception If the provided parent ID does not match that of a node 
-        /// contained within the tree, the function will throw a 
-        /// std::runtim_error.
-        unsigned int addNode(T value, unsigned int parentId);
+        T& operator*();
+        const T& operator*() const;
 
-        /// @brief Add a whole to the tree, as a new branch.
-        ///
-        /// @param tree Tree whose structure will be copied to form the new 
-        /// @param parentId ID of the node which should be parent of the newly
-        /// created branch.
-        ///
-        /// @return ID of the root of the newly created branch.
-        ///
-        /// @exception If the provided parent ID does not match that of a node 
-        /// contained within the tree, the function will throw a 
-        /// std::runtim_error.
-        unsigned int addBranch(const Tree<T>& tree, unsigned int parentId);
+        bool operator!=(const iterator& rhs) const;
+        bool operator==(const iterator& rhs) const;
 
-        /// @brief Remove a branch from the tree.
-        ///
-        /// @param branchRootId ID of the node which is root of the branch to
-        /// remove.
-        ///
-        /// @exception If the provided ID is the ID of the root of the tree, or
-        /// if it otherwise does not match that of node contained within the 
-        /// tree, the function will throw a std::runtime_error.
-        void removeBranch(unsigned int branchRootId);
+        /// @brief Iterate over the next element in a DFS traversal of the tree.
+        void next() const;
+    };
 
-        /// @brief Remove a branch from the tree, and return it.
-        ///
-        /// @param branchRootId ID of the node which is root of the branch to
-        /// remove.
-        ///
-        /// @return The removed branch, as a new tree.
-        /// 
-        /// @exception If the provided ID is the ID of the root of the tree, or
-        /// if it otherwise does not match that of node contained within the 
-        /// tree, the function will throw a std::runtime_error.
-        Tree<T> popBranch(unsigned int branchRootId);
+    friend class iterator;
 
-        /// @brief Get a branch from the tree.
-        ///
-        /// @param branchRootId ID of the node which is root of the branch to
-        /// retrieve.
-        ///
-        /// @return The branch copied in a new tree.
-        Tree<T> getBranch(unsigned int branchRootId);
+    /// @brief Get an iterator to start a DFS traversal of the tree.
+    iterator dfsBegin();
 
-        /// @brief Move a branch in the tree (change its parent).
-        ///
-        /// @param branchRootId ID of the node which is root of the branch to
-        /// move.
-        /// @param newParentId ID of the node which should be the new parent of
-        /// the moved branch.
-        ///
-        /// @exception If the branch root ID is the ID of the root of the tree, 
-        /// or if any of the provided IDs do not match that of nodes contained 
-        /// within the tree, the function will throw a std::runtime_error.
-        void moveBranch(unsigned int branchRootId, unsigned int newParentId);
-
-        /// @brief Remove all nodes in the tree, keeping the root and resetting
-        /// it with a default-constructed value.
-        void clear();
-
-        /// @brief Count all elements with a certain value from a starting node,
-        /// going downwards.
-        ///
-        /// @param value Value the elements must have in order to be counted.
-        /// @param branchRootId Pointer to the node from which to start 
-        /// counting.
-        ///
-        /// @return The count of matched elements.
-        unsigned int countValue(const T& value, unsigned int branchRootId);
+    /// @brief Get the iterator past the end of a DFS traversal of the tree.
+    iterator dfsEnd();
 };
 
 template<typename T>
@@ -443,6 +515,18 @@ unsigned int Tree<T>::countValue(const T& value, unsigned int branchRootId)
 }
 
 template<typename T>
+Tree<T>::iterator Tree<T>::dfsBegin()
+{
+    return iterator(_root, shared_from_this());
+}
+
+template<typename T>
+Tree<T>::iterator Tree<T>::dfsEnd()
+{
+    return iterator(nullptr, shared_from_this());
+}
+
+template<typename T>
 void Tree<T>::destructBranch(NodePtr root)
 {
     // First destroy all children of root
@@ -503,6 +587,149 @@ unsigned int Tree<T>::countValueRoutine(const T& value, NodePtr startingNode)
     return count;
 }
 
+template<typename T>
+Tree<T>::NodePtr Tree<T>::next(unsigned int id)
+{
+    auto it = _nodes.find(id);
+    if (it == _nodes.end())
+    {
+        throw std::runtime_error("Tree: next() called from invalid iterator.");
+    }
+
+    NodePtr node = it->second;
+    std::vector<NodePtr> children = node->getChildren();
+    if (children.size() > 0)
+    {
+        return children[0];
+    }
+    
+    NodePtr parent = node->getParent();
+    if (parent != nullptr)
+    {
+        NodePtr nextNode = parent->getNextSibling(node->id);
+        if (nextNode != nullptr) return nextNode;
+        
+        return next(parent->id);
+    }
+
+    return nullptr;
+}
+
+template<typename T>
+Tree<T>::iterator::iterator() :
+    _node(nullptr),
+    _tree(nullptr)
+{
+
+}
+
+template<typename T>
+Tree<T>::iterator::iterator(NodePtr node, TreePtr tree) :
+    _node(node),
+    _tree(tree)
+{
+
+}
+
+template<typename T>
+Tree<T>::iterator& Tree<T>::iterator::operator++()
+{
+    next();
+    return *this;
+}
+
+template<typename T>
+const Tree<T>::iterator& Tree<T>::iterator::operator++() const
+{
+    next();
+    return *this;
+}
+
+template<typename T>
+Tree<T>::iterator& Tree<T>::iterator::operator++(int)
+{
+    iterator tmp = *this;
+    next();
+    return tmp;
+}
+
+template<typename T>
+const Tree<T>::iterator& Tree<T>::iterator::operator++(int) const
+{
+    iterator tmp = *this;
+    next();
+    return tmp;
+}
+
+template<typename T>
+T& Tree<T>::iterator::operator->()
+{
+    return node->value;
+}
+
+template<typename T>
+const T& Tree<T>::iterator::operator->() const
+{
+    return node->value;
+}
+
+template<typename T>
+T& Tree<T>::iterator::operator*()
+{
+    return node->value;
+}
+
+template<typename T>
+const T& Tree<T>::iterator::operator*() const
+{
+    return node->value;
+}
+
+template<typename T>
+bool Tree<T>::iterator::operator!=(const iterator& rhs) const
+{
+    return !(operator==(rhs));
+}
+
+template<typename T>
+bool Tree<T>::iterator::operator==(const iterator& rhs) const
+{
+    return (_node == rhs._node) && (_tree == rhs._tree);
+}
+
+template<typename T>
+void Tree<T>::iterator::next() const
+{
+    _node = _tree->next(_node->id);
+}
+
 }//namespace CppTools
+
+template<typename T>
+void swap(CppTools::Tree<T>::iterator& lhs, CppTools::Tree<T>::iterator& rhs)
+{
+    using std::swap;
+
+    swap(lhs._node, rhs._node);
+    swap(lhs._tree, rhs._tree);
+}
+
+namespace std
+{
+
+template<typename T>
+void advance(CppTools::Tree<T>::iterator& it, std::iterator_traits<CppTools::Tree<T>::iterator>::difference_type n)
+{
+    for (auto i = 0; i < n; i++) ++it;
+}
+
+template<typename T>
+CppTools::Tree<T>::iterator next(CppTools::Tree<T>::iterator it, std::iterator_traits<CppTools::Tree<T>::iterator>::difference_type n)
+{
+    advance(it);
+    return it;
+}
+
+}//namespace std
 
 #endif//CPPTOOLS__TREE_HPP
