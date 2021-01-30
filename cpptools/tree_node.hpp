@@ -91,7 +91,7 @@ TreeNode<T>::TreeNode(T value) :
     _parentIdChain(),
     value(value)
 {
-    
+
 }
 
 template<typename T>
@@ -262,9 +262,9 @@ void TreeNode<T>::removeChild(unsigned int childId)
 template<typename T>
 void TreeNode<T>::removeAllChildren()
 {
-    for (auto it = _wChildren.rbegin(); it != _wChildren.rend(); it++)
+    for (size_t i = _wChildren.size(); i > 0; i--)
     {
-        TreeNodePtr child = it->lock();
+        TreeNodePtr child = _wChildren[i-1].lock();
         child->setParent(nullptr);
     }
 
@@ -274,9 +274,9 @@ void TreeNode<T>::removeAllChildren()
 template<typename T>
 void TreeNode<T>::removeAllChildrenRecursive()
 {
-    for (auto it = _wChildren.rbegin(); it != _wChildren.rend(); it++)
+    for (size_t i = _wChildren.size(); i > 0; i--)
     {
-        TreeNodePtr child = it->lock();
+        TreeNodePtr child = _wChildren[i-1].lock();
         child->removeAllChildrenRecursive();
         child->setParent(nullptr);
     }
