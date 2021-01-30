@@ -574,7 +574,7 @@ void Tree<T>::moveBranch(unsigned int branchRootId, unsigned int newParentId)
 template<typename T>
 void Tree<T>::clear()
 {
-    _root->removeAllChildren();
+    _root->removeAllChildrenRecursive();
     _nodes.clear();
     _root->value = T();
 }
