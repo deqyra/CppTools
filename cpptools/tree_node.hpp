@@ -59,8 +59,10 @@ class TreeNode : public std::enable_shared_from_this<TreeNode<T>>
         void addChild(TreeNodePtr child);
         // Remove child from this node using its ID
         void removeChild(unsigned int id);
-        // Remove all childre from this node
+        // Remove all children from this node
         void removeAllChildren();
+        // Recursively remove all children from this node
+        void removeAllChildrenRecursive();
         // Whether the node with provided ID is a child of this node
         bool hasChild(unsigned int id);
         // Get a pointer to the child node which is next from the child with provided id
@@ -84,11 +86,12 @@ TreeNode<T>::TreeNode(T value) :
     id(_count++),
     _wParent(),
     _wChildren(),
+    _childrenIds(),
     _wParentChain(),
     _parentIdChain(),
     value(value)
 {
-
+    
 }
 
 template<typename T>
@@ -127,6 +130,7 @@ void TreeNode<T>::setParent(TreeNodePtr newParent)
     if (newParent != nullptr)
     {
         newParent->_wChildren.push_back(this->weak_from_this());
+        newParent->_childrenIds.push_back(id);
     }
     // Update this node's parent weak pointer
     _wParent = newParent;
@@ -258,9 +262,22 @@ void TreeNode<T>::removeChild(unsigned int childId)
 template<typename T>
 void TreeNode<T>::removeAllChildren()
 {
-    for (size_t i = _wChildren.size(); i > 0; i--)
+    for (auto it = _wChildren.rbegin(); it != _wChildren.rend(); it++)
     {
-        TreeNodePtr child = _wChildren[i-1].lock();
+        TreeNodePtr child = it->lock();
+        child->setParent(nullptr);
+    }
+
+    _wChildren.clear();
+}
+
+template<typename T>
+void TreeNode<T>::removeAllChildrenRecursive()
+{
+    for (auto it = _wChildren.rbegin(); it != _wChildren.rend(); it++)
+    {
+        TreeNodePtr child = it->lock();
+        child->removeAllChildrenRecursive();
         child->setParent(nullptr);
     }
 
