@@ -4,11 +4,10 @@ A collection of C++ developed for my own use.
 Currently made up of the following:
 | Tool                                  | Description                                                                                                                                                                                                                               |
 |---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [**Quick exception macros**][make_ex] | Preprocessor macros to declare and define exceptions on the fly. Used by all files in [`cpptools/exceptions`][ex_folder].                                                                                                                    |
+| [**Quick exception macros**][make_ex] | Preprocessor macros to declare and define exceptions on the fly. Used by all files in [`cpptools/exceptions`][ex_folder].                                                                                                                 |
 | [**`Tree`**][tree]                    | A templated structure storing objects hierarchically. Development still underway, usage might be a bit clunky.                                                                                                                            |
 | [**`Notifier`**][notifier]            | A callback subscriber manager whose purpose is to make it easier to implement observer patterns.                                                                                                                                          |
 | [**`LambdaMaker`**][lambda]           | A library of parametric lambda functions for common numerical comparisons (is greater than, between values, etc).                                                                                                                         |
-| [**`CPreprocessor`**][c_pre]          | A basic implementation of a (probably not) standard C preprocessor. Development ongoing.                                                                                                                                                  |
 | [**`CLI`**][cli]                      | Sort of a CLI framework aiming at making CLI menus easily. Comes together with basic building blocks and a (mostly failproof) input model. See my project [**PicrossEngine**][picross_cli] for an example usage.                          |
 | [**`MicroShell`**][shell]             | Sort of a shell emulator able to prompt the user for commands which were registered beforehand. Complies to and works with the input model from [**`CLI`**][cli]. See my project [**PicrossEngine**][picross_shell] for an example usage. |
 | [**`SineGenerator`**][sine]           | Instantly and efficiently get the real time value of a running sine of a given frequency, pausing and resuming at will.                                                                                                                   |
@@ -24,7 +23,6 @@ on at present.
 [tree]:             https://github.com/deqyra/CppTools/blob/master/cpptools/tree.hpp
 [notifier]:         https://github.com/deqyra/CppTools/blob/master/cpptools/notifier.hpp
 [lambda]:           https://github.com/deqyra/CppTools/blob/master/cpptools/lambda_maker.hpp
-[c_pre]:            https://github.com/deqyra/CppTools/blob/master/cpptools/parse/c_preprocessor/c_preprocessor.hpp
 [cli]:              https://github.com/deqyra/CppTools/tree/master/cpptools/cli
 [picross_cli]:      https://github.com/deqyra/PicrossEngine/blob/master/main.cpp#L48
 [shell]:            https://github.com/deqyra/CppTools/tree/master/cpptools/micro_shell
