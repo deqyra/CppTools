@@ -71,9 +71,6 @@ set( CPPTOOLS_HEADER_FILES
     cpptools/micro_shell/micro_shell.hpp
     cpptools/micro_shell/micro_shell_codes.hpp
     cpptools/micro_shell/micro_shell_command.hpp
-    cpptools/parse/token.hpp
-    cpptools/parse/c_preprocessor/c_preprocessor.hpp
-    cpptools/parse/c_preprocessor/c_preprocessor_token_type.hpp
 )
 
 set( CPPTOOLS_SOURCE_FILES
