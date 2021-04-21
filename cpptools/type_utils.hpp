@@ -1,6 +1,9 @@
 #ifndef CPUEMU__COMMON__TYPE_UTILS_HPP
 #define CPUEMU__COMMON__TYPE_UTILS_HPP
 
+#include <iostream>
+#include <map>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <valarray>
@@ -116,6 +119,38 @@ struct is_sized_container<std::pair<T1, T2>> : std::true_type { };
 
 template <typename ...Args>
 struct is_sized_container<std::tuple<Args...>> : std::true_type { };
+
+namespace
+{
+
+std::map<std::string, std::pair<size_t, size_t>> _instanceCount;
+
+}
+
+template <typename T, char* Name>
+struct instance_counter
+{
+    static std::string name = Name;
+
+    instance_counter()
+    {
+        _instanceCount[name].first++;
+        _instanceCount[name].second++;
+    }
+    
+    instance_counter(const instance_counter&)
+    {
+        _instanceCount[name].first++;
+        _instanceCount[name].second++;
+    }
+protected:
+    virtual ~instance_counter() // objects should never be removed through pointers of this type
+    {
+        _instanceCount[name].second++;
+    }
+};
+
+void print_instance_count(std::ostream& out = std::cout);
 
 }
 
