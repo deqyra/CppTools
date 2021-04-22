@@ -130,23 +130,23 @@ std::map<std::string, std::pair<size_t, size_t>> _instanceCount;
 template <typename T, char* Name>
 struct instance_counter
 {
-    static std::string name = Name;
+    static inline const char* name = Name;
 
     instance_counter()
     {
-        _instanceCount[name].first++;
-        _instanceCount[name].second++;
+        _instanceCount[std::string(name)].first++;
+        _instanceCount[std::string(name)].second++;
     }
     
     instance_counter(const instance_counter&)
     {
-        _instanceCount[name].first++;
-        _instanceCount[name].second++;
+        _instanceCount[std::string(name)].first++;
+        _instanceCount[std::string(name)].second++;
     }
 protected:
     virtual ~instance_counter() // objects should never be removed through pointers of this type
     {
-        _instanceCount[name].second++;
+        _instanceCount[std::string(name)].second++;
     }
 };
 
