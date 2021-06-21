@@ -71,6 +71,8 @@ set( CPPTOOLS_HEADER_FILES
     cpptools/micro_shell/micro_shell.hpp
     cpptools/micro_shell/micro_shell_codes.hpp
     cpptools/micro_shell/micro_shell_command.hpp
+    cpptools/thread/interfaces/interruptible.hpp
+    cpptools/thread/worker.hpp
 )
 
 set( CPPTOOLS_SOURCE_FILES
@@ -80,6 +82,7 @@ set( CPPTOOLS_SOURCE_FILES
     cpptools/exceptions/range_bounds_exceeded_error.cpp
     cpptools/exceptions/unmatched_array_size_error.cpp
     cpptools/cli/cli_streams.cpp
+    cpptools/thread/worker.cpp
 )
 
 # Build target
@@ -152,6 +155,14 @@ install(
     TARGETS "cpptools"
     LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 )
+
+# Install target
+if( NOT DEFINED CPPTOOLS_EXTERNAL_INSTALL_PREFIX OR NOT ${CPPTOOLS_EXTERNAL_INSTALL_PREFIX} )
+    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
+    message( STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}" )
+else(  )
+    message( STATUS "Provided install prefix: ${CMAKE_INSTALL_PREFIX}" )
+endif( )
 
 install(
     DIRECTORY "${CMAKE_SOURCE_DIR}/cpptools"
