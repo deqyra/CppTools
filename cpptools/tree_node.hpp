@@ -247,7 +247,7 @@ void TreeNode<T>::removeChild(unsigned int childId)
         throw std::runtime_error(s.c_str());
     }
 
-    int index = std::distance(_childrenIds.begin(), itId);
+    size_t index = std::distance(_childrenIds.begin(), itId);
     auto itNode = _wChildren.begin() + index;
 
     TreeNodePtr child = itNode->lock();

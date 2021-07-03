@@ -1,17 +1,23 @@
-# CMake configuration
-cmake_minimum_required( VERSION 3.1...3.15 )
+###############################################################################
+#                                                                             #
+#                             CMake configuration                             #
+#                                                                             #
+###############################################################################
+
+cmake_minimum_required( VERSION 3.11 )
 
 if( ${CMAKE_VERSION} VERSION_LESS 3.12 )
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} )
 endif(  )
 
-set( CMAKE_CXX_COMPILER_WORKS 1 )   # Skips the compiler test, which is platform-dependent
-project( "CppTools"
-    DESCRIPTION "A collection of C++ tools developed for use by deqyra's other projects"
-    LANGUAGES C CXX
-)
 
-# Toggles
+
+###############################################################################
+#                                                                             #
+#                                   Toggles                                   #
+#                                                                             #
+###############################################################################
+
 option( BUILD_STATIC_LIBS "Whether to build library as static or shared library" OFF )
 option( BUILD_RELEASE "Whether to build for a debug or release profile" OFF)
 option( CPPTOOLS_SKIP_TESTS "Whether or not to skip tests" OFF )
@@ -22,16 +28,37 @@ else(  )
     set( CMAKE_BUILD_TYPE "Debug" )
 endif(  )
 
-if( WIN32 )
-    message( STATUS "Windows detected, forcing static libs." )
-    set( BUILD_STATIC_LIBS ON )
-endif(  )
-
 if( ${BUILD_STATIC_LIBS} )
     set( STATIC_OR_SHARED "STATIC" )
 else(  )
     set( STATIC_OR_SHARED "SHARED" )
+    set( BUILD_SHARED_LIBS TRUE )
 endif(  )
+
+if( WIN32 AND ( STATIC_OR_SHARED STREQUAL "SHARED" ) )
+    set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
+endif(  )
+
+# Install target directory
+if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
+    message( STATUS "Overriding default install prefix to: ${CMAKE_INSTALL_PREFIX}" )
+else(  )
+    message( STATUS "Provided install prefix: ${CMAKE_INSTALL_PREFIX}" )
+endif( )
+
+if( NOT DEFINED CPPTOOLS_EXPORT_LOCATION )
+    set( CPPTOOLS_EXPORT_LOCATION "${CMAKE_BINARY_DIR}/export" )
+endif(  )
+message( STATUS "Export location for export targets: ${CPPTOOLS_EXPORT_LOCATION}" )
+
+
+
+###############################################################################
+#                                                                             #
+#                              Compiler options                               #
+#                                                                             #
+###############################################################################
 
 # C++17 requires at least gcc 7 to be compiled
 set( CMAKE_CXX_STANDARD 17 )
@@ -39,14 +66,23 @@ set( CMAKE_CXX_STANDARD 17 )
 if( UNIX )
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g")
 endif( )
-    
-# Setup directories
-set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 
-# Project info
-set( CPPTOOLS_HEADER_FILES
+
+
+###############################################################################
+#                                                                             #
+#                             Project definition                              #
+#                                                                             #
+###############################################################################
+
+project( "CppTools"
+    DESCRIPTION "A collection of handy C++ tools developed for use in other projects by deqyra"
+    LANGUAGES C CXX
+)
+
+set(CPPTOOLS_LIB_NAME "cpptools")
+
+set( CPPTOOLS_SOURCE_FILES
     cpptools/enum_map.hpp
     cpptools/hash_combine.hpp
     cpptools/iterable_tools.hpp
@@ -54,56 +90,76 @@ set( CPPTOOLS_HEADER_FILES
     cpptools/make_basic_exception.hpp
     cpptools/notifier.hpp
     cpptools/sine_generator.hpp
+    cpptools/string_tools.cpp
     cpptools/string_tools.hpp
     cpptools/tree.hpp
     cpptools/tree_node.hpp
+    cpptools/cli/cli_streams.cpp
     cpptools/cli/cli_streams.hpp
     cpptools/cli/cli_input.hpp
     cpptools/cli/cli_command.hpp
     cpptools/cli/cli_menu.hpp
-    cpptools/cli/menu_command.hpp
     cpptools/cli/command_sequence.hpp
-    cpptools/exceptions/bad_syntax_error.hpp 
-    cpptools/exceptions/file_not_found_error.hpp 
-    cpptools/exceptions/index_out_of_bounds_error.hpp
-    cpptools/exceptions/range_bounds_exceeded_error.hpp 
-    cpptools/exceptions/unmatched_array_size_error.hpp
+    cpptools/cli/menu_command.hpp
     cpptools/micro_shell/micro_shell.hpp
     cpptools/micro_shell/micro_shell_codes.hpp
     cpptools/micro_shell/micro_shell_command.hpp
-    cpptools/thread/interfaces/interruptible.hpp
+    cpptools/exceptions/file_not_found_error.cpp
+    cpptools/exceptions/file_not_found_error.hpp 
+    cpptools/exceptions/index_out_of_bounds_error.cpp
+    cpptools/exceptions/index_out_of_bounds_error.hpp
+    cpptools/exceptions/range_bounds_exceeded_error.cpp
+    cpptools/exceptions/range_bounds_exceeded_error.hpp 
+    cpptools/exceptions/unmatched_array_size_error.cpp
+    cpptools/exceptions/unmatched_array_size_error.hpp
+    cpptools/exceptions/bad_syntax_error.cpp 
+    cpptools/exceptions/bad_syntax_error.hpp 
+    cpptools/thread/worker.cpp
     cpptools/thread/worker.hpp
+    cpptools/thread/interfaces/interruptible.hpp
 )
 
-set( CPPTOOLS_SOURCE_FILES
-    cpptools/string_tools.cpp
-    cpptools/exceptions/index_out_of_bounds_error.cpp
-    cpptools/exceptions/file_not_found_error.cpp
-    cpptools/exceptions/range_bounds_exceeded_error.cpp
-    cpptools/exceptions/unmatched_array_size_error.cpp
-    cpptools/cli/cli_streams.cpp
-    cpptools/thread/worker.cpp
+###############################################################################
+#                                                                             #
+#                             Target definitions                              #
+#                                                                             #
+###############################################################################
+
+# Generate script file to copy headers
+file( WRITE ${CMAKE_BINARY_DIR}/cp_${CPPTOOLS_LIB_NAME}_headers.cmake
+"file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/cpptools
+    DESTINATION ${CPPTOOLS_EXPORT_LOCATION}/include
+    FILES_MATCHING
+    PATTERN \"*.h\"
+    PATTERN \"*.hpp\"
+    PATTERN \"*.hxx\"
+)"
 )
 
 # Build target
-add_library( "cpptools" ${STATIC_OR_SHARED}
-    ${CPPTOOLS_HEADER_FILES}
+add_library( "${CPPTOOLS_LIB_NAME}" ${STATIC_OR_SHARED}
     ${CPPTOOLS_SOURCE_FILES}
 )
 
-# Install-like targets
-add_custom_target( "install_headers" )
+# Custom target to export lib
+add_custom_target("export_${CPPTOOLS_LIB_NAME}_lib")
+add_dependencies("export_${CPPTOOLS_LIB_NAME}_lib" ${CPPTOOLS_LIB_NAME})
 add_custom_command(
-    TARGET "install_headers"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CPPTOOLS_HEADER_FILES}" 
+    TARGET "export_${CPPTOOLS_LIB_NAME}_lib"
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CPPTOOLS_LIB_NAME}> ${CPPTOOLS_EXPORT_LOCATION}/lib/
 )
 
-#$<TARGET_FILE:test>
+# Custom target to export core headers
+add_custom_target("export_${CPPTOOLS_LIB_NAME}_headers")
+add_custom_command(
+    TARGET "export_${CPPTOOLS_LIB_NAME}_headers"
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp_${CPPTOOLS_LIB_NAME}_headers.cmake
+)
 
 # Build and run tests
 if( !CPPTOOLS_SKIP_TESTS )
     enable_testing( )
-    add_executable( "cpptools_tests"
+    add_executable( "${CPPTOOLS_LIB_NAME}_build_tests"
         tests/catch2_custom_generators.hpp
         tests/debugging_tools.cpp
         tests/debugging_tools.hpp
@@ -122,47 +178,28 @@ if( !CPPTOOLS_SKIP_TESTS )
         tests/tools/micro_shell/test_micro_shell.cpp
     )
 
-    target_include_directories( "cpptools_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
-    target_link_libraries( "cpptools_tests" "cpptools" )
+    target_include_directories( "${CPPTOOLS_LIB_NAME}_build_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
+    target_link_libraries( "${CPPTOOLS_LIB_NAME}_build_tests" "${CPPTOOLS_LIB_NAME}" )
     
     # Copy resource folder
     add_custom_command(
-        TARGET "cpptools_tests"
+        TARGET "${CPPTOOLS_LIB_NAME}_build_tests"
         COMMENT "Copying resource folder"
         PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources
     )
 
-    set( TESTS_RUNTIME_NAME "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpptools_tests" )
-    if( WIN32 )
-        set( TESTS_RUNTIME_NAME "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/cpptools_tests.exe" )
-    endif(  )
-
     add_test(
-        NAME "tests"
-        COMMAND "cpptools_tests"
-    )
-
-    add_custom_command(
-        TARGET "cpptools_tests"
-        COMMENT "Running tests"
-        POST_BUILD
-        COMMAND ${TESTS_RUNTIME_NAME}
+        NAME "${CPPTOOLS_LIB_NAME}_run_tests"
+        COMMAND "${CPPTOOLS_LIB_NAME}_build_tests"
     )
 endif(  )
 
+# Install targets
 install(
-    TARGETS "cpptools"
+    TARGETS "${CPPTOOLS_LIB_NAME}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 )
-
-# Install target
-if( NOT DEFINED CPPTOOLS_EXTERNAL_INSTALL_PREFIX OR NOT ${CPPTOOLS_EXTERNAL_INSTALL_PREFIX} )
-    set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
-    message( STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}" )
-else(  )
-    message( STATUS "Provided install prefix: ${CMAKE_INSTALL_PREFIX}" )
-endif( )
 
 install(
     DIRECTORY "${CMAKE_SOURCE_DIR}/cpptools"
