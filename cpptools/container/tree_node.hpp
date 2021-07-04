@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__TREE_NODE_HPP
-#define CPPTOOLS__TREE_NODE_HPP
+#ifndef CPPTOOLS__CONTAINER__TREE_NODE_HPP
+#define CPPTOOLS__CONTAINER__TREE_NODE_HPP
 
 #include <algorithm>
 #include <functional>
@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace CppTools
+namespace cpptools
 {
 
 template<typename T>
@@ -328,6 +328,6 @@ void TreeNode<T>::generateParentChains()
     }
 }
 
-}//namespace CppTools
+}//namespace cpptools
 
-#endif//CPPTOOLS__TREE_NODE_HPP
+#endif//CPPTOOLS__CONTAINER__TREE_NODE_HPP

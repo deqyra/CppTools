@@ -1,7 +1,7 @@
 #ifndef CPPTOOLS__EXCEPTIONS__BAD_SYNTAX__ERROR
 #define CPPTOOLS__EXCEPTIONS__BAD_SYNTAX__ERROR
 
-#include "../make_basic_exception.hpp"
+#include "make_basic_exception.hpp"
 
 DECLARE_BASIC_EXCEPTION(BadSyntaxError)
 

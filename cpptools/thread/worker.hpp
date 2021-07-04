@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include <functional>
 #include <future>
+#include <memory>
 #include <mutex>
 #include <thread>
 
@@ -76,6 +77,18 @@ private:
     /// @brief Process (function) to execute in a loop.
     std::function<void()> _task;
 
+    /// @brief Function to execute before starting the task in a loop.
+    std::function<void()> _onStart;
+
+    /// @brief Function to execute once the task is done running in a loop.
+    std::function<void()> _onFinalize;
+
+    /// @brief Function to execute upon resuming after the task paused.
+    std::function<void()> _onResume;
+
+    /// @brief Function to execute upon pause the task.
+    std::function<void()> _onPause;
+
     /// @brief Handle to the execution thread of the process.
     std::future<void> _thread;
 
@@ -85,7 +98,18 @@ private:
 public:
     /// @param task Process (function) to execute in a loop.
     /// @param startNow Whether or not to start the process.
-    Worker(std::function<void()> t, bool startNow = true);
+    /// @param onStart Function to execute before starting the task in a loop.
+    /// @param onFinalize Function to execute once the task is done running.
+    /// @param onResume Function to execute upon resuming after the task paused.
+    /// @param onPause Function to execute upon pause the task.
+    Worker(
+        std::function<void()> task,
+        bool startNow = true,
+        std::function<void()> onStart = [](){},
+        std::function<void()> onFinalize = [](){},
+        std::function<void()> onResume = [](){},
+        std::function<void()> onPause = [](){}
+    );
     ~Worker();
 
     // Moving is unsafe. If moving is needed, use unique_ptr<Worker>.
@@ -115,6 +139,8 @@ public:
 
     virtual void waitUntilRunning(bool runNow = true);
 };
+
+using WorkerPtr = std::shared_ptr<Worker>;
 
 }//namespace cpptools
 

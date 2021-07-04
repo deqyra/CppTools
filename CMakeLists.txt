@@ -83,17 +83,6 @@ project( "CppTools"
 set(CPPTOOLS_LIB_NAME "cpptools")
 
 set( CPPTOOLS_SOURCE_FILES
-    cpptools/enum_map.hpp
-    cpptools/hash_combine.hpp
-    cpptools/iterable_tools.hpp
-    cpptools/lambda_maker.hpp
-    cpptools/make_basic_exception.hpp
-    cpptools/notifier.hpp
-    cpptools/sine_generator.hpp
-    cpptools/string_tools.cpp
-    cpptools/string_tools.hpp
-    cpptools/tree.hpp
-    cpptools/tree_node.hpp
     cpptools/cli/cli_streams.cpp
     cpptools/cli/cli_streams.hpp
     cpptools/cli/cli_input.hpp
@@ -101,9 +90,9 @@ set( CPPTOOLS_SOURCE_FILES
     cpptools/cli/cli_menu.hpp
     cpptools/cli/command_sequence.hpp
     cpptools/cli/menu_command.hpp
-    cpptools/micro_shell/micro_shell.hpp
-    cpptools/micro_shell/micro_shell_codes.hpp
-    cpptools/micro_shell/micro_shell_command.hpp
+    cpptools/container/tree.hpp
+    cpptools/container/tree_node.hpp
+    cpptools/exceptions/make_basic_exception.hpp
     cpptools/exceptions/file_not_found_error.cpp
     cpptools/exceptions/file_not_found_error.hpp 
     cpptools/exceptions/index_out_of_bounds_error.cpp
@@ -114,9 +103,23 @@ set( CPPTOOLS_SOURCE_FILES
     cpptools/exceptions/unmatched_array_size_error.hpp
     cpptools/exceptions/bad_syntax_error.cpp 
     cpptools/exceptions/bad_syntax_error.hpp 
+    cpptools/oo/notifier.hpp
+    cpptools/oo/interfaces/event_receiver.hpp
+    cpptools/math/sine_generator.hpp
+    cpptools/micro_shell/micro_shell.hpp
+    cpptools/micro_shell/micro_shell_codes.hpp
+    cpptools/micro_shell/micro_shell_command.hpp
     cpptools/thread/worker.cpp
     cpptools/thread/worker.hpp
     cpptools/thread/interfaces/interruptible.hpp
+    cpptools/utility/hash_combine.hpp
+    cpptools/utility/iterable_tools.hpp
+    cpptools/utility/lambda_maker.hpp
+    cpptools/utility/map_tools.hpp
+    cpptools/utility/string_tools.cpp
+    cpptools/utility/string_tools.hpp
+    cpptools/utility/type_traits.cpp
+    cpptools/utility/type_traits.hpp
 )
 
 ###############################################################################

@@ -1,7 +1,7 @@
 #ifndef CPPTOOLS__EXCEPTIONS__RANGE_BOUNDS_EXCEEDED_ERROR_HPP
 #define CPPTOOLS__EXCEPTIONS__RANGE_BOUNDS_EXCEEDED_ERROR_HPP
 
-#include "../make_basic_exception.hpp"
+#include "make_basic_exception.hpp"
 
 DECLARE_BASIC_EXCEPTION(RangeBoundsExceededError)
 
