@@ -1,10 +1,10 @@
-#ifndef CPPTOOLS__NOTIFIER_HPP
-#define CPPTOOLS__NOTIFIER_HPP
+#ifndef CPPTOOLS__OO__NOTIFIER_HPP
+#define CPPTOOLS__OO__NOTIFIER_HPP
 
 #include <functional>
 #include <unordered_map>
 
-namespace CppTools
+namespace cpptools
 {
 
 template <typename ...ArgTypes>
@@ -57,6 +57,6 @@ void Notifier<ArgTypes...>::notify(ArgTypes... args) const
     }
 }
 
-}//namespace CppTools
+}//namespace cpptools
 
 #endif //TOOLS__NOTIFIER_HPP

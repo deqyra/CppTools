@@ -7,7 +7,7 @@
 #include "cli_streams.hpp"
 #include "../string_tools.hpp"
 
-namespace CppTools
+namespace cpptools
 {
 
 namespace CLIInput
@@ -182,6 +182,6 @@ namespace CLIInput
     }
 } // namespace CLIInput
 
-}//namespace CppTools
+}//namespace cpptools
 
 #endif//CPPTOOLS__CLI__CLI_INPUT

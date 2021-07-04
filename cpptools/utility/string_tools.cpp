@@ -6,8 +6,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "exceptions/file_not_found_error.hpp"
-#include "exceptions/range_bounds_exceeded_error.hpp"
+#include "../exceptions/file_not_found_error.hpp"
+#include "../exceptions/range_bounds_exceeded_error.hpp"
 
 namespace std
 {
@@ -17,7 +17,7 @@ namespace std
     }
 } // namespace std
 
-namespace CppTools
+namespace cpptools
 {
 namespace String
 {
@@ -508,4 +508,4 @@ void parseIntRange(const std::string& input, char delimiter, int& lowBound, int&
 }
 
 }// namespace String
-}//namespace CppTools
+}//namespace cpptools

@@ -1,5 +1,5 @@
-#ifndef CPUEMU__COMMON__TYPE_UTILS_HPP
-#define CPUEMU__COMMON__TYPE_UTILS_HPP
+#ifndef CPPTOOLS__UTILITY__TYPE_TRAITS_HPP
+#define CPPTOOLS__UTILITY__TYPE_TRAITS_HPP
 
 #include <iostream>
 #include <map>
@@ -154,4 +154,4 @@ void print_instance_count(std::ostream& out = std::cout);
 
 }
 
-#endif//CPUEMU__COMMON__TYPE_UTILS_HPP
+#endif//CPPTOOLS__UTILITY__TYPE_TRAITS_HPP

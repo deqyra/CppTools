@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace CppTools
+namespace cpptools
 {
 
 class CLIStreams
@@ -21,6 +21,6 @@ class CLIStreams
         std::ostream& err();
 };
 
-}//namespace CppTools
+}//namespace cpptools
 
 #endif//CPPTOOLS__CLI__CLI_STREAMS_HPP

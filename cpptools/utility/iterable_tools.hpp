@@ -1,9 +1,9 @@
-#ifndef CPPTOOLS__ITERABLE_TOOLS_HPP
-#define CPPTOOLS__ITERABLE_TOOLS_HPP
+#ifndef CPPTOOLS__UTILITY__ITERABLE_TOOLS_HPP
+#define CPPTOOLS__UTILITY__ITERABLE_TOOLS_HPP
 
 #include <algorithm>
 
-namespace CppTools
+namespace cpptools
 {
 namespace Iterable
 {
@@ -97,6 +97,6 @@ void stripElementFromIterable(Iterable& container, T element)
 }
 
 }// namespace Iterable
-}//namespace CppTools
+}//namespace cpptools
 
-#endif//CPPTOOLS__ITERABLE_TOOLS_HPP
+#endif//CPPTOOLS__UTILITY__ITERABLE_TOOLS_HPP

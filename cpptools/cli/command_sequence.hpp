@@ -8,7 +8,7 @@
 #include "cli_command.hpp"
 #include "cli_input.hpp"
 
-namespace CppTools
+namespace cpptools
 {
 
 // Extended command allowing to run several commands in a row.
@@ -90,6 +90,6 @@ int CommandSequence<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-}//namespace CppTools
+}//namespace cpptools
 
 #endif//CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP

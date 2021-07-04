@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace CppTools
+namespace cpptools
 {
 
 CLIStreams::CLIStreams(std::istream& in, std::ostream& out, std::ostream& err) :
@@ -28,4 +28,4 @@ std::ostream& CLIStreams::err()
     return _err;
 }
 
-}//namespace CppTools
+}//namespace cpptools
