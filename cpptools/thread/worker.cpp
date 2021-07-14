@@ -5,11 +5,11 @@ namespace cpptools
 
 Worker::Worker(
     std::function<void()> task,
-    bool startNow = true,
-    std::function<void()> onStart = [](){},
-    std::function<void()> onFinalize = [](){},
-    std::function<void()> onResume = [](){},
-    std::function<void()> onPause = [](){}
+    bool startNow,
+    std::function<void()> onStart,
+    std::function<void()> onFinalize,
+    std::function<void()> onResume,
+    std::function<void()> onPause
 ) :
     _exit(false),
     _execute(startNow),
@@ -163,6 +163,11 @@ void Worker::_work()
                 _paused = false;
             }
             wasRunningBefore = false;
+        }
+        else if (_exit)
+        {
+            stopExecution = _exit;
+            l.unlock();
         }
         else
         {
