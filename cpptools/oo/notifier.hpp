@@ -57,6 +57,6 @@ void Notifier<ArgTypes...>::notify(ArgTypes... args) const
     }
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif //TOOLS__NOTIFIER_HPP

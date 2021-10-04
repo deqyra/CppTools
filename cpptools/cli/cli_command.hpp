@@ -31,6 +31,6 @@ CLICommand<CustomState>::~CLICommand()
 inline static const int CLI_COMMAND_SUCCESS = 0;
 inline static const int CLI_COMMAND_FAILURE = -1;
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CLI__CLI_COMMAND_HPP

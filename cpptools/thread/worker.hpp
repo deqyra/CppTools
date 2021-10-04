@@ -43,9 +43,9 @@ private:
     /// is running.
     std::condition_variable _semRunning;
 
-    ///                          ///    \\\ 
-    ///                         /// !!!! \\\ 
-    ///                        ///        \\\ 
+    ///                          ///    \\\
+    ///                         /// !!!! \\\
+    ///                        ///        \\\
     ///
     /// _exit and _execute are the only flags which control the execution
     /// flow of the threaded process. All other boolean flags are only meant
@@ -66,9 +66,9 @@ private:
     /// @brief Whether or not the thread is running.
     bool _running;
 
-    ///                          ///    \\\ 
-    ///                         /// !!!! \\\ 
-    ///                        ///        \\\ 
+    ///                          ///    \\\
+    ///                         /// !!!! \\\
+    ///                        ///        \\\
     ///
     /// _exit and _execute are the only flags which control the execution
     /// flow of the threaded process. All other boolean flags are only meant
@@ -142,6 +142,6 @@ public:
 
 using WorkerPtr = std::shared_ptr<Worker>;
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__THREAD__WORKER_HPP

@@ -77,4 +77,4 @@ TEST_CASE("MicroShell")
     }
 }
 
-}//namespace CppTools
+} // namespace CppTools

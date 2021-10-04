@@ -122,6 +122,6 @@ std::string CLIMenu<CustomState>::allOptionsString()
     return s;
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CLI__CLI_MENU_HPP

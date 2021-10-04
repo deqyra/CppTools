@@ -108,6 +108,6 @@ void SineGenerator<P>::runningCycleModulo2Pi()
     while (_runningCycle > M_PI) _runningCycle -= (P)(2.0) * (P)M_PI;
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__MATH__SINE_GENERATOR_HPP

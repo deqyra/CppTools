@@ -90,6 +90,6 @@ int CommandSequence<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP

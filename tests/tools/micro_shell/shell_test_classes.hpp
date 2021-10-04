@@ -58,6 +58,6 @@ class TestShellExitCommand : public TestShellCommand
         }
 };
 
-}//namespace CppTools
+} // namespace CppTools
 
 #endif//TESTS__TOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP

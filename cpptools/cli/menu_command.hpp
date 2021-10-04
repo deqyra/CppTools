@@ -54,6 +54,6 @@ int MenuCommand<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CLI__MENU_COMMAND_HPP

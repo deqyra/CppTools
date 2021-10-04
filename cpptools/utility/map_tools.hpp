@@ -22,6 +22,6 @@ bool mapContainsPair(const T<Key, Val, Hash, Pred, Alloc>& map, const std::pair<
     return false;
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__UTILITY__MULTIMAP_TOOLS_HPP

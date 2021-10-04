@@ -859,7 +859,7 @@ void Tree<T>::iterator::next() const
     _node = _tree->next(_node->id);
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 template<typename T>
 void swap(typename cpptools::Tree<T>::iterator& lhs, typename cpptools::Tree<T>::iterator& rhs)
@@ -892,6 +892,6 @@ typename cpptools::Tree<T>::iterator next(
     return it;
 }
 
-}//namespace std
+} // namespace std
 
 #endif//CPPTOOLS__CONTAINER__TREE_HPP

@@ -38,4 +38,4 @@ TEST_CASE("CommandSequence end-to-end", TAGS)
     f.close();
 }
 
-}//namespace CppTools
+} // namespace CppTools

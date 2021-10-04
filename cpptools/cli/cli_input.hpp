@@ -182,6 +182,6 @@ namespace CLIInput
     }
 } // namespace CLIInput
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CLI__CLI_INPUT

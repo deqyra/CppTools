@@ -33,4 +33,4 @@ TestCLICommandSequence makeBasicTestCommandSequence()
     return TestCLICommandSequence(sequenceCommands, "Test sequence");
 }
 
-}//namespace CppTools
+} // namespace CppTools

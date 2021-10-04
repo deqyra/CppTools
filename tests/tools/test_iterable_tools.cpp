@@ -67,5 +67,5 @@ TEST_CASE("Elements can be stripped from a vector", TAGS)
     REQUIRE(vec == ref);
 }
 
-}//namespace Iterable
-}//namespace CppTools
+} // namespace Iterable
+} // namespace CppTools

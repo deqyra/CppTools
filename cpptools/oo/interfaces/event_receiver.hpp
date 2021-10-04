@@ -23,7 +23,7 @@ public:
 template<typename E>
 using EventReceiverPtr = std::shared_ptr<EventReceiver<E>>;
 
-}// namespace cpptools
+} // namespace cpptools
 
 
 #endif//CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP

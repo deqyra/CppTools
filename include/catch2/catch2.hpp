@@ -11459,7 +11459,7 @@ namespace Floating {
         return sstr.str();
     }
 
-}// namespace Floating
+} // namespace Floating
 
 Floating::WithinUlpsMatcher WithinULP(double target, uint64_t maxUlpDiff) {
     return Floating::WithinUlpsMatcher(target, maxUlpDiff, Floating::FloatingPointKind::Double);
