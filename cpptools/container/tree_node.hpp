@@ -328,6 +328,6 @@ void TreeNode<T>::generateParentChains()
     }
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CONTAINER__TREE_NODE_HPP

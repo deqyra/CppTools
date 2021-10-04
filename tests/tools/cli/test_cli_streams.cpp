@@ -21,4 +21,4 @@ TEST_CASE("CLI stream wrapper", TAGS)
     REQUIRE(streams.err().rdbuf() == std::cerr.rdbuf());
 }
 
-}//namespace CppTools
+} // namespace CppTools

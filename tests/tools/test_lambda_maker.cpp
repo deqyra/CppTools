@@ -61,5 +61,5 @@ namespace LambdaMaker
         testLambda(strictly_between(9, 14));
         REQUIRE(result == expected);
     }
-}//namespace LambdaMaker
-}//namespace CppTools
+} // namespace LambdaMaker
+} // namespace CppTools

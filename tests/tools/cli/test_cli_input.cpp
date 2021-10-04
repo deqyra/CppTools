@@ -62,4 +62,4 @@ TEST_CASE("CLI input", TAGS)
     }
 }
 
-}//namespace CppTools
+} // namespace CppTools

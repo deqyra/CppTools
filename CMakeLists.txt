@@ -60,8 +60,7 @@ message( STATUS "Export location for export targets: ${CPPTOOLS_EXPORT_LOCATION}
 #                                                                             #
 ###############################################################################
 
-# C++17 requires at least gcc 7 to be compiled
-set( CMAKE_CXX_STANDARD 17 )
+set( CMAKE_CXX_STANDARD 20 )
 
 if( UNIX )
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g")

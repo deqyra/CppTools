@@ -21,6 +21,6 @@ class CLIStreams
         std::ostream& err();
 };
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__CLI__CLI_STREAMS_HPP

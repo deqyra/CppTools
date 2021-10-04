@@ -322,5 +322,5 @@ TEST_CASE("stripCR", TAGS)
     REQUIRE(test == expected);
 }
 
-}//namespace String
-}//namespace CppTools
+} // namespace String
+} // namespace CppTools

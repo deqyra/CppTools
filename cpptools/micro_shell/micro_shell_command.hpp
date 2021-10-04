@@ -38,6 +38,6 @@ MicroShellCommand<CustomState>::~MicroShellCommand()
 
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP

@@ -34,4 +34,4 @@ TEST_CASE("MenuCommand end-to-end", TAGS)
     f.close();
 }
 
-}//namespace CppTools
+} // namespace CppTools

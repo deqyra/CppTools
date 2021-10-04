@@ -58,6 +58,6 @@ class TestCLIExitCommand : public TestCLICommand
 TestCLIMenu makeBasicTestMenu();
 TestCLICommandSequence makeBasicTestCommandSequence();
 
-}//namespace CppTools
+} // namespace CppTools
 
 #endif//TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP

@@ -33,4 +33,4 @@ TEST_CASE("CLIMenu end-to-end", TAGS)
     f.close();
 }
 
-}//namespace CppTools
+} // namespace CppTools

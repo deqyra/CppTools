@@ -301,6 +301,6 @@ int MicroShell<CustomState>::handleExit(const std::string& command, CustomState&
     return _exitCommand->processInput(command, state, streams);
 }
 
-}//namespace cpptools
+} // namespace cpptools
 
 #endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP

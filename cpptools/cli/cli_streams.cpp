@@ -28,4 +28,4 @@ std::ostream& CLIStreams::err()
     return _err;
 }
 
-}//namespace cpptools
+} // namespace cpptools

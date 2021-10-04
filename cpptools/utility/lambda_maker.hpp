@@ -62,7 +62,7 @@ std::function<bool(const T&)> strictly_between(const T& low, const T& high)
     };
 }
 
-}// namespace LambdaMaker
-}//namespace cpptools
+} // namespace LambdaMaker
+} // namespace cpptools
 
 #endif//CPPTOOLS__UTILITY__LAMBDA_MAKER_HPP

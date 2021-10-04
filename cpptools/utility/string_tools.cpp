@@ -507,5 +507,5 @@ void parseIntRange(const std::string& input, char delimiter, int& lowBound, int&
     }
 }
 
-}// namespace String
-}//namespace cpptools
+} // namespace String
+} // namespace cpptools

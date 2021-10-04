@@ -96,7 +96,7 @@ void stripElementFromIterable(Iterable& container, T element)
     }
 }
 
-}// namespace Iterable
-}//namespace cpptools
+} // namespace Iterable
+} // namespace cpptools
 
 #endif//CPPTOOLS__UTILITY__ITERABLE_TOOLS_HPP
