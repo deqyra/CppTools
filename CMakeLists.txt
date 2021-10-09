@@ -129,8 +129,8 @@ set( CPPTOOLS_SOURCE_FILES
 
 # Generate script file to copy headers
 file( WRITE ${CMAKE_BINARY_DIR}/cp_${CPPTOOLS_LIB_NAME}_headers.cmake
-"file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/cpptools
-    DESTINATION ${CPPTOOLS_EXPORT_LOCATION}/include
+"file( COPY \"${CMAKE_CURRENT_SOURCE_DIR}/cpptools\"
+    DESTINATION \"${CPPTOOLS_EXPORT_LOCATION}/include\"
     FILES_MATCHING
     PATTERN \"*.h\"
     PATTERN \"*.hpp\"
