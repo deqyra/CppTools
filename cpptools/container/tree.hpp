@@ -136,7 +136,20 @@ public:
     /// @exception If the provided parent ID does not match that of a node 
     /// contained within the tree, the function will throw a 
     /// std::runtim_error.
-    unsigned int addNode(T value, unsigned int parentId);
+    unsigned int addNode(T&& value, unsigned int parentId);
+
+    /// @brief Add a node to the tree.
+    ///
+    /// @param value Value which the new node should hold.
+    /// @param parentId ID of the node which should be parent of the newly
+    /// created node.
+    ///
+    /// @return ID of the newly created node.
+    ///
+    /// @exception If the provided parent ID does not match that of a node 
+    /// contained within the tree, the function will throw a 
+    /// std::runtim_error.
+    unsigned int addNode(const T& value, unsigned int parentId);
 
     /// @brief Add a whole to the tree, as a new branch.
     ///
@@ -422,7 +435,14 @@ bool Tree<T>::hasNode(unsigned int id)
 }
 
 template<typename T>
-unsigned int Tree<T>::addNode(T value, unsigned int parentId)
+unsigned int Tree<T>::addNode(T&& value, unsigned int parentId)
+{
+    const T& valueRef = value;
+    return addNode(value, parentId);
+}
+
+template<typename T>
+unsigned int Tree<T>::addNode(const T& value, unsigned int parentId)
 {
     if (size() == max_size())
     {

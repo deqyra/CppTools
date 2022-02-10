@@ -17,11 +17,11 @@ public:
     /// @brief Register a critical event to the window.
     ///
     /// @param event Literal describing the event to queue.
-    virtual void queueEvent(const E& event) = 0;
+    virtual void queueEvent(const E event) = 0;
 };
 
 template<typename E>
-using EventReceiverPtr = std::shared_ptr<EventReceiver<E>>;
+using EventReceiverPtr = std::unique_ptr<EventReceiver<E>>;
 
 } // namespace cpptools
 

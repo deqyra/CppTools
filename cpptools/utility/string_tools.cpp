@@ -311,8 +311,28 @@ void stripComments(std::string& str)
 {
     std::string result;
 
+    // Find and remove single line comments
+    size_t offset = str.find("//", 0);
+    while (offset != std::string::npos)
+    {
+        // Find end of line
+        size_t end = str.find('\n', offset);
+        // Find total length of comment
+        size_t len = std::string::npos;
+        if (end != std::string::npos)
+        {
+            // Do not account for extra 1 char '\n', leave as is
+            len = end - offset;
+        }
+
+        // Erase all of it
+        str.erase(offset, len);
+
+        offset = str.find("//", 0);
+    }
+
     // Find and remove multiline comments
-    size_t offset = str.find("/*", 0);
+    offset = str.find("/*", 0);
     while (offset != std::string::npos)
     {
         // Find end of multiline comment
@@ -329,26 +349,6 @@ void stripComments(std::string& str)
         str.erase(offset, len);
 
         offset = str.find("/*", 0);
-    }
-
-    // Find and remove single line comments
-    offset = str.find("//", 0);
-    while (offset != std::string::npos)
-    {
-        // Find end of multiline comment
-        size_t end = str.find('\n', offset);
-        // Find total length of comment
-        size_t len = std::string::npos;
-        if (end != std::string::npos)
-        {
-            // Do not account for extra 1 char '\n', leave as is
-            len = end - offset;
-        }
-
-        // Erase all of it
-        str.erase(offset, len);
-
-        offset = str.find("//", 0);
     }
 }
 
