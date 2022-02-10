@@ -23,7 +23,6 @@ class ActionEventReceiver
 public:
     using ActionType = T;
     using ArgTypes = type_utils::type_list<Ty...>;
-    static constexpr bool HasEventArgs = std::is_same_v<ArgTypes, type_utils::type_list<>>;
 
     /// @brief Start the processing for an action.
     ///
