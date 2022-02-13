@@ -12,29 +12,23 @@ namespace cpptools
 /// an action of a certain type.
 ///
 /// @tparam T Type of the action to be handled by the implementing class.
-/// @tparam Ty Types of the parameters to send along with the action
-/// signals.
-template<
-    typename T,
-    class... Ty
->
+template<typename T>
 class ActionEventReceiver
 {
 public:
     using ActionType = T;
-    using ArgTypes = type_utils::type_list<Ty...>;
 
     /// @brief Start the processing for an action.
     ///
     /// @param action Object describing the action to start processing.
     /// @param args Arguments of the action to send along with the stop signal.
-    virtual void triggerAction(const T& action, Ty... args) = 0;
+    virtual void triggerAction(const T& action) = 0;
 
     /// @brief Stop the processing for an action.
     ///
     /// @param action Object describing the action to stop processing.
     /// @param args Arguments of the action to send along with the stop signal.
-    virtual void stopAction(const T& action, Ty... args) = 0;
+    virtual void stopAction(const T& action) = 0;
 };
 
 template<typename T>

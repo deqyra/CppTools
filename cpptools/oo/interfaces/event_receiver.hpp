@@ -6,10 +6,9 @@
 namespace cpptools
 {
 
-/// @brief Interface for a class able to receive critical events which were
-/// queued to a window. Such a class is to be used in context with windows.
+/// @brief Interface for a class able to receive events and queue them.
 ///
-/// @tparam E Type of the critical events to be received. 
+/// @tparam E Type of events to be queued. 
 template<typename E>
 class EventReceiver
 {
