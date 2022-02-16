@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <cpptools/utility/type_traits.hpp>
+#include <cpptools/utility/type_utils.hpp>
 
 namespace cpptools
 {

@@ -91,7 +91,10 @@ private:
 
 public:
     /// @param rootValue Value which the root node of the tree should hold
-    Tree(T rootValue = T());
+    Tree(const T& rootValue);
+
+    /// @param rootValue Value which the root node of the tree should hold
+    Tree(T&& rootValue);
 
     Tree(const Tree<T>& other);
     Tree(Tree<T>&& other);
@@ -137,19 +140,6 @@ public:
     /// contained within the tree, the function will throw a 
     /// std::runtim_error.
     unsigned int addNode(T&& value, unsigned int parentId);
-
-    /// @brief Add a node to the tree.
-    ///
-    /// @param value Value which the new node should hold.
-    /// @param parentId ID of the node which should be parent of the newly
-    /// created node.
-    ///
-    /// @return ID of the newly created node.
-    ///
-    /// @exception If the provided parent ID does not match that of a node 
-    /// contained within the tree, the function will throw a 
-    /// std::runtim_error.
-    unsigned int addNode(const T& value, unsigned int parentId);
 
     /// @brief Add a whole to the tree, as a new branch.
     ///
@@ -317,12 +307,22 @@ public:
 };
 
 template<typename T>
-Tree<T>::Tree(T rootValue) :
+Tree<T>::Tree(const T& rootValue) :
     _root(nullptr),
     _nodes()
 {
     // Create a node from the root value and register it in the node map
     _root = std::make_shared<Node>(rootValue);
+    _nodes[_root->id] = _root;
+}
+
+template<typename T>
+Tree<T>::Tree(T&& rootValue) :
+    _root(nullptr),
+    _nodes()
+{
+    // Create a node from the root value and register it in the node map
+    _root = std::make_shared<Node>(std::move(rootValue));
     _nodes[_root->id] = _root;
 }
 
@@ -437,13 +437,6 @@ bool Tree<T>::hasNode(unsigned int id)
 template<typename T>
 unsigned int Tree<T>::addNode(T&& value, unsigned int parentId)
 {
-    const T& valueRef = value;
-    return addNode(value, parentId);
-}
-
-template<typename T>
-unsigned int Tree<T>::addNode(const T& value, unsigned int parentId)
-{
     if (size() == max_size())
     {
         throw std::runtime_error("Tree: max size reached, cannot add node.");
@@ -457,7 +450,7 @@ unsigned int Tree<T>::addNode(const T& value, unsigned int parentId)
     }
 
     // Create the new node and have it automatically registered in its parent
-    NodePtr node = std::make_shared<Node>(value);
+    NodePtr node = std::make_shared<Node>(std::forward<T>(value));
     node->setParent(it->second);
     _nodes[node->id] = node;
     return node->id;

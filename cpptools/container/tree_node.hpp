@@ -43,7 +43,10 @@ class TreeNode : public std::enable_shared_from_this<TreeNode<T>>
 
     public:
         // Construct new node with value attached
-        TreeNode(T value);
+        TreeNode(const T& value);
+
+        // Construct new node with value attached
+        TreeNode(T&& value);
 
         // Get a pointer to the parent of this node
         TreeNodePtr getParent();
@@ -82,7 +85,7 @@ template<typename T>
 unsigned int TreeNode<T>::_count = 0;
 
 template<typename T>
-TreeNode<T>::TreeNode(T value) :
+TreeNode<T>::TreeNode(const T& value) :
     id(_count++),
     _wParent(),
     _wChildren(),
@@ -90,6 +93,19 @@ TreeNode<T>::TreeNode(T value) :
     _wParentChain(),
     _parentIdChain(),
     value(value)
+{
+
+}
+
+template<typename T>
+TreeNode<T>::TreeNode(T&& value) :
+    id(_count++),
+    _wParent(),
+    _wChildren(),
+    _childrenIds(),
+    _wParentChain(),
+    _parentIdChain(),
+    value(std::move(value))
 {
 
 }

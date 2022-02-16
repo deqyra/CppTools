@@ -104,6 +104,7 @@ set( CPPTOOLS_SOURCE_FILES
     cpptools/exceptions/bad_syntax_error.hpp 
     cpptools/oo/notifier.hpp
     cpptools/oo/interfaces/event_receiver.hpp
+    cpptools/oo/interfaces/action_event_receiver.hpp
     cpptools/math/sine_generator.hpp
     cpptools/micro_shell/micro_shell.hpp
     cpptools/micro_shell/micro_shell_codes.hpp
@@ -117,8 +118,12 @@ set( CPPTOOLS_SOURCE_FILES
     cpptools/utility/map_tools.hpp
     cpptools/utility/string_tools.cpp
     cpptools/utility/string_tools.hpp
-    cpptools/utility/type_traits.cpp
-    cpptools/utility/type_traits.hpp
+    cpptools/utility/type_utils.hpp
+    cpptools/utility/type_utils_impl/container_traits.hpp
+    cpptools/utility/type_utils_impl/container_traits_detail.hpp
+    cpptools/utility/type_utils_impl/instance_counter.hpp
+    cpptools/utility/type_utils_impl/instance_counter.cpp
+    cpptools/utility/type_utils_impl/type_list.hpp
 )
 
 ###############################################################################

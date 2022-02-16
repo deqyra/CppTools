@@ -29,26 +29,42 @@ public:
 };
 
 template <typename T>
-struct has_begin_end : private sfinae_base
+struct has_begin : private sfinae_base
 {
 private:
     template <typename C>
     static yes & f(typename std::enable_if<
-        std::is_same<decltype(static_cast<typename C::const_iterator(C::*)() const>(&C::begin)),
-                        typename C::const_iterator(C::*)() const>::value>::type*);
+        std::is_same<
+            decltype(static_cast<typename C::const_iterator(C::*)() const>(&C::begin)),
+            typename C::const_iterator(C::*)() const
+        >::value
+    >::type*);
 
     template <typename C> static no & f(...);
 
+public:
+    static bool const value = sizeof(f<T>(nullptr)) == sizeof(yes);
+
+    void dummy(); //for GCC to supress -Wctor-dtor-privacy
+};
+
+template <typename T>
+struct has_end : private sfinae_base
+{
+private:
     template <typename C>
     static yes & g(typename std::enable_if<
-        std::is_same<decltype(static_cast<typename C::const_iterator(C::*)() const>(&C::end)),
-                        typename C::const_iterator(C::*)() const>::value, void>::type*);
+        std::is_same<
+            decltype(static_cast<typename C::const_iterator(C::*)() const>(&C::end)),
+            typename C::const_iterator(C::*)() const
+        >::value,
+        void
+    >::type*);
 
     template <typename C> static no & g(...);
 
 public:
-    static bool const beg_value = sizeof(f<T>(nullptr)) == sizeof(yes);
-    static bool const end_value = sizeof(g<T>(nullptr)) == sizeof(yes);
+    static bool const value = sizeof(g<T>(nullptr)) == sizeof(yes);
 
     void dummy(); //for GCC to supress -Wctor-dtor-privacy
 };
