@@ -5,16 +5,18 @@
 #include <valarray>
 #include <utility>
 
-#include "detail.hpp"
+#include "container_traits_detail.hpp"
 
 namespace type_utils
 {
 
 template <typename T>
-struct is_container : public std::integral_constant<bool,
-                                                    detail::has_const_iterator<T>::value &&
-                                                    detail::has_begin_end<T>::beg_value  &&
-                                                    detail::has_begin_end<T>::end_value> { };
+struct is_container : public std::integral_constant<
+    bool,
+    detail::has_const_iterator<T>::value &&
+    detail::has_begin<T>::value &&
+    detail::has_end<T>::value
+> { };
 
 template <typename T, std::size_t N>
 struct is_container<T[N]> : std::true_type { };
@@ -32,11 +34,13 @@ template <typename ...Args>
 struct is_container<std::tuple<Args...>> : std::true_type { };
 
 template <typename T>
-struct is_sized_container : public std::integral_constant<bool,
-                                                    detail::has_const_iterator<T>::value &&
-                                                    detail::has_begin_end<T>::beg_value  &&
-                                                    detail::has_begin_end<T>::end_value  &&
-                                                    detail::has_size<T>::value> { };
+struct is_sized_container : public std::integral_constant<
+    bool,
+    detail::has_const_iterator<T>::value &&
+    detail::has_begin<T>::value &&
+    detail::has_end<T>::value &&
+    detail::has_size<T>::value
+> { };
 
 template <typename T, std::size_t N>
 struct is_sized_container<T[N]> : std::true_type { };
@@ -52,7 +56,6 @@ struct is_sized_container<std::pair<T1, T2>> : std::true_type { };
 
 template <typename ...Args>
 struct is_sized_container<std::tuple<Args...>> : std::true_type { };
-
 
 } // namespace type_utils
 
