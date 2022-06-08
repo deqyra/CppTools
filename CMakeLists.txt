@@ -75,55 +75,55 @@ endif( )
 ###############################################################################
 
 project( "CppTools"
-    DESCRIPTION "A collection of handy C++ tools developed for use in other projects by deqyra"
+    DESCRIPTION "A collection of handy C++ tools developed for use in other projects"
     LANGUAGES C CXX
 )
 
 set(CPPTOOLS_LIB_NAME "cpptools")
 
 set( CPPTOOLS_SOURCE_FILES
-    cpptools/cli/cli_streams.cpp
-    cpptools/cli/cli_streams.hpp
-    cpptools/cli/cli_input.hpp
-    cpptools/cli/cli_command.hpp
-    cpptools/cli/cli_menu.hpp
-    cpptools/cli/command_sequence.hpp
-    cpptools/cli/menu_command.hpp
-    cpptools/container/tree.hpp
-    cpptools/container/tree_node.hpp
-    cpptools/exceptions/make_basic_exception.hpp
-    cpptools/exceptions/file_not_found_error.cpp
-    cpptools/exceptions/file_not_found_error.hpp 
-    cpptools/exceptions/index_out_of_bounds_error.cpp
-    cpptools/exceptions/index_out_of_bounds_error.hpp
-    cpptools/exceptions/range_bounds_exceeded_error.cpp
-    cpptools/exceptions/range_bounds_exceeded_error.hpp 
-    cpptools/exceptions/unmatched_array_size_error.cpp
-    cpptools/exceptions/unmatched_array_size_error.hpp
-    cpptools/exceptions/bad_syntax_error.cpp 
-    cpptools/exceptions/bad_syntax_error.hpp 
-    cpptools/oo/notifier.hpp
-    cpptools/oo/interfaces/event_receiver.hpp
-    cpptools/oo/interfaces/action_event_receiver.hpp
-    cpptools/math/sine_generator.hpp
-    cpptools/micro_shell/micro_shell.hpp
-    cpptools/micro_shell/micro_shell_codes.hpp
-    cpptools/micro_shell/micro_shell_command.hpp
-    cpptools/thread/worker.cpp
-    cpptools/thread/worker.hpp
-    cpptools/thread/interfaces/interruptible.hpp
-    cpptools/utility/hash_combine.hpp
-    cpptools/utility/iterable_tools.hpp
-    cpptools/utility/lambda_maker.hpp
-    cpptools/utility/map_tools.hpp
-    cpptools/utility/string_tools.cpp
-    cpptools/utility/string_tools.hpp
-    cpptools/utility/type_utils.hpp
-    cpptools/utility/type_utils_impl/container_traits.hpp
-    cpptools/utility/type_utils_impl/container_traits_detail.hpp
-    cpptools/utility/type_utils_impl/instance_counter.hpp
-    cpptools/utility/type_utils_impl/instance_counter.cpp
-    cpptools/utility/type_utils_impl/type_list.hpp
+    tools/cli/cli_streams.cpp
+    tools/cli/cli_streams.hpp
+    tools/cli/cli_input.hpp
+    tools/cli/cli_command.hpp
+    tools/cli/cli_menu.hpp
+    tools/cli/command_sequence.hpp
+    tools/cli/menu_command.hpp
+    tools/container/tree.hpp
+    tools/container/tree_node.hpp
+    tools/exceptions/make_basic_exception.hpp
+    tools/exceptions/file_not_found_error.cpp
+    tools/exceptions/file_not_found_error.hpp 
+    tools/exceptions/index_out_of_bounds_error.cpp
+    tools/exceptions/index_out_of_bounds_error.hpp
+    tools/exceptions/range_bounds_exceeded_error.cpp
+    tools/exceptions/range_bounds_exceeded_error.hpp 
+    tools/exceptions/unmatched_array_size_error.cpp
+    tools/exceptions/unmatched_array_size_error.hpp
+    tools/exceptions/bad_syntax_error.cpp 
+    tools/exceptions/bad_syntax_error.hpp 
+    tools/oo/notifier.hpp
+    tools/oo/interfaces/event_receiver.hpp
+    tools/oo/interfaces/action_event_receiver.hpp
+    tools/math/sine_generator.hpp
+    tools/micro_shell/micro_shell.hpp
+    tools/micro_shell/micro_shell_codes.hpp
+    tools/micro_shell/micro_shell_command.hpp
+    tools/thread/worker.cpp
+    tools/thread/worker.hpp
+    tools/thread/interfaces/interruptible.hpp
+    tools/utility/hash_combine.hpp
+    tools/utility/iterable_tools.hpp
+    tools/utility/lambda_maker.hpp
+    tools/utility/map_tools.hpp
+    tools/utility/string_tools.cpp
+    tools/utility/string_tools.hpp
+    tools/utility/type_utils.hpp
+    tools/utility/type_utils_impl/container_traits.hpp
+    tools/utility/type_utils_impl/container_traits_detail.hpp
+    tools/utility/type_utils_impl/instance_counter.hpp
+    tools/utility/type_utils_impl/instance_counter.cpp
+    tools/utility/type_utils_impl/type_list.hpp
 )
 
 ###############################################################################
@@ -134,7 +134,7 @@ set( CPPTOOLS_SOURCE_FILES
 
 # Generate script file to copy headers
 file( WRITE ${CMAKE_BINARY_DIR}/cp_${CPPTOOLS_LIB_NAME}_headers.cmake
-"file( COPY \"${CMAKE_CURRENT_SOURCE_DIR}/cpptools\"
+"file( COPY \"${CMAKE_CURRENT_SOURCE_DIR}/tools\"
     DESTINATION \"${CPPTOOLS_EXPORT_LOCATION}/include\"
     FILES_MATCHING
     PATTERN \"*.h\"
@@ -209,7 +209,7 @@ install(
 )
 
 install(
-    DIRECTORY "${CMAKE_SOURCE_DIR}/cpptools"
+    DIRECTORY "${CMAKE_SOURCE_DIR}/tools"
     DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
     FILES_MATCHING 
     PATTERN "*.h"
