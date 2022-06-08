@@ -1,9 +1,9 @@
 #include <catch2/catch2.hpp>
 
 #include "cli_test_classes.hpp"
-#include <cpptools/cli/cli_menu.hpp>
-#include <cpptools/cli/cli_streams.hpp>
-#include <cpptools/string_tools.hpp>
+#include <tools/cli/cli_menu.hpp>
+#include <tools/cli/cli_streams.hpp>
+#include <tools/string_tools.hpp>
 
 #include <string>
 #include <fstream>
@@ -11,7 +11,7 @@
 
 #define TAGS "[cli][cli_command]"
 
-namespace CppTools
+namespace tools
 {
 
 TEST_CASE("CLIMenu end-to-end", TAGS)
@@ -33,4 +33,4 @@ TEST_CASE("CLIMenu end-to-end", TAGS)
     f.close();
 }
 
-} // namespace CppTools
+} // namespace tools

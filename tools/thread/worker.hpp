@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__THREAD__WORKER_HPP
-#define CPPTOOLS__THREAD__WORKER_HPP
+#ifndef TOOLS__THREAD__WORKER_HPP
+#define TOOLS__THREAD__WORKER_HPP
 
 #include <condition_variable>
 #include <functional>
@@ -10,7 +10,7 @@
 
 #include "interfaces/interruptible.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 class Worker : public Interruptible
@@ -142,6 +142,6 @@ public:
 
 using WorkerPtr = std::shared_ptr<Worker>;
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__THREAD__WORKER_HPP
+#endif//TOOLS__THREAD__WORKER_HPP

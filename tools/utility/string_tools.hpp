@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__STRING_TOOLS_HPP
-#define CPPTOOLS__UTILITY__STRING_TOOLS_HPP
+#ifndef TOOLS__UTILITY__STRING_TOOLS_HPP
+#define TOOLS__UTILITY__STRING_TOOLS_HPP
 
 #include <string>
 #include <vector>
@@ -10,7 +10,7 @@ namespace std
     std::string to_string(std::string val);
 } // namespace std
 
-namespace cpptools
+namespace tools
 {
 namespace String
 {
@@ -106,6 +106,6 @@ std::string iterableToString(
 }
 
 } // namespace String
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__UTILITY__STRING_TOOLS_HPP
+#endif//TOOLS__UTILITY__STRING_TOOLS_HPP

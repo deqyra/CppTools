@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
-#define CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
+#ifndef TOOLS__CLI__COMMAND_SEQUENCE_HPP
+#define TOOLS__CLI__COMMAND_SEQUENCE_HPP
 
 #include <vector>
 #include <string>
@@ -8,7 +8,7 @@
 #include "cli_command.hpp"
 #include "cli_input.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 // Extended command allowing to run several commands in a row.
@@ -90,6 +90,6 @@ int CommandSequence<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
+#endif//TOOLS__CLI__COMMAND_SEQUENCE_HPP

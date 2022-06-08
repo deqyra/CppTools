@@ -1,9 +1,9 @@
-#ifndef CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
-#define CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
+#ifndef TOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
+#define TOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
 
 #include <memory>
 
-namespace cpptools
+namespace tools
 {
 
 /// @brief Interface for a class able to receive events and queue them.
@@ -22,7 +22,7 @@ public:
 template<typename E>
 using EventReceiverPtr = std::unique_ptr<EventReceiver<E>>;
 
-} // namespace cpptools
+} // namespace tools
 
 
-#endif//CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
+#endif//TOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP

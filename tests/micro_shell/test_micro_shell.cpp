@@ -8,12 +8,12 @@
 
 #include "shell_test_classes.hpp"
 
-#include <cpptools/cli/cli_streams.hpp>
-#include <cpptools/string_tools.hpp>
+#include <tools/cli/cli_streams.hpp>
+#include <tools/string_tools.hpp>
 
 #define TAGS "[micro_shell]"
 
-namespace CppTools
+namespace tools
 {
 
 TEST_CASE("MicroShell")
@@ -77,4 +77,4 @@ TEST_CASE("MicroShell")
     }
 }
 
-} // namespace CppTools
+} // namespace tools

@@ -1,12 +1,12 @@
-#ifndef CPPTOOLS__MATH__SINE_GENERATOR_HPP
-#define CPPTOOLS__MATH__SINE_GENERATOR_HPP
+#ifndef TOOLS__MATH__SINE_GENERATOR_HPP
+#define TOOLS__MATH__SINE_GENERATOR_HPP
 
 #include <chrono>
 #include <cmath>
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-namespace cpptools
+namespace tools
 {
 
 template<typename P = float>
@@ -108,6 +108,6 @@ void SineGenerator<P>::runningCycleModulo2Pi()
     while (_runningCycle > M_PI) _runningCycle -= (P)(2.0) * (P)M_PI;
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__MATH__SINE_GENERATOR_HPP
+#endif//TOOLS__MATH__SINE_GENERATOR_HPP

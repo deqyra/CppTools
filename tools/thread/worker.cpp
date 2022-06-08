@@ -1,6 +1,6 @@
 #include "worker.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 Worker::Worker(

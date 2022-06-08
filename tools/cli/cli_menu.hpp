@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__CLI_MENU_HPP
-#define CPPTOOLS__CLI__CLI_MENU_HPP
+#ifndef TOOLS__CLI__CLI_MENU_HPP
+#define TOOLS__CLI__CLI_MENU_HPP
 
 #include <string>
 #include <vector>
@@ -10,7 +10,7 @@
 #include "cli_input.hpp"
 #include "../string_tools.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 template<typename CustomState>
@@ -122,6 +122,6 @@ std::string CLIMenu<CustomState>::allOptionsString()
     return s;
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__CLI__CLI_MENU_HPP
+#endif//TOOLS__CLI__CLI_MENU_HPP

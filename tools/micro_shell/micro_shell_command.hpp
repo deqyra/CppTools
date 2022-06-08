@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
-#define CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
+#ifndef TOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
+#define TOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
 
 #include <string>
 
@@ -9,7 +9,7 @@
 #define HELP_KEYWORD "help"
 #define EXIT_KEYWORD "exit"
 
-namespace cpptools
+namespace tools
 {
 
 template<typename CustomState>
@@ -38,6 +38,6 @@ MicroShellCommand<CustomState>::~MicroShellCommand()
 
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
+#endif//TOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP

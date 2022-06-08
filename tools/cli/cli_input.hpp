@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__CLI_INPUT
-#define CPPTOOLS__CLI__CLI_INPUT
+#ifndef TOOLS__CLI__CLI_INPUT
+#define TOOLS__CLI__CLI_INPUT
 
 #include <iostream>
 #include <string>
@@ -7,7 +7,7 @@
 #include "cli_streams.hpp"
 #include "../string_tools.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 namespace CLIInput
@@ -182,6 +182,6 @@ namespace CLIInput
     }
 } // namespace CLIInput
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__CLI__CLI_INPUT
+#endif//TOOLS__CLI__CLI_INPUT
