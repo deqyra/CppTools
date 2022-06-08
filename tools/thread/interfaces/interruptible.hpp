@@ -1,9 +1,9 @@
-#ifndef CPPTOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
-#define CPPTOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
+#ifndef TOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
+#define TOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
 
 #include <memory>
 
-namespace cpptools
+namespace tools
 {
 
 /// @brief Interface for a class implementing an interruptible process.
@@ -60,4 +60,4 @@ using InterruptiblePtr = std::shared_ptr<Interruptible>;
 
 }
 
-#endif//CPPTOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
+#endif//TOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP

@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CONTAINER__TREE_HPP
-#define CPPTOOLS__CONTAINER__TREE_HPP
+#ifndef TOOLS__CONTAINER__TREE_HPP
+#define TOOLS__CONTAINER__TREE_HPP
 
 #include <iostream>
 #include <iterator>
@@ -13,7 +13,7 @@
 
 #include "tree_node.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 /// @brief A tree managing nodes organized in a hierarchical structure, in which
@@ -872,10 +872,10 @@ void Tree<T>::iterator::next() const
     _node = _tree->next(_node->id);
 }
 
-} // namespace cpptools
+} // namespace tools
 
 template<typename T>
-void swap(typename cpptools::Tree<T>::iterator& lhs, typename cpptools::Tree<T>::iterator& rhs)
+void swap(typename tools::Tree<T>::iterator& lhs, typename tools::Tree<T>::iterator& rhs)
 {
     using std::swap;
 
@@ -888,17 +888,17 @@ namespace std
 
 template<typename T>
 void advance(
-    typename cpptools::Tree<T>::iterator& it,
-    typename std::iterator_traits<typename cpptools::Tree<T>::iterator>::difference_type n
+    typename tools::Tree<T>::iterator& it,
+    typename std::iterator_traits<typename tools::Tree<T>::iterator>::difference_type n
 )
 {
     for (auto i = 0; i < n; i++) ++it;
 }
 
 template<typename T>
-typename cpptools::Tree<T>::iterator next(
-    typename cpptools::Tree<T>::iterator it,
-    typename std::iterator_traits<typename cpptools::Tree<T>::iterator>::difference_type n
+typename tools::Tree<T>::iterator next(
+    typename tools::Tree<T>::iterator it,
+    typename std::iterator_traits<typename tools::Tree<T>::iterator>::difference_type n
 )
 {
     advance(it, n);
@@ -907,4 +907,4 @@ typename cpptools::Tree<T>::iterator next(
 
 } // namespace std
 
-#endif//CPPTOOLS__CONTAINER__TREE_HPP
+#endif//TOOLS__CONTAINER__TREE_HPP

@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__TYPE_TRAITS_IMPL__CONTAINER_TRAITS_HPP
-#define CPPTOOLS__UTILITY__TYPE_TRAITS_IMPL__CONTAINER_TRAITS_HPP
+#ifndef TOOLS__UTILITY__TYPE_TRAITS_IMPL__CONTAINER_TRAITS_HPP
+#define TOOLS__UTILITY__TYPE_TRAITS_IMPL__CONTAINER_TRAITS_HPP
 
 #include <type_traits>
 #include <valarray>
@@ -59,4 +59,4 @@ struct is_sized_container<std::tuple<Args...>> : std::true_type { };
 
 } // namespace type_utils
 
-#endif//CPPTOOLS__UTILITY__TYPE_TRAITS_IMPL_CONTAINER_TRAITSL_HPP
+#endif//TOOLS__UTILITY__TYPE_TRAITS_IMPL_CONTAINER_TRAITSL_HPP

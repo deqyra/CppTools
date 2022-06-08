@@ -1,9 +1,9 @@
-#ifndef CPPTOOLS__UTILITY__LAMBDA_MAKER_HPP
-#define CPPTOOLS__UTILITY__LAMBDA_MAKER_HPP
+#ifndef TOOLS__UTILITY__LAMBDA_MAKER_HPP
+#define TOOLS__UTILITY__LAMBDA_MAKER_HPP
 
 #include <functional>
 
-namespace cpptools
+namespace tools
 {
 namespace LambdaMaker
 {
@@ -63,6 +63,6 @@ std::function<bool(const T&)> strictly_between(const T& low, const T& high)
 }
 
 } // namespace LambdaMaker
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__UTILITY__LAMBDA_MAKER_HPP
+#endif//TOOLS__UTILITY__LAMBDA_MAKER_HPP

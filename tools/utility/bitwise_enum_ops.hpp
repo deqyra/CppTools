@@ -1,10 +1,10 @@
-#ifndef CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
-#define CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
+#ifndef TOOLS__UTILITY__BITWISE_ENUM_HPP
+#define TOOLS__UTILITY__BITWISE_ENUM_HPP
 
 #include <concepts>
 #include <type_traits>
 
-namespace cpptools
+namespace tools
 {
     
 template<typename T>
@@ -75,6 +75,6 @@ namespace bitwise_enum_ops
 
 } // namespace bitwise_enum_ops
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
+#endif//TOOLS__UTILITY__BITWISE_ENUM_HPP

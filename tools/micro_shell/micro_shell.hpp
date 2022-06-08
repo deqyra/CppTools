@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP
-#define CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP
+#ifndef TOOLS__MICRO_SHELL__MICRO_SHELL_HPP
+#define TOOLS__MICRO_SHELL__MICRO_SHELL_HPP
 
 #include <string>
 #include <deque>
@@ -13,7 +13,7 @@
 #include "../string_tools.hpp"
 #include "../exceptions/index_out_of_bounds_error.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 template<typename CustomState>
@@ -301,6 +301,6 @@ int MicroShell<CustomState>::handleExit(const std::string& command, CustomState&
     return _exitCommand->processInput(command, state, streams);
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_HPP
+#endif//TOOLS__MICRO_SHELL__MICRO_SHELL_HPP

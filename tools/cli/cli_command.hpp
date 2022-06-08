@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__CLI_COMMAND_HPP
-#define CPPTOOLS__CLI__CLI_COMMAND_HPP
+#ifndef TOOLS__CLI__CLI_COMMAND_HPP
+#define TOOLS__CLI__CLI_COMMAND_HPP
 
 #include <string>
 #include <memory>
@@ -7,7 +7,7 @@
 #include "cli_streams.hpp"
 #include "cli_input.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 template<typename CustomState>
@@ -31,6 +31,6 @@ CLICommand<CustomState>::~CLICommand()
 inline static const int CLI_COMMAND_SUCCESS = 0;
 inline static const int CLI_COMMAND_FAILURE = -1;
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__CLI__CLI_COMMAND_HPP
+#endif//TOOLS__CLI__CLI_COMMAND_HPP

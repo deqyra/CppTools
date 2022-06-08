@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__MENU_COMMAND_HPP
-#define CPPTOOLS__CLI__MENU_COMMAND_HPP
+#ifndef TOOLS__CLI__MENU_COMMAND_HPP
+#define TOOLS__CLI__MENU_COMMAND_HPP
 
 #include "cli_command.hpp"
 
@@ -8,7 +8,7 @@
 #include "cli_menu.hpp"
 #include "cli_streams.hpp"
 
-namespace cpptools
+namespace tools
 {
 
 // Extended command wrapping a menu.
@@ -54,6 +54,6 @@ int MenuCommand<CustomState>::run(CustomState& state, CLIStreams& streams)
     return CLI_COMMAND_SUCCESS;
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__CLI__MENU_COMMAND_HPP
+#endif//TOOLS__CLI__MENU_COMMAND_HPP

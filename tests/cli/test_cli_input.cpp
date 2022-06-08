@@ -5,11 +5,11 @@
 #include <iostream>
 #include <string>
 
-#include <cpptools/cli/cli_input.hpp>
+#include <tools/cli/cli_input.hpp>
 
 #define TAGS "[cli][cli_input]"
 
-namespace CppTools
+namespace tools
 {
 
 TEST_CASE("CLI input", TAGS)
@@ -62,4 +62,4 @@ TEST_CASE("CLI input", TAGS)
     }
 }
 
-} // namespace CppTools
+} // namespace tools

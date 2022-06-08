@@ -1,9 +1,9 @@
-#ifndef CPPTOOLS__CLI__CLI_STREAMS_HPP
-#define CPPTOOLS__CLI__CLI_STREAMS_HPP
+#ifndef TOOLS__CLI__CLI_STREAMS_HPP
+#define TOOLS__CLI__CLI_STREAMS_HPP
 
 #include <iostream>
 
-namespace cpptools
+namespace tools
 {
 
 class CLIStreams
@@ -21,6 +21,6 @@ class CLIStreams
         std::ostream& err();
 };
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__CLI__CLI_STREAMS_HPP
+#endif//TOOLS__CLI__CLI_STREAMS_HPP

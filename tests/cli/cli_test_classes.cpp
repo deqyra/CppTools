@@ -1,13 +1,13 @@
 #include "cli_test_classes.hpp"
 
-#include <cpptools/cli/cli_menu.hpp>
-#include <cpptools/cli/cli_command.hpp>
-#include <cpptools/cli/cli_streams.hpp>
-#include <cpptools/cli/cli_input.hpp>
-#include <cpptools/cli/menu_command.hpp>
-#include <cpptools/cli/command_sequence.hpp>
+#include <tools/cli/cli_menu.hpp>
+#include <tools/cli/cli_command.hpp>
+#include <tools/cli/cli_streams.hpp>
+#include <tools/cli/cli_input.hpp>
+#include <tools/cli/menu_command.hpp>
+#include <tools/cli/command_sequence.hpp>
 
-namespace CppTools
+namespace tools
 {
 
 TestCLIMenu makeBasicTestMenu()
@@ -33,4 +33,4 @@ TestCLICommandSequence makeBasicTestCommandSequence()
     return TestCLICommandSequence(sequenceCommands, "Test sequence");
 }
 
-} // namespace CppTools
+} // namespace tools

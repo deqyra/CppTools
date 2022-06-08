@@ -1,14 +1,14 @@
 #ifndef TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP
 #define TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP
 
-#include <cpptools/cli/cli_menu.hpp>
-#include <cpptools/cli/cli_command.hpp>
-#include <cpptools/cli/cli_streams.hpp>
-#include <cpptools/cli/cli_input.hpp>
-#include <cpptools/cli/menu_command.hpp>
-#include <cpptools/cli/command_sequence.hpp>
+#include <tools/cli/cli_menu.hpp>
+#include <tools/cli/cli_command.hpp>
+#include <tools/cli/cli_streams.hpp>
+#include <tools/cli/cli_input.hpp>
+#include <tools/cli/menu_command.hpp>
+#include <tools/cli/command_sequence.hpp>
 
-namespace CppTools
+namespace tools
 {
 
 class TestCLIState {};
@@ -58,6 +58,6 @@ class TestCLIExitCommand : public TestCLICommand
 TestCLIMenu makeBasicTestMenu();
 TestCLICommandSequence makeBasicTestCommandSequence();
 
-} // namespace CppTools
+} // namespace tools
 
 #endif//TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP

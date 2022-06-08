@@ -1,11 +1,11 @@
-#ifndef CPPTOOLS__UTILITY__MULTIMAP_TOOLS_HPP
-#define CPPTOOLS__UTILITY__MULTIMAP_TOOLS_HPP
+#ifndef TOOLS__UTILITY__MULTIMAP_TOOLS_HPP
+#define TOOLS__UTILITY__MULTIMAP_TOOLS_HPP
 
 #include <map>
 #include <unordered_map>
 #include <utility>
 
-namespace cpptools
+namespace tools
 {
 
 template<template<typename, typename, typename, typename, typename> typename T, typename Key, typename Val, typename Hash, typename Pred, typename Alloc>
@@ -22,6 +22,6 @@ bool mapContainsPair(const T<Key, Val, Hash, Pred, Alloc>& map, const std::pair<
     return false;
 }
 
-} // namespace cpptools
+} // namespace tools
 
-#endif//CPPTOOLS__UTILITY__MULTIMAP_TOOLS_HPP
+#endif//TOOLS__UTILITY__MULTIMAP_TOOLS_HPP

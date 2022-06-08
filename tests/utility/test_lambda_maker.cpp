@@ -4,11 +4,11 @@
 #include <algorithm>
 #include <functional>
 
-#include <cpptools/lambda_maker.hpp>
+#include <tools/lambda_maker.hpp>
 
 #define TAGS "[tools][lambda_maker]"
 
-namespace CppTools
+namespace tools
 {
 namespace LambdaMaker
 {
@@ -62,4 +62,4 @@ namespace LambdaMaker
         REQUIRE(result == expected);
     }
 } // namespace LambdaMaker
-} // namespace CppTools
+} // namespace tools

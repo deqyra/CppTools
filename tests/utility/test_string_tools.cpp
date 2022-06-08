@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include <cpptools/string_tools.hpp>
+#include <tools/string_tools.hpp>
 
 #define TAGS "[string][tools]"
 
-namespace CppTools
+namespace tools
 {
 namespace String
 {
@@ -323,4 +323,4 @@ TEST_CASE("stripCR", TAGS)
 }
 
 } // namespace String
-} // namespace CppTools
+} // namespace tools

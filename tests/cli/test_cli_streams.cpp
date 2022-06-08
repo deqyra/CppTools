@@ -3,11 +3,11 @@
 #include <iostream>
 #include <fstream>
 
-#include <cpptools/cli/cli_streams.hpp>
+#include <tools/cli/cli_streams.hpp>
 
 #define TAGS "[cli][cli_streams]"
 
-namespace CppTools
+namespace tools
 {
 
 TEST_CASE("CLI stream wrapper", TAGS)
@@ -21,4 +21,4 @@ TEST_CASE("CLI stream wrapper", TAGS)
     REQUIRE(streams.err().rdbuf() == std::cerr.rdbuf());
 }
 
-} // namespace CppTools
+} // namespace tools
