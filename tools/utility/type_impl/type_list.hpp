@@ -1,7 +1,7 @@
-#ifndef TOOLS__UTILITY__TYPE_TRAITS_IMPL__TYPE_LIST_HPP
-#define TOOLS__UTILITY__TYPE_TRAITS_IMPL__TYPE_LIST_HPP
+#ifndef TOOLS__UTILITY__TYPE_IMPL__TYPE_LIST_HPP
+#define TOOLS__UTILITY__TYPE_IMPL__TYPE_LIST_HPP
 
-namespace type_utils
+namespace tools::type
 {
 
 /////////////////////////
@@ -44,7 +44,7 @@ struct make_type_list<>
     using type = type_list<>;
 };
 
-// Specialisation for combining 2 type_lists
+// Specialisation combining 2 type_lists
 template<typename... Head, typename... Tail>
 struct make_type_list<
     type_list<Head...>,
@@ -54,26 +54,20 @@ struct make_type_list<
     using type = type_list<Head..., Tail...>;
 };
 
-// Specialisation for combining a type_list with a list of the rest
+// Specialisation combining a type_list with a list of the rest
 template<typename... Head, typename... Tail>
 struct make_type_list<type_list<Head...>, Tail...>
 {
-    using type = typename make_type_list<
-        type_list<Head...>,
-        typename make_type_list<Tail...>::type
-    >::type;
+    using type = type_list<Head..., Tail...>;
 };
 
-// Specialisation for combining a regular type with a list of the rest
+// Specialisation combining a regular type with a list of the rest
 template<typename Head, typename... Tail>
 struct make_type_list<Head, Tail...>
 {
-    using type = typename make_type_list<
-        type_list<Head>,
-        typename make_type_list<Tail...>::type
-    >::type;
+    using type = type_list<Head, Tail...>;
 };
 
-} // namespace type_utils
+} // namespace tools::type
 
-#endif//TOOLS__UTILITY__TYPE_TRAITS_IMPL__TYPE_LIST_HPP
+#endif//TOOLS__UTILITY__TYPE_IMPL__TYPE_LIST_HPP

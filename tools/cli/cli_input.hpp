@@ -5,12 +5,9 @@
 #include <string>
 
 #include "cli_streams.hpp"
-#include "../string_tools.hpp"
+#include "../utility/string.hpp"
 
-namespace tools
-{
-
-namespace CLIInput
+namespace tools::CLIInput
 {
     // Default streams to be used
     inline static CLIStreams defaultStreams = CLIStreams(std::cin, std::cout, std::cerr);
@@ -118,7 +115,7 @@ namespace CLIInput
         // Get input.
         std::getline(streams.in(), input);
         // Take care of terminal-induced bullcrap.
-        StringTools::popCR(input);
+        string::pop_cr(input);
         // Type-aware parsing of the input.
         return parseString<T>(input);
     }
@@ -136,7 +133,7 @@ namespace CLIInput
     template<>
     int parseString(const std::string& input)
     {
-        if (!String::stringIsNum(input))
+        if (!string::is_integer(input))
         {
             throw std::invalid_argument("parseString<int>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
         }
@@ -180,8 +177,6 @@ namespace CLIInput
     {
         return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
     }
-} // namespace CLIInput
-
-} // namespace tools
+} // namespace tools::CLIInput
 
 #endif//TOOLS__CLI__CLI_INPUT

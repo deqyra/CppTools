@@ -8,7 +8,7 @@
 #include "cli_streams.hpp"
 #include "cli_command.hpp"
 #include "cli_input.hpp"
-#include "../string_tools.hpp"
+#include "../utility/string.hpp"
 
 namespace tools
 {

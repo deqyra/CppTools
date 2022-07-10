@@ -3,7 +3,7 @@
 #include "cli_test_classes.hpp"
 #include <tools/cli/cli_menu.hpp>
 #include <tools/cli/cli_streams.hpp>
-#include <tools/string_tools.hpp>
+#include <tools/utility/string.hpp>
 
 #include <string>
 #include <fstream>
@@ -27,7 +27,7 @@ TEST_CASE("CommandSequence end-to-end", TAGS)
 
     commandSequence.run(state, s);
 
-    std::string expected = String::readFileIntoString("resources/tests/tools/cli/menu_output.txt");
+    std::string expected = string::from_file("resources/tests/tools/cli/menu_output.txt");
     expected += "TestCLICommand1 was run.\n"
                 "TestCLICommand2 was run.\n";
 

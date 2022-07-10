@@ -1,16 +1,33 @@
 #ifndef TOOLS__UTILITY__HASH_COMBINE_HPP
 #define TOOLS__UTILITY__HASH_COMBINE_HPP
 
-#include <functional>
-
 namespace tools
 {
 
-template <class T>
+struct hash_combine_params
+{
+    size_t initial_value;
+    size_t left_shift;
+    size_t right_shift;
+};
+
+constexpr hash_combine_params default_hash_combine_params = {
+    .initial_value = 0x9e3779b9,
+    .left_shift = 6;
+    .right_shift = 2;
+};
+
+template <
+    class T,
+    hash_combine_params params = default_hash_combine_params
+>
 inline void hash_combine(std::size_t& s, const T& v)
 {
     std::hash<T> h;
-    s^= h(v) + 0x9e3779b9 + (s<< 6) + (s>> 2);
+    s  ^= h(v)
+        + params.initial_value
+        + (s << params.left_shift)
+        + (s >> params.right_shift);
 }
 
 } // namespace tools
