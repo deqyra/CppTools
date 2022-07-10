@@ -1,11 +1,11 @@
 #include "instance_counter.hpp"
 
-namespace type_utils
+namespace tools::type
 {
 
 void print_instance_count(std::ostream& out)
 {
-    for (const auto& [k, counts] : _instanceCount)
+    for (const auto& [k, counts] : _instance_count)
     {
         out << "Type \"" << k << "\":\n"
             << counts.first << " instances created, " << counts.second << " alive\n";
@@ -13,4 +13,4 @@ void print_instance_count(std::ostream& out)
     out << std::endl;
 }
 
-}
+} // namespace tools::type

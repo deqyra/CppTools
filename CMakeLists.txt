@@ -82,48 +82,47 @@ project( "CppTools"
 set(CPPTOOLS_LIB_NAME "cpptools")
 
 set( CPPTOOLS_SOURCE_FILES
+    tools/cli/cli_command.hpp
+    tools/cli/cli_input.hpp
+    tools/cli/cli_menu.hpp
     tools/cli/cli_streams.cpp
     tools/cli/cli_streams.hpp
-    tools/cli/cli_input.hpp
-    tools/cli/cli_command.hpp
-    tools/cli/cli_menu.hpp
     tools/cli/command_sequence.hpp
     tools/cli/menu_command.hpp
-    tools/container/tree.hpp
     tools/container/tree_node.hpp
-    tools/exceptions/make_basic_exception.hpp
+    tools/container/tree.hpp
+    tools/exceptions/bad_syntax_error.cpp 
+    tools/exceptions/bad_syntax_error.hpp 
     tools/exceptions/file_not_found_error.cpp
     tools/exceptions/file_not_found_error.hpp 
     tools/exceptions/index_out_of_bounds_error.cpp
     tools/exceptions/index_out_of_bounds_error.hpp
+    tools/exceptions/make_basic_exception.hpp
     tools/exceptions/range_bounds_exceeded_error.cpp
     tools/exceptions/range_bounds_exceeded_error.hpp 
     tools/exceptions/unmatched_array_size_error.cpp
     tools/exceptions/unmatched_array_size_error.hpp
-    tools/exceptions/bad_syntax_error.cpp 
-    tools/exceptions/bad_syntax_error.hpp 
+    tools/math/sine_generator.hpp
+    tools/micro_shell/micro_shell_codes.hpp
+    tools/micro_shell/micro_shell_command.hpp
+    tools/micro_shell/micro_shell.hpp
     tools/oo/notifier.hpp
     tools/oo/interfaces/event_receiver.hpp
     tools/oo/interfaces/action_event_receiver.hpp
-    tools/math/sine_generator.hpp
-    tools/micro_shell/micro_shell.hpp
-    tools/micro_shell/micro_shell_codes.hpp
-    tools/micro_shell/micro_shell_command.hpp
     tools/thread/worker.cpp
     tools/thread/worker.hpp
     tools/thread/interfaces/interruptible.hpp
+    tools/utility/bitwise_enum_ops.hpp
     tools/utility/hash_combine.hpp
-    tools/utility/iterable_tools.hpp
-    tools/utility/lambda_maker.hpp
-    tools/utility/map_tools.hpp
-    tools/utility/string_tools.cpp
-    tools/utility/string_tools.hpp
-    tools/utility/type_utils.hpp
-    tools/utility/type_utils_impl/container_traits.hpp
-    tools/utility/type_utils_impl/container_traits_detail.hpp
-    tools/utility/type_utils_impl/instance_counter.hpp
-    tools/utility/type_utils_impl/instance_counter.cpp
-    tools/utility/type_utils_impl/type_list.hpp
+    tools/utility/map.hpp
+    tools/utility/predicate.hpp
+    tools/utility/ranges.hpp
+    tools/utility/string.cpp
+    tools/utility/string.hpp
+    tools/utility/type.hpp
+    tools/utility/type_impl/instance_counter.hpp
+    tools/utility/type_impl/instance_counter.cpp
+    tools/utility/type_impl/type_list.hpp
 )
 
 ###############################################################################

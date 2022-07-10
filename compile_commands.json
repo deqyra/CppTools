@@ -1,0 +1,47 @@
+[
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\cli\\cli_streams.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\cli\\cli_streams.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/cli/cli_streams.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\bad_syntax_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\bad_syntax_error.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/bad_syntax_error.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\file_not_found_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\file_not_found_error.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/file_not_found_error.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\index_out_of_bounds_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\index_out_of_bounds_error.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/index_out_of_bounds_error.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\range_bounds_exceeded_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\range_bounds_exceeded_error.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/range_bounds_exceeded_error.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\unmatched_array_size_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\unmatched_array_size_error.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/unmatched_array_size_error.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\thread\\worker.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\thread\\worker.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/thread/worker.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\utility\\string.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\utility\\string.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/utility/string.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\utility\\type_impl\\instance_counter.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\utility\\type_impl\\instance_counter.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/utility/type_impl/instance_counter.cpp"
+}
+]

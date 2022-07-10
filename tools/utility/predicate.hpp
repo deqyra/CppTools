@@ -1,15 +1,16 @@
-#ifndef TOOLS__UTILITY__LAMBDA_MAKER_HPP
-#define TOOLS__UTILITY__LAMBDA_MAKER_HPP
+#ifndef TOOLS__UTILITY__PREDICATE_HPP
+#define TOOLS__UTILITY__PREDICATE_HPP
 
 #include <functional>
 
-namespace tools
-{
-namespace LambdaMaker
+namespace tools::predicate
 {
 
 template<typename T>
-std::function<bool(const T&)> greater_than(const T& value)
+using pred_t = bool(const T&);
+
+template<typename T>
+pred_t<T> greater_than(const T& value)
 {
     return [value] (const T& element) -> bool
     {
@@ -18,7 +19,7 @@ std::function<bool(const T&)> greater_than(const T& value)
 }
 
 template<typename T>
-std::function<bool(const T&)> greater_equal(const T& value)
+pred_t<T> greater_equal(const T& value)
 {
     return [value] (const T& element) -> bool
     {
@@ -27,7 +28,7 @@ std::function<bool(const T&)> greater_equal(const T& value)
 }
 
 template<typename T>
-std::function<bool(const T&)> less_than(const T& value)
+pred_t<T> less_than(const T& value)
 {
     return [value] (const T& element) -> bool
     {
@@ -36,7 +37,7 @@ std::function<bool(const T&)> less_than(const T& value)
 }
 
 template<typename T>
-std::function<bool(const T&)> less_equal(const T& value)
+pred_t<T> less_equal(const T& value)
 {
     return [value] (const T& element) -> bool
     {
@@ -45,7 +46,7 @@ std::function<bool(const T&)> less_equal(const T& value)
 }
 
 template<typename T>
-std::function<bool(const T&)> between(const T& low, const T& high)
+pred_t<T> between(const T& low, const T& high)
 {
     return [low, high] (const T& element) -> bool
     {
@@ -54,7 +55,7 @@ std::function<bool(const T&)> between(const T& low, const T& high)
 }
 
 template<typename T>
-std::function<bool(const T&)> strictly_between(const T& low, const T& high)
+pred_t<T> strictly_between(const T& low, const T& high)
 {
     return [low, high] (const T& element) -> bool
     {
@@ -62,7 +63,6 @@ std::function<bool(const T&)> strictly_between(const T& low, const T& high)
     };
 }
 
-} // namespace LambdaMaker
-} // namespace tools
+} // namespace tools::predicate
 
-#endif//TOOLS__UTILITY__LAMBDA_MAKER_HPP
+#endif//TOOLS__UTILITY__PREDICATE_HPP
