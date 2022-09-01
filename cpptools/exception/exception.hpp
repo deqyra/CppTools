@@ -9,7 +9,7 @@
 
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 /// Exception model in cpptools:
@@ -23,8 +23,8 @@ namespace cpptools::exception
 ///     - The value of T::error_category is a literal that represents the error category which T is meant for
 ///     - T provides a public enum type named "error_code"
 ///     - The literals in T::error_code describe error cases in the category of errors that T represents
-///     - A specialization of cpptools::exception::default_error_message for T::error_code is visible alongside T
-///     - A specialization of cpptools::exception::to_string for T::error_code is visible alongside T
+///     - A specialization of tools::exception::default_error_message for T::error_code is visible alongside T
+///     - A specialization of tools::exception::to_string for T::error_code is visible alongside T
 /// - Every exception class meant to be throwable must be a specialization of the `exception` template, which:
 ///     - uses CRTP to inherit from a type T as described above
 ///     - is also template-parameterized on a specific error code literal in T::error_code
@@ -91,7 +91,7 @@ public:
 
     std::string_view error_code_to_string() const override
     {
-        return cpptools::exception::to_string(code);
+        return tools::exception::to_string(code);
     }
 
     // Overrides from base_exception
@@ -156,7 +156,7 @@ constexpr std::string_view to_string<unknown_exception::error_code>(const unknow
 
 using unknown_error = exception<unknown_exception, unknown_exception::error_code::unknown>;
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #define CPPTOOLS_THROW(exception_type, ...) throw exception_type(__FUNCTION__, __LINE__,  ##__VA_ARGS__ )
 

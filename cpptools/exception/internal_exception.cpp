@@ -1,6 +1,6 @@
 #include "internal_exception.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 template<>

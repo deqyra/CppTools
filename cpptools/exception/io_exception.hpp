@@ -6,7 +6,7 @@
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 class io_exception : public base_exception
@@ -45,6 +45,6 @@ namespace io
     using invalid_output_stream_error = exception<io_exception, e::invalid_output_stream>;
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #endif//CPPTOOLS__EXCEPTION__IO_EXCEPTION_HPP

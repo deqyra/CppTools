@@ -1,12 +1,12 @@
-#ifndef TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP
-#define TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP
+#ifndef TESTS__CPPTOOLS__CLI__CLI_TEST_CLASSES_HPP
+#define TESTS__CPPTOOLS__CLI__CLI_TEST_CLASSES_HPP
 
-#include <tools/cli/cli_menu.hpp>
-#include <tools/cli/cli_command.hpp>
-#include <tools/cli/cli_streams.hpp>
-#include <tools/cli/cli_input.hpp>
-#include <tools/cli/menu_command.hpp>
-#include <tools/cli/command_sequence.hpp>
+#include <cpptools/cli/cli_menu.hpp>
+#include <cpptools/cli/cli_command.hpp>
+#include <cpptools/cli/cli_streams.hpp>
+#include <cpptools/cli/cli_input.hpp>
+#include <cpptools/cli/menu_command.hpp>
+#include <cpptools/cli/command_sequence.hpp>
 
 namespace tools
 {
@@ -60,4 +60,4 @@ TestCLICommandSequence makeBasicTestCommandSequence();
 
 } // namespace tools
 
-#endif//TESTS__TOOLS__CLI__CLI_TEST_CLASSES_HPP
+#endif//TESTS__CPPTOOLS__CLI__CLI_TEST_CLASSES_HPP

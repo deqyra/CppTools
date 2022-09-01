@@ -10,7 +10,7 @@
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 class iterator_exception : public base_exception
@@ -62,6 +62,6 @@ namespace iterator
     using operation_while_invalid_error = exception<iterator_exception, e::operation_while_invalid>;
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #endif//CPPTOOLS__EXCEPTION__ITERATOR_EXCEPTION_HPP

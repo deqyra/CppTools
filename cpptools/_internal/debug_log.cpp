@@ -3,7 +3,7 @@
 #include <iostream>
 #include <ostream>
 
-namespace cpptools::internal::debug_log
+namespace tools::internal::debug_log
 {
 
 namespace

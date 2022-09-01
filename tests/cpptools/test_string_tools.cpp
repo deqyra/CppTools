@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include <tools/string_tools.hpp>
+#include <cpptools/utility/string_tools.hpp>
 
-#define TAGS "[string][tools]"
+#define TAGS "[string]"
 
 namespace tools
 {
@@ -271,15 +271,15 @@ TEMPLATE_TEST_CASE("Vectors into custom string format", TAGS, int, char, std::st
         // No surrounding characters
         std::string s;
         s += std::to_string(val) + " " + std::to_string(val);
-        REQUIRE(StringTools::iterableToString(vec) == s);
+        REQUIRE(String::iterableToString(vec) == s);
 
         // Single surrounding characters
         s = "<[" + std::to_string(val) + "]-[" + std::to_string(val) + "]>";
-        REQUIRE(StringTools::iterableToString(vec, "-", "<", ">", "[", "]") == s);
+        REQUIRE(String::iterableToString(vec, "-", "<", ">", "[", "]") == s);
 
         // Surrounding strings
         s = "<~(['" + std::to_string(val) + "'] # ['" + std::to_string(val) + "'])~>";
-        REQUIRE(StringTools::iterableToString(vec, " # ", "<~(", ")~>", "['", "']") == s);
+        REQUIRE(String::iterableToString(vec, " # ", "<~(", ")~>", "['", "']") == s);
     }
 
     SECTION("Empty vector")
@@ -289,7 +289,7 @@ TEMPLATE_TEST_CASE("Vectors into custom string format", TAGS, int, char, std::st
         // Surrounding strings
         std::string s = "<~()~>";
 
-        REQUIRE(StringTools::iterableToString(vec, " # ", "<~(", ")~>", "['", "']") == s);
+        REQUIRE(String::iterableToString(vec, " # ", "<~(", ")~>", "['", "']") == s);
     }
 }
 

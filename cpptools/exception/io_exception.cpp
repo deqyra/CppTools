@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 io_exception::io_exception(const std::string_view& stream_name) :

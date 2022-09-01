@@ -1,6 +1,6 @@
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 std::string_view to_string(error_category cat)
@@ -18,4 +18,4 @@ std::string_view to_string(error_category cat)
     }
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception

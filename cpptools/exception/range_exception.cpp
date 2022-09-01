@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 range_exception::range_exception(std::pair<size_t, size_t> expected_range, size_t value) :

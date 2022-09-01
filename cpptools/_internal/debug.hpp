@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include "../exception/exception.hpp"
+#include <cpptools/exception/exception.hpp>
 
 #include "debug_log.hpp"
 
@@ -37,7 +37,7 @@
 #       define CPPTOOLS_DEBUG_ASSERT(cond, channel, level, message, ex_t, ...) \
             if (!(cond))                                                       \
             {                                                                  \
-                using namespace cpptools::internal::debug_log;                 \
+                using namespace tools::internal::debug_log;                 \
                 log(level, channel, message);                                  \
             }
 #   elif CPPTOOLS_DEBUG_POLICY == CPPTOOLS_DEBUG_POLICY_THROW
@@ -50,7 +50,7 @@
 #       define CPPTOOLS_DEBUG_ASSERT(cond, channel, level, message, ex_t, ...) \
             if (!(cond))                                                       \
             {                                                                  \
-                using namespace cpptools::internal::debug_log;                 \
+                using namespace tools::internal::debug_log;                 \
                 log(level, channel, message);                                  \
                 CPPTOOLS_THROW(ex_t, ##__VA_ARGS__).with_message(message);     \
             }

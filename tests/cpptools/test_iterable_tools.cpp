@@ -1,8 +1,8 @@
 #include <catch2/catch2.hpp>
 
-#include <tools/iterable_tools.hpp>
+#include <cpptools/utility/iterable_tools.hpp>
 
-#define TAGS "[iterable][tools]"
+#define TAGS "[iterable]"
 
 namespace tools
 {
@@ -68,4 +68,5 @@ TEST_CASE("Elements can be stripped from a vector", TAGS)
 }
 
 } // namespace Iterable
+<<<<<<< HEAD:tests/utility/test_iterable_tools.cpp
 } // namespace tools

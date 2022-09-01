@@ -6,7 +6,7 @@
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 class range_exception : public base_exception
@@ -42,6 +42,6 @@ namespace range
     using range_bounds_exceeded_error = exception<range_exception, e::range_bounds_exceeded>;
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #endif//CPPTOOLS__EXCEPTION__RANGE_EXCEPTION_HPP

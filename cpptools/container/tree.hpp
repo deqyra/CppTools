@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-namespace cpptools
+namespace tools
 {
 
 enum class tree_traversal
@@ -1749,7 +1749,7 @@ void swap
     std::ranges::swap(lhs._value, rhs._value);
 }
 
-} // namespace cpptools
+} // namespace tools
 
 // TODO: equivalent reverse traversals of different types for iterator_bases
 // TODO: debug assertions

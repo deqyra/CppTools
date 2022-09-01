@@ -8,8 +8,8 @@
 
 #include "shell_test_classes.hpp"
 
-#include <tools/cli/cli_streams.hpp>
-#include <tools/string_tools.hpp>
+#include <cpptools/cli/cli_streams.hpp>
+#include <cpptools/utility/string_tools.hpp>
 
 #define TAGS "[micro_shell]"
 
