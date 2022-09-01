@@ -1,11 +1,11 @@
-#ifndef TESTS__TOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP
-#define TESTS__TOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP
+#ifndef TESTS__CPPTOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP
+#define TESTS__CPPTOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP
 
-#include <tools/cli/cli_streams.hpp>
-#include <tools/cli/cli_input.hpp>
-#include <tools/micro_shell/micro_shell.hpp>
-#include <tools/micro_shell/micro_shell_command.hpp>
-#include <tools/micro_shell/micro_shell_codes.hpp>
+#include <cpptools/cli/cli_streams.hpp>
+#include <cpptools/cli/cli_input.hpp>
+#include <cpptools/micro_shell/micro_shell.hpp>
+#include <cpptools/micro_shell/micro_shell_command.hpp>
+#include <cpptools/micro_shell/micro_shell_codes.hpp>
 
 namespace tools
 {
@@ -60,4 +60,4 @@ class TestShellExitCommand : public TestShellCommand
 
 } // namespace tools
 
-#endif//TESTS__TOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP
+#endif//TESTS__CPPTOOLS__MICRO_SHELL__SHELL_TEST_CLASSES_HPP

@@ -9,7 +9,7 @@
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 class parameter_exception : public base_exception
@@ -60,6 +60,6 @@ namespace parameter
     using lossy_cast_error = exception<parameter_exception, e::lossy_cast>;
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #endif//CPPTOOLS__EXCEPTION__PARAMETER_EXCEPTION_HPP

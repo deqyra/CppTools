@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 parameter_exception::parameter_exception(const std::string_view& parameter_name, std::string parameter_value) :

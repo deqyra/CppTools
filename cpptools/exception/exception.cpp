@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 std::string base_exception::to_string() const
@@ -47,4 +47,4 @@ constexpr std::string_view to_string<unknown_exception::error_code>(const unknow
     }
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception

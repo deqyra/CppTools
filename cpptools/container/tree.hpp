@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-namespace cpptools
+namespace tools
 {
 
 enum class tree_traversal

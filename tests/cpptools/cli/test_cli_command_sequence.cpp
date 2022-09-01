@@ -1,9 +1,10 @@
 #include <catch2/catch2.hpp>
 
 #include "cli_test_classes.hpp"
-#include <tools/cli/cli_menu.hpp>
-#include <tools/cli/cli_streams.hpp>
-#include <tools/utility/string.hpp>
+
+#include <cpptools/cli/cli_menu.hpp>
+#include <cpptools/cli/cli_streams.hpp>
+#include <cpptools/utility/string_tools.hpp>
 
 #include <string>
 #include <fstream>

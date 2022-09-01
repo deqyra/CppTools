@@ -6,7 +6,7 @@
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 class internal_exception : public base_exception
@@ -42,6 +42,6 @@ namespace internal
     using unexpected_error = exception<internal_exception, e::unexpected>;
 }
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #endif//CPPTOOLS__EXCEPTION__INTERNAL_EXCEPTION_HPP

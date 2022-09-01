@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 template<>

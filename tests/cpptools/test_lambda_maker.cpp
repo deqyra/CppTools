@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <functional>
 
-#include <tools/lambda_maker.hpp>
+#include <cpptools/utility/lambda_maker.hpp>
 
-#define TAGS "[tools][lambda_maker]"
+#define TAGS "[lambda_maker]"
 
 namespace tools
 {

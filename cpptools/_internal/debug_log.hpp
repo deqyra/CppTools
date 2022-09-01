@@ -4,7 +4,7 @@
 #include <map>
 #include <string_view>
 
-namespace cpptools::internal::debug_log
+namespace tools::internal::debug_log
 {
 
 enum level : unsigned char
@@ -19,7 +19,7 @@ extern std::map<std::string_view, level> channel_levels;
 
 void log(level lv, std::string_view channel, std::string_view message);
 
-} // namespace cpptools::internal::debug_log
+} // namespace tools::internal::debug_log
 
 
 #endif//CPPTOOLS___INTERNAL__DEBUG_LOG_HPP

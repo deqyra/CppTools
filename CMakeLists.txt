@@ -82,47 +82,47 @@ project( "CppTools"
 set(CPPTOOLS_LIB_NAME "cpptools")
 
 set( CPPTOOLS_SOURCE_FILES
-    tools/cli/cli_command.hpp
-    tools/cli/cli_input.hpp
-    tools/cli/cli_menu.hpp
-    tools/cli/cli_streams.cpp
-    tools/cli/cli_streams.hpp
-    tools/cli/command_sequence.hpp
-    tools/cli/menu_command.hpp
-    tools/container/tree_node.hpp
-    tools/container/tree.hpp
-    tools/exceptions/bad_syntax_error.cpp 
-    tools/exceptions/bad_syntax_error.hpp 
-    tools/exceptions/file_not_found_error.cpp
-    tools/exceptions/file_not_found_error.hpp 
-    tools/exceptions/index_out_of_bounds_error.cpp
-    tools/exceptions/index_out_of_bounds_error.hpp
-    tools/exceptions/make_basic_exception.hpp
-    tools/exceptions/range_bounds_exceeded_error.cpp
-    tools/exceptions/range_bounds_exceeded_error.hpp 
-    tools/exceptions/unmatched_array_size_error.cpp
-    tools/exceptions/unmatched_array_size_error.hpp
-    tools/math/sine_generator.hpp
-    tools/micro_shell/micro_shell_codes.hpp
-    tools/micro_shell/micro_shell_command.hpp
-    tools/micro_shell/micro_shell.hpp
-    tools/oo/notifier.hpp
-    tools/oo/interfaces/event_receiver.hpp
-    tools/oo/interfaces/action_event_receiver.hpp
-    tools/thread/worker.cpp
-    tools/thread/worker.hpp
-    tools/thread/interfaces/interruptible.hpp
-    tools/utility/bitwise_enum_ops.hpp
-    tools/utility/hash_combine.hpp
-    tools/utility/map.hpp
-    tools/utility/predicate.hpp
-    tools/utility/ranges.hpp
-    tools/utility/string.cpp
-    tools/utility/string.hpp
-    tools/utility/type.hpp
-    tools/utility/type_impl/instance_counter.hpp
-    tools/utility/type_impl/instance_counter.cpp
-    tools/utility/type_impl/type_list.hpp
+    cpptools/cli/cli_streams.cpp
+    cpptools/cli/cli_streams.hpp
+    cpptools/cli/cli_input.hpp
+    cpptools/cli/cli_command.hpp
+    cpptools/cli/cli_menu.hpp
+    cpptools/cli/command_sequence.hpp
+    cpptools/cli/menu_command.hpp
+    cpptools/container/tree.hpp
+    cpptools/exceptions/make_basic_exception.hpp
+    cpptools/exceptions/file_not_found_error.cpp
+    cpptools/exceptions/file_not_found_error.hpp 
+    cpptools/exceptions/index_out_of_bounds_error.cpp
+    cpptools/exceptions/index_out_of_bounds_error.hpp
+    cpptools/exceptions/range_bounds_exceeded_error.cpp
+    cpptools/exceptions/range_bounds_exceeded_error.hpp 
+    cpptools/exceptions/unmatched_array_size_error.cpp
+    cpptools/exceptions/unmatched_array_size_error.hpp
+    cpptools/exceptions/bad_syntax_error.cpp 
+    cpptools/exceptions/bad_syntax_error.hpp 
+    cpptools/oo/notifier.hpp
+    cpptools/oo/interfaces/event_receiver.hpp
+    cpptools/oo/interfaces/action_event_receiver.hpp
+    cpptools/math/sine_generator.hpp
+    cpptools/micro_shell/micro_shell.hpp
+    cpptools/micro_shell/micro_shell_codes.hpp
+    cpptools/micro_shell/micro_shell_command.hpp
+    cpptools/thread/worker.cpp
+    cpptools/thread/worker.hpp
+    cpptools/thread/interfaces/interruptible.hpp
+    cpptools/utility/hash_combine.hpp
+    cpptools/utility/iterable_tools.hpp
+    cpptools/utility/lambda_maker.hpp
+    cpptools/utility/map_tools.hpp
+    cpptools/utility/string_tools.cpp
+    cpptools/utility/string_tools.hpp
+    cpptools/utility/type_utils.hpp
+    cpptools/utility/type_utils_impl/container_traits.hpp
+    cpptools/utility/type_utils_impl/container_traits_detail.hpp
+    cpptools/utility/type_utils_impl/instance_counter.hpp
+    cpptools/utility/type_utils_impl/instance_counter.cpp
+    cpptools/utility/type_utils_impl/type_list.hpp
 )
 
 ###############################################################################
@@ -162,34 +162,45 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp_${CPPTOOLS_LIB_NAME}_headers.cmake
 )
 
+target_include_directories(
+    "${CPPTOOLS_LIB_NAME}" PUBLIC
+    "${CMAKE_SOURCE_DIR}"
+    "${CMAKE_SOURCE_DIR}/external/include"
+)
+
 # Build and run tests
-if( !CPPTOOLS_SKIP_TESTS )
+if(NOT CPPTOOLS_SKIP_TESTS)
     enable_testing( )
-    add_executable( "${CPPTOOLS_LIB_NAME}_build_tests"
+    add_executable( "${CPPTOOLS_LIB_NAME}_tests"
         tests/catch2_custom_generators.hpp
         tests/debugging_tools.cpp
         tests/debugging_tools.hpp
         tests/main.cpp
-        tests/tools/test_string_tools.cpp
-        tests/tools/test_iterable_tools.cpp
-        tests/tools/test_lambda_maker.cpp
-        tests/tools/cli/cli_test_classes.cpp
-        tests/tools/cli/cli_test_classes.hpp
-        tests/tools/cli/test_cli_command_sequence.cpp
-        tests/tools/cli/test_cli_input.cpp
-        tests/tools/cli/test_cli_menu.cpp
-        tests/tools/cli/test_cli_menu_command.cpp
-        tests/tools/cli/test_cli_streams.cpp
-        tests/tools/micro_shell/shell_test_classes.hpp
-        tests/tools/micro_shell/test_micro_shell.cpp
+        tests/cpptools/test_string_tools.cpp
+        tests/cpptools/test_iterable_tools.cpp
+        tests/cpptools/test_lambda_maker.cpp
+        tests/cpptools/container/test_tree.cpp
+        tests/cpptools/cli/cli_test_classes.cpp
+        tests/cpptools/cli/cli_test_classes.hpp
+        tests/cpptools/cli/test_cli_command_sequence.cpp
+        tests/cpptools/cli/test_cli_input.cpp
+        tests/cpptools/cli/test_cli_menu.cpp
+        tests/cpptools/cli/test_cli_menu_command.cpp
+        tests/cpptools/cli/test_cli_streams.cpp
+        tests/cpptools/micro_shell/shell_test_classes.hpp
+        tests/cpptools/micro_shell/test_micro_shell.cpp
     )
 
-    target_include_directories( "${CPPTOOLS_LIB_NAME}_build_tests" PUBLIC "${CMAKE_SOURCE_DIR}" )
-    target_link_libraries( "${CPPTOOLS_LIB_NAME}_build_tests" "${CPPTOOLS_LIB_NAME}" )
+    target_include_directories(
+        "${CPPTOOLS_LIB_NAME}_tests" PUBLIC
+        "${CMAKE_SOURCE_DIR}"
+        "${CMAKE_SOURCE_DIR}/external/include"
+    )
+    target_link_libraries( "${CPPTOOLS_LIB_NAME}_tests" "${CPPTOOLS_LIB_NAME}" )
     
     # Copy resource folder
     add_custom_command(
-        TARGET "${CPPTOOLS_LIB_NAME}_build_tests"
+        TARGET "${CPPTOOLS_LIB_NAME}_tests"
         COMMENT "Copying resource folder"
         PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources
@@ -197,7 +208,7 @@ if( !CPPTOOLS_SKIP_TESTS )
 
     add_test(
         NAME "${CPPTOOLS_LIB_NAME}_run_tests"
-        COMMAND "${CPPTOOLS_LIB_NAME}_build_tests"
+        COMMAND "${CPPTOOLS_LIB_NAME}_tests"
     )
 endif(  )
 

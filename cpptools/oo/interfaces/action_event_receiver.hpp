@@ -5,7 +5,7 @@
 
 #include <cpptools/utility/type_utils.hpp>
 
-namespace cpptools
+namespace tools
 {
 
 /// @brief Interface for an object able to receive and process events related to
@@ -34,6 +34,6 @@ public:
 template<typename T>
 using ActionEventReceiverPtr = std::unique_ptr<ActionEventReceiver<T>>;
 
-} // namespace cpptools
+} // namespace tools
 
 #endif//CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER

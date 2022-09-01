@@ -1,7 +1,7 @@
 #ifndef CPPTOOLS__UTILITY__TYPE_TRAITS_IMPL__TYPE_LIST_HPP
 #define CPPTOOLS__UTILITY__TYPE_TRAITS_IMPL__TYPE_LIST_HPP
 
-namespace cpptools::type_utils
+namespace tools::type_utils
 {
 
 /////////////////////////
@@ -75,6 +75,6 @@ struct make_type_list<Head, Tail...>
     >::type;
 };
 
-} // namespace cpptools::type_utils
+} // namespace tools::type_utils
 
 #endif//CPPTOOLS__UTILITY__TYPE_TRAITS_IMPL__TYPE_LIST_HPP

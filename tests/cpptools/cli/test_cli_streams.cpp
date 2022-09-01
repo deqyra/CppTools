@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <tools/cli/cli_streams.hpp>
+#include <cpptools/cli/cli_streams.hpp>
 
 #define TAGS "[cli][cli_streams]"
 

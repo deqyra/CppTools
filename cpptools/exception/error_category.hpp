@@ -3,7 +3,7 @@
 
 #include <string_view>
 
-namespace cpptools::exception
+namespace tools::exception
 {
 
 enum class error_category
@@ -18,6 +18,6 @@ enum class error_category
 
 std::string_view error_category_name(error_category cat);
 
-} // namespace cpptools::exception
+} // namespace tools::exception
 
 #endif//CPPTOOLS__EXCEPTION__EXCEPTION_CATEGORY_HPP
