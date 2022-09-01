@@ -10,8 +10,9 @@
 #include "micro_shell_codes.hpp"
 #include "../cli/cli_streams.hpp"
 #include "../cli/cli_input.hpp"
-#include "../string_tools.hpp"
-#include "../exceptions/index_out_of_bounds_error.hpp"
+#include "../utility/string_tools.hpp"
+#include "../exception/range_exception.hpp"
+#include "../exception/parameter_exception.hpp"
 
 namespace tools
 {
@@ -86,8 +87,10 @@ void MicroShell<CustomState>::addCommand(MicroShell<CustomState>::CommandPtr com
     // Do not accept several commands with the same name, nor any command named 'exit' or 'help'.
     if (hasCommand(command->name()) || command->name() == EXIT_KEYWORD || command->name() == HELP_KEYWORD)
     {
-        std::string s = "MicroShell<" + std::to_string(typeid(CustomState).name()) + ">: Command \"" + command->name() + "\" already exists in the shell and cannot be added.";
-        throw std::invalid_argument(s.c_str());
+        CPPTOOLS_THROW(
+            exception::parameter::invalid_value_error,
+            "command", command
+        );
     }
 
     _chain.push_back(command);
@@ -102,8 +105,10 @@ void MicroShell<CustomState>::removeCommand(const std::string& name)
     // Throw if not found.
     if (index == -1)
     {
-        std::string s = "MicroShell<" + std::to_string(typeid(CustomState).name()) + ">: Command \"" + name + "\" is not part of the shell and cannot be removed.";
-        throw std::invalid_argument(s.c_str());
+        CPPTOOLS_THROW(
+            exception::parameter::invalid_value_error,
+            "name", name
+        );
     }
 
     // Remove command.
@@ -116,8 +121,10 @@ void MicroShell<CustomState>::removeCommand(size_t index)
     // Try to erase the command at provided index.
     if (_chain.begin() + index >= _chain.end())
     {
-        std::string s = "MicroShell<" + std::to_string(typeid(CustomState).name()) + ">: Index " + std::to_string(index) + " is out of bounds, cannot remove command.";
-        throw IndexOutOfBoundsError(s);
+        CPPTOOLS_THROW(
+            exception::range::index_out_of_bounds_error,
+            {0, _chain.size() - 1}, index
+        );
     }
 
     _chain.erase(_chain.begin() + index);
@@ -158,8 +165,10 @@ typename MicroShell<CustomState>::CommandPtr MicroShell<CustomState>::getCommand
     // Try to fetch the command at provided index.
     if (index >= _chain.size())
     {
-        std::string s = "MicroShell<" + std::to_string(typeid(CustomState).name()) + ">: Index " + std::to_string(index) + " is out of bounds, cannot fetch command.";
-        throw IndexOutOfBoundsError(s);
+        CPPTOOLS_THROW(
+            exception::range::index_out_of_bounds_error,
+            {0, _chain.size() - 1}, index
+        );
     }
 
     return _chain.at(index);
@@ -172,8 +181,10 @@ typename MicroShell<CustomState>::CommandPtr MicroShell<CustomState>::getCommand
     size_t index = indexOf(name);
     if (index == -1)
     {
-        std::string s = "MicroShell<" + std::to_string(typeid(CustomState).name()) + ">: Command with name " + name + " is not part of the shell and cannot be fetched.";
-        throw IndexOutOfBoundsError(s);
+        CPPTOOLS_THROW(
+            exception::parameter::invalid_value_error,
+            "name", name
+        );
     }
 
     return getCommand(index);
@@ -203,7 +214,7 @@ template<typename CustomState>
 int MicroShell<CustomState>::processInput(const std::string& input, CustomState& state, CLIStreams& streams)
 {
     // Tokenise the string on spaces to extract the command and its arguments.
-    std::vector<std::string> tokens = StringTools::tokenizeString(input, ' ', true);
+    std::vector<std::string> tokens = String::tokenizeString(input, ' ', true);
     if (!tokens.size()) return SHELL_COMMAND_NOT_FOUND;
 
     // If help was requested, respond accordingly.

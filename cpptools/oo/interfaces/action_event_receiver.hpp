@@ -1,11 +1,11 @@
-#ifndef TOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
-#define TOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
+#ifndef CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
+#define CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
 
 #include <memory>
 
-#include <tools/utility/type_utils.hpp>
+#include <cpptools/utility/type_utils.hpp>
 
-namespace tools
+namespace cpptools
 {
 
 /// @brief Interface for an object able to receive and process events related to
@@ -34,6 +34,6 @@ public:
 template<typename T>
 using ActionEventReceiverPtr = std::unique_ptr<ActionEventReceiver<T>>;
 
-} // namespace tools
+} // namespace cpptools
 
-#endif//TOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
+#endif//CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
