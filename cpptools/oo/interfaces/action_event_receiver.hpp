@@ -13,26 +13,26 @@ namespace tools
 ///
 /// @tparam T Type of the action to be handled by the implementing class.
 template<typename T>
-class ActionEventReceiver
+class action_event_receiver
 {
 public:
-    using ActionType = T;
+    using action_type = T;
 
     /// @brief Start the processing for an action.
     ///
     /// @param action Object describing the action to start processing.
     /// @param args Arguments of the action to send along with the stop signal.
-    virtual void triggerAction(const T& action) = 0;
+    virtual void trigger_action(const T& action) = 0;
 
     /// @brief Stop the processing for an action.
     ///
     /// @param action Object describing the action to stop processing.
     /// @param args Arguments of the action to send along with the stop signal.
-    virtual void stopAction(const T& action) = 0;
+    virtual void stop_action(const T& action) = 0;
 };
 
 template<typename T>
-using ActionEventReceiverPtr = std::unique_ptr<ActionEventReceiver<T>>;
+using action_event_receiver_ptr = std::unique_ptr<action_event_receiver<T>>;
 
 } // namespace tools
 

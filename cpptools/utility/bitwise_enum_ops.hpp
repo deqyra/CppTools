@@ -1,12 +1,12 @@
-#ifndef TOOLS__UTILITY__BITWISE_ENUM_HPP
-#define TOOLS__UTILITY__BITWISE_ENUM_HPP
+#ifndef CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
+#define CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
 
 #include <concepts>
 #include <type_traits>
 
 namespace tools
 {
-    
+
 template<typename T>
 struct enable_bitwise_enum : public std::false_type { };
 
@@ -89,4 +89,4 @@ bool any(const T& value)
 
 } // namespace tools
 
-#endif//TOOLS__UTILITY__BITWISE_ENUM_HPP
+#endif//CPPTOOLS__UTILITY__BITWISE_ENUM_HPP

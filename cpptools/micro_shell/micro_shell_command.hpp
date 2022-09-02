@@ -1,43 +1,37 @@
-#ifndef TOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
-#define TOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
+#ifndef CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
+#define CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
 
 #include <string>
 
-#include "../cli/cli_streams.hpp"
-#include "../cli/cli_input.hpp"
-
-#define HELP_KEYWORD "help"
-#define EXIT_KEYWORD "exit"
+#include <cpptools/cli/cli_streams.hpp>
+#include <cpptools/cli/cli_input.hpp>
 
 namespace tools
 {
 
-template<typename CustomState>
-class MicroShellCommand
+template<typename state_t>
+class micro_shell_command
 {
-    private:    // Attributes
-    public:     // Public methods
-        MicroShellCommand();
-        virtual ~MicroShellCommand();
+public: 
+    struct keywords
+    {
+        static constexpr char help[] = "help";
+        static constexpr char exit[] = "exit";
+    };
 
-        virtual std::string name() = 0;
-        virtual std::string description() = 0;
-        virtual std::string help() = 0;
-        virtual int processInput(const std::string& command, CustomState& state, CLIStreams& streams = CLIInput::defaultStreams) = 0;
+    micro_shell_command()
+    {
+
+    }
+
+    virtual ~micro_shell_command() = default;
+
+    virtual std::string name() = 0;
+    virtual std::string description() = 0;
+    virtual std::string help() = 0;
+    virtual int process_input(const std::string& command, state_t& state, cli_streams& streams = cli_input::default_streams) = 0;
 };
-
-template<typename CustomState>
-MicroShellCommand<CustomState>::MicroShellCommand()
-{
-
-}
-
-template<typename CustomState>
-MicroShellCommand<CustomState>::~MicroShellCommand()
-{
-
-}
 
 } // namespace tools
 
-#endif//TOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP
+#endif//CPPTOOLS__MICRO_SHELL__MICRO_SHELL_COMMAND_HPP

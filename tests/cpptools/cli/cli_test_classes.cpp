@@ -10,27 +10,27 @@
 namespace tools
 {
 
-TestCLIMenu makeBasicTestMenu()
+Testcli_menu make_basic_test_menu()
 {
-    std::vector<TestCLICommandPtr> commands = {
-        std::make_shared<TestCLICommand1>(),
-        std::make_shared<TestCLICommand2>()
+    std::vector<TestCLIcommand_ptr> commands = {
+        std::make_shared<Testcli_command1>(),
+        std::make_shared<Testcli_command2>()
     };
 
-    return TestCLIMenu(commands, "Test menu", "Exit", std::make_shared<TestCLIExitCommand>());
+    return Testcli_menu(commands, "Test menu", "Exit", std::make_shared<TestCLIexit_command>());
 }
 
-TestCLICommandSequence makeBasicTestCommandSequence()
+TestCLIcommand_sequence make_basic_test_command_sequence()
 {
-    TestCLIMenu testMenu = makeBasicTestMenu();
-    
-    std::vector<TestCLICommandPtr> sequenceCommands = {
-        std::make_shared<TestCLIMenuCommand>(testMenu),
-        std::make_shared<TestCLICommand1>(),
-        std::make_shared<TestCLICommand2>()
+    Testcli_menu test_menu = make_basic_test_menu();
+
+    std::vector<TestCLIcommand_ptr> sequence_commands = {
+        std::make_shared<TestCLImenu_command>(test_menu),
+        std::make_shared<Testcli_command1>(),
+        std::make_shared<Testcli_command2>()
     };
 
-    return TestCLICommandSequence(sequenceCommands, "Test sequence");
+    return TestCLIcommand_sequence(sequence_commands, "Test sequence");
 }
 
 } // namespace tools

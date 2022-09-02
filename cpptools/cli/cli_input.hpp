@@ -1,182 +1,131 @@
-#ifndef TOOLS__CLI__CLI_INPUT
-#define TOOLS__CLI__CLI_INPUT
+#ifndef CPPTOOLS__CLI__CLI_INPUT
+#define CPPTOOLS__CLI__CLI_INPUT
 
 #include <iostream>
 #include <string>
 
-#include "cli_streams.hpp"
-#include "../utility/string.hpp"
+#include <cpptools/utility/string.hpp>
 
-namespace tools::CLIInput
+#include "cli_streams.hpp"
+
+namespace tools::cli_input
 {
     // Default streams to be used
-    inline static CLIStreams defaultStreams = CLIStreams(std::cin, std::cout, std::cerr);
-
-    // Prompts the user for input using the provided string as title. Loops until input is successfully parsed.
-    template<typename T>
-    static T askForInput(const std::string& title, CLIStreams& streams = defaultStreams);
-
-    // Repeatedly asks for input until entered value is at least the provided minimum value. Should be used on orderable types when it makes sense.
-    template<typename T>
-    static T askForMinInput(const std::string& title, T min, CLIStreams& streams = defaultStreams);
-
-    // Repeatedly asks for input until entered value is at most the provided maximum value. Should be used on orderable types when it makes sense.
-    template<typename T>
-    static T askForMaxInput(const std::string& title, T max, CLIStreams& streams = defaultStreams);
-
-    // Repeatedly asks for input until entered value is within provided bounds. Should be used on orderable types when it makes sense.
-    template<typename T>
-    static T askForBoundedInput(const std::string& title, T min, T max, CLIStreams& streams = defaultStreams);
-
-    // Parses a string to find a value of the template parameter. Needs an explicit specialized definition for each type.
-    template<typename T>
-    static T parseString(const std::string& input);
-
-    // Returns a descriptive string of the template parameter. Needs an explicit specialized definition for each type.
-    template<typename T>
-    static std::string typeName();
+    inline cli_streams default_streams = cli_streams{};
 
     template<typename T>
-    static T waitForInput(CLIStreams& streams = defaultStreams);
-
-    template<typename T>
-    T askForInput(const std::string& title, CLIStreams& streams)
+    T ask_for_input(const std::string& title, cli_streams& streams)
     {
         // Prompt the user for a value until a valid one is entered.
         while (true)
         {
             try
             {
-                streams.out() << title;
-                return waitForInput<T>(streams);
+                streams.out << title;
+                return wait_for_input<T>(streams);
             }
             catch(const std::invalid_argument&)
             {
-                streams.out() << "Invalid input, please enter a " << typeName<T>() << "." << std::endl;
+                streams.out << "Invalid input, please enter a " << type_name<T>() << "." << std::endl;
             }            
         }
     }
 
     template<typename T>
-    T askForMinInput(const std::string& title, T min, CLIStreams& streams)
+    T ask_for_min_input(const std::string& title, T min, cli_streams& streams)
     {
         // Ask for input until the entered value is valid and at least min.
         while (true)
         {
-            T input = askForInput<T>(title, streams);
+            T input = ask_for_input<T>(title, streams);
 
             if (input >= min)
             {
                 return input;
             }
 
-            streams.out() << "Invalid input, please enter a value that is at least " << min << "." << std::endl;
+            streams.out << "Invalid input, please enter a value that is greater than " << min << "." << std::endl;
         }
     }
 
     template<typename T>
-    T askForMaxInput(const std::string& title, T max, CLIStreams& streams)
+    T ask_for_max_input(const std::string& title, T max, cli_streams& streams)
     {
         // Ask for input until the entered value is valid and at most max.
         while (true)
         {
-            T input = askForInput<T>(title, streams);
+            T input = ask_for_input<T>(title, streams);
 
             if (input <= max)
             {
                 return input;
             }
 
-            streams.out() << "Invalid input, please enter a value that is at most " << max << "." << std::endl;
+            streams.out << "Invalid input, please enter a value that is less than " << max << "." << std::endl;
         }
     }
 
     template<typename T>
-    T askForBoundedInput(const std::string& title, T min, T max, CLIStreams& streams)
+    T ask_for_bounded_input(const std::string& title, T min, T max, cli_streams& streams)
     {
         // Ask for input until the entered value is between min and max.
         while (true)
         {
-            T input = askForInput<T>(title, streams);
+            T input = ask_for_input<T>(title, streams);
 
             if (input >= min && input <= max)
             {
                 return input;
             }
 
-            streams.out() << "Invalid input, please enter a value between " << min << " and " << max << "." << std::endl;
+            streams.out << "Invalid input, please enter a value between " << min << " and " << max << "." << std::endl;
         }
     }
 
     template<typename T>
-    T waitForInput(CLIStreams& streams)
+    T wait_for_input(cli_streams& streams)
     {
         std::string input;
         // Get input.
-        std::getline(streams.in(), input);
+        std::getline(streams.in, input);
         // Take care of terminal-induced bullcrap.
         string::pop_cr(input);
         // Type-aware parsing of the input.
-        return parseString<T>(input);
+        return parse_string<T>(input);
     }
 
+    template<typename T>
+    T parse_string(const std::string& input) = delete;
+
+    template<typename T>
+    std::string type_name() = delete;
+
     //
-    // Specializations of parseString.
+    // Specializations of parse_string.
     //
 
     template<>
-    std::string parseString(const std::string& input)
-    {
-        return input;
-    }
+    std::string parse_string(const std::string& input);
 
     template<>
-    int parseString(const std::string& input)
-    {
-        if (!string::is_integer(input))
-        {
-            throw std::invalid_argument("parseString<int>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
-        }
-        return std::stoi(input);
-    }
+    int parse_string(const std::string& input);
 
     template<>
-    bool parseString(const std::string& input)
-    {
-        if (input == "y" || input == "yes" || input == "true")
-        {
-            return true;
-        }
-
-        if (input == "n" || input == "no" || input == "false")
-        {
-            return false;
-        }
-
-        throw std::invalid_argument("parseString<bool>: Invalid string value for expected bool input.");
-    }
+    bool parse_string(const std::string& input);
 
     //
-    // Specializations of typeName.
+    // Specializations of type_name.
     //
 
     template <>
-    std::string typeName<std::string>()
-    {
-        return "string";
-    }
+    std::string type_name<std::string>();
 
     template <>
-    std::string typeName<int>()
-    {
-        return "integer";
-    }
+    std::string type_name<int>();
 
     template <>
-    std::string typeName<bool>()
-    {
-        return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
-    }
-} // namespace tools::CLIInput
+    std::string type_name<bool>();
 
-#endif//TOOLS__CLI__CLI_INPUT
+} // namespace tools::cli_input
+
+#endif//CPPTOOLS__CLI__CLI_INPUT

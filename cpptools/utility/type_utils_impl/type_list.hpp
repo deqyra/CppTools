@@ -45,10 +45,10 @@ struct make_type_list<>
 };
 
 // Specialisation to end recursion on a type list
-template<typename... AllTypes>
-struct make_type_list<type_list<AllTypes...>>
+template<typename... all_types>
+struct make_type_list<type_list<all_types...>>
 {
-    using type = type_list<AllTypes...>;
+    using type = type_list<all_types...>;
 };
 
 // Specialisation to end recursion on a regular type

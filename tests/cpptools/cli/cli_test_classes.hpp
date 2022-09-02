@@ -13,50 +13,50 @@ namespace tools
 
 class TestCLIState {};
 
-using TestCLIMenu = CLIMenu<TestCLIState>;
-using TestCLICommand = CLICommand<TestCLIState>;
-using TestCLICommandPtr = std::shared_ptr<TestCLICommand>;
-using TestCLIMenuCommand = MenuCommand<TestCLIState>;
-using TestCLICommandSequence = CommandSequence<TestCLIState>;
+using Testcli_menu = cli_menu<TestCLIState>;
+using Testcli_command = cli_command<TestCLIState>;
+using TestCLIcommand_ptr = std::unique_ptr<Testcli_command>;
+using TestCLImenu_command = menu_command<TestCLIState>;
+using TestCLIcommand_sequence = command_sequence<TestCLIState>;
 
-class TestCLICommand1 : public TestCLICommand
+class Testcli_command1 : public Testcli_command
 {
     public:
-        TestCLICommand1() : TestCLICommand() {}
-        virtual std::string getTooltip() {return "TestCLICommand1";}
-        virtual int run(TestCLIState& state, CLIStreams& streams)
+        Testcli_command1() : Testcli_command() {}
+        virtual std::string get_tooltip() {return "Testcli_command1";}
+        virtual int run(TestCLIState& state, cli_streams& streams)
         {
-            streams.out() << "TestCLICommand1 was run.\n";
+            streams.out << "Testcli_command1 was run.\n";
             return 0;
         }
 };
 
-class TestCLICommand2 : public TestCLICommand
+class Testcli_command2 : public Testcli_command
 {
     public:
-        TestCLICommand2() : TestCLICommand() {}
-        virtual std::string getTooltip() {return "TestCLICommand2";}
-        virtual int run(TestCLIState& state, CLIStreams& streams)
+        Testcli_command2() : Testcli_command() {}
+        virtual std::string get_tooltip() {return "Testcli_command2";}
+        virtual int run(TestCLIState& state, cli_streams& streams)
         {
-            streams.out() << "TestCLICommand2 was run.\n";
+            streams.out << "Testcli_command2 was run.\n";
             return 0;
         }
 };
 
-class TestCLIExitCommand : public TestCLICommand
+class TestCLIexit_command : public Testcli_command
 {
     public:
-        TestCLIExitCommand() : TestCLICommand() {}
-        virtual std::string getTooltip() {return "Exit";}
-        virtual int run(TestCLIState& state, CLIStreams& streams)
+        TestCLIexit_command() : Testcli_command() {}
+        virtual std::string get_tooltip() {return "Exit";}
+        virtual int run(TestCLIState& state, cli_streams& streams)
         {
-            streams.out() << "Successful exit.\n";
+            streams.out << "Successful exit.\n";
             return 0;
         }
 };
 
-TestCLIMenu makeBasicTestMenu();
-TestCLICommandSequence makeBasicTestCommandSequence();
+Testcli_menu make_basic_test_menu();
+TestCLIcommand_sequence make_basic_test_command_sequence();
 
 } // namespace tools
 

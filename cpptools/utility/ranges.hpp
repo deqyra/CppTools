@@ -1,8 +1,12 @@
-#ifndef TOOLS__UTILITY__RANGES_HPP
-#define TOOLS__UTILITY__RANGES_HPP
+#ifndef CPPTOOLS__UTILITY__RANGES_HPP
+#define CPPTOOLS__UTILITY__RANGES_HPP
 
 #include <algorithm>
 #include <concepts>
+#include <numeric>
+#include <ranges>
+
+#include "concepts.hpp"
 
 namespace tools::ranges
 {
@@ -17,7 +21,7 @@ namespace tools::ranges
 template<std::ranges::sized_range... ArgTypes>
 size_t max_size(ArgTypes&&... ranges)
 {
-    return std::max(std::ranges::size(ranges), ...);
+    return std::max(std::ranges::size(ranges)...);
 }
 
 /// @brief Find the size of the biggest range in a range of ranges
@@ -29,12 +33,12 @@ size_t max_size(ArgTypes&&... ranges)
 ///
 /// @return The size of the biggest range in the range of ranges
 template<std::ranges::range R, std::ranges::sized_range N>
-size_t nested_max_size(const R<N>& range)
+size_t nested_max_size(const R& range)
 {
     auto get_size = [](const N& nested_range) -> size_t
     {
         return std::ranges::size(nested_range);
-    }
+    };
 
     return std::ranges::max(range | std::views::transform(get_size));
 }
@@ -49,10 +53,10 @@ size_t nested_max_size(const R<N>& range)
 ///
 /// @return The sum of all elements in the nested range
 template<std::ranges::range R, std::ranges::range N, typename T>
-requires(T a, T b) ({ a + b } -> std::convertible_to<T>)
-T nested_sum(const R<N<T>>& range)
+requires concepts::addable<T>
+T nested_sum(const R& range)
 {
-    auto do_sum = [](const N<T>& inner_range) -> T
+    auto do_sum = [](const N& inner_range) -> T
     {
         return std::accumulate(
             std::cbegin(inner_range),
@@ -71,4 +75,4 @@ T nested_sum(const R<N<T>>& range)
 
 } // namespace tools::ranges
 
-#endif//TOOLS__UTILITY__RANGES_HPP
+#endif//CPPTOOLS__UTILITY__RANGES_HPP

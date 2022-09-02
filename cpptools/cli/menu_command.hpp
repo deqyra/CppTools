@@ -1,10 +1,9 @@
-#ifndef TOOLS__CLI__MENU_COMMAND_HPP
-#define TOOLS__CLI__MENU_COMMAND_HPP
-
-#include "cli_command.hpp"
+#ifndef CPPTOOLS__CLI__MENU_COMMAND_HPP
+#define CPPTOOLS__CLI__MENU_COMMAND_HPP
 
 #include <string>
 
+#include "cli_command.hpp"
 #include "cli_menu.hpp"
 #include "cli_streams.hpp"
 
@@ -12,48 +11,38 @@ namespace tools
 {
 
 // Extended command wrapping a menu.
-template<typename CustomState>
-class MenuCommand : public CLICommand<CustomState>
+template<typename state_t>
+class menu_command : public cli_command<state_t>
 {
-    private:    // Attributes
-        CLIMenu<CustomState> _innerMenu;
+public:
+    using code = typename cli_command<state_t>::code;
 
-    public:     // Public methods
-        MenuCommand(CLIMenu<CustomState> innerMenu);
-        virtual ~MenuCommand();
+private:
+    cli_menu<state_t> _inner_menu;
 
-        virtual std::string getTooltip();
-        // Run the MenuCommand (show the inner menu).
-        virtual int run(CustomState& state, CLIStreams& streams);
+public: 
+    menu_command(cli_menu<state_t> inner_menu) :
+        cli_command<state_t>(),
+        _inner_menu(inner_menu)
+    {
+
+    }
+
+    virtual ~menu_command() = default;
+
+    virtual std::string get_tooltip()
+    {
+        return _inner_menu.get_tooltip();
+    }
+
+    // Run the menu_command (show the inner menu).
+    virtual int run(state_t& state, cli_streams& streams)
+    {
+        _inner_menu.show(state, streams);
+        return code::success;
+    }
 };
-
-template<typename CustomState>
-MenuCommand<CustomState>::MenuCommand(CLIMenu<CustomState> innerMenu) :
-    CLICommand<CustomState>(),
-    _innerMenu(innerMenu)
-{
-
-}
-
-template<typename CustomState>
-MenuCommand<CustomState>::~MenuCommand()
-{
-    
-}
-
-template<typename CustomState>
-std::string MenuCommand<CustomState>::getTooltip()
-{
-    return _innerMenu.getTooltip();
-}
-
-template<typename CustomState>
-int MenuCommand<CustomState>::run(CustomState& state, CLIStreams& streams)
-{
-    _innerMenu.show(state, streams);
-    return CLI_COMMAND_SUCCESS;
-}
 
 } // namespace tools
 
-#endif//TOOLS__CLI__MENU_COMMAND_HPP
+#endif//CPPTOOLS__CLI__MENU_COMMAND_HPP

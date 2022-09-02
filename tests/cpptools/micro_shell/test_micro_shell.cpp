@@ -16,62 +16,62 @@
 namespace tools
 {
 
-TEST_CASE("MicroShell")
+TEST_CASE("micro_shell")
 {
-    TestShell shell = TestShell();
-    TestShellCommandPtr com1 = std::make_shared<TestShellCommand1>();
-    TestShellCommandPtr com2 = std::make_shared<TestShellCommand2>();
-    TestShellCommandPtr exit = std::make_shared<TestShellExitCommand>();
-    
-    SECTION("addCommand")
+    test_shell shell = test_shell();
+    test_shell_command_ptr com1 = std::make_shared<test_shell_command1>();
+    test_shell_command_ptr com2 = std::make_shared<test_shell_command2>();
+    test_shell_command_ptr exit = std::make_shared<test_shell_exit_command>();
+
+    SECTION("add_command")
     {
-        REQUIRE_NOTHROW(shell.addCommand(com1));
+        REQUIRE_NOTHROW(shell.add_command(com1));
     }
 
-    SECTION("hasCommand")
+    SECTION("has_command")
     {
-        REQUIRE_NOTHROW(shell.addCommand(com1));
-        REQUIRE(shell.hasCommand("TestShellCommand1"));
+        REQUIRE_NOTHROW(shell.add_command(com1));
+        REQUIRE(shell.has_command("test_shell_command1"));
     }
 
-    SECTION("getCommand")
+    SECTION("get_command")
     {
-        REQUIRE_NOTHROW(shell.addCommand(com1));
-        REQUIRE(shell.getCommand("TestShellCommand1") == com1);
+        REQUIRE_NOTHROW(shell.add_command(com1));
+        REQUIRE(shell.get_command("test_shell_command1") == com1);
     }
 
-    SECTION("indexOf")
+    SECTION("index_of")
     {
-        REQUIRE_NOTHROW(shell.addCommand(com1));
-        REQUIRE(shell.indexOf("TestShellCommand1") == 0);
+        REQUIRE_NOTHROW(shell.add_command(com1));
+        REQUIRE(shell.index_of("test_shell_command1") == 0);
     }
 
-    SECTION("set and getExitCommand")
+    SECTION("set and get_exit_command")
     {
-        REQUIRE_NOTHROW(shell.setExitCommand(exit));
-        REQUIRE(shell.getExitCommand() == exit);
+        REQUIRE_NOTHROW(shell.set_exit_command(exit));
+        REQUIRE(shell.get_exit_command() == exit);
     }
 
-    SECTION("removeCommand")
+    SECTION("remove_command")
     {
-        REQUIRE_NOTHROW(shell.addCommand(com1));
-        REQUIRE_NOTHROW(shell.removeCommand("TestShellCommand1"));
-        REQUIRE_FALSE(shell.hasCommand("TestShellCommand1"));
+        REQUIRE_NOTHROW(shell.add_command(com1));
+        REQUIRE_NOTHROW(shell.remove_command("test_shell_command1"));
+        REQUIRE_FALSE(shell.has_command("test_shell_command1"));
     }
 
     SECTION("End to end")
     {
-        REQUIRE_NOTHROW(shell.addCommand(com1));
-        REQUIRE_NOTHROW(shell.addCommand(com2));
-        REQUIRE_NOTHROW(shell.setExitCommand(exit));
+        REQUIRE_NOTHROW(shell.add_command(com1));
+        REQUIRE_NOTHROW(shell.add_command(com2));
+        REQUIRE_NOTHROW(shell.set_exit_command(exit));
 
         std::ifstream f = std::ifstream("resources/tests/tools/micro_shell/micro_shell_input.txt", std::ios::in);
         REQUIRE(f);
         std::stringstream ss;
-        CLIStreams s = CLIStreams(f, ss, ss);
-        TestShellState state = TestShellState();
+        cli_streams s = cli_streams(f, ss, ss);
+        test_shell_state state = test_shell_state();
 
-        std::string expected = String::readFileIntoString("resources/tests/tools/micro_shell/micro_shell_output.txt");
+        std::string expected = String::read_file_into_string("resources/tests/tools/micro_shell/micro_shell_output.txt");
         REQUIRE_NOTHROW(shell.run(state, s));
         REQUIRE(ss.str() == expected);
     }

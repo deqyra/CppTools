@@ -1,5 +1,5 @@
-#ifndef TOOLS__THREAD__WORKER_HPP
-#define TOOLS__THREAD__WORKER_HPP
+#ifndef CPPTOOLS__THREAD__WORKER_HPP
+#define CPPTOOLS__THREAD__WORKER_HPP
 
 #include <condition_variable>
 #include <functional>
@@ -13,35 +13,37 @@
 namespace tools
 {
 
-class Worker : public Interruptible
+class worker : public interruptible
 {
+public:
+    using task_fun = void (*)(void);
 private:
     /// @brief Protection around the execution flow flags (_execute and _exit).
-    std::mutex _mutexExecute;
+    std::mutex _mutex_execute;
 
     /// @brief Protection around the _finalized flag.
-    std::mutex _mutexFinalized;
+    std::mutex _mutex_finalized;
 
     /// @brief Protection around the _pause flag.
-    std::mutex _mutexPause;
+    std::mutex _mutex_pause;
 
     /// @brief Protection around the _running flag.
-    std::mutex _mutexRun;
+    std::mutex _mutex_run;
 
     /// @brief Semaphore to wait by in order to control the execution flow.
-    std::condition_variable _semExecute;
+    std::condition_variable _sem_execute;
 
     /// @brief Semaphore to wait by in order to know whether the thread
     /// is finalized.
-    std::condition_variable _semFinalized;
+    std::condition_variable _sem_finalized;
 
     /// @brief Semaphore to wait by in order to know whether the thread
     /// is paused.
-    std::condition_variable _semPause;
+    std::condition_variable _sem_pause;
 
     /// @brief Semaphore to wait by in order to know whether the thread
     /// is running.
-    std::condition_variable _semRunning;
+    std::condition_variable _sem_running;
 
     ///                          ///    \\\
     ///                         /// !!!! \\\
@@ -75,19 +77,19 @@ private:
     /// to be informative.
 
     /// @brief Process (function) to execute in a loop.
-    std::function<void()> _task;
+    task_fun _task;
 
     /// @brief Function to execute before starting the task in a loop.
-    std::function<void()> _onStart;
+    task_fun _on_start;
 
     /// @brief Function to execute once the task is done running in a loop.
-    std::function<void()> _onFinalize;
+    task_fun _on_finalize;
 
     /// @brief Function to execute upon resuming after the task paused.
-    std::function<void()> _onResume;
+    task_fun _on_resume;
 
     /// @brief Function to execute upon pause the task.
-    std::function<void()> _onPause;
+    task_fun _on_pause;
 
     /// @brief Handle to the execution thread of the process.
     std::future<void> _thread;
@@ -97,27 +99,27 @@ private:
 
 public:
     /// @param task Process (function) to execute in a loop.
-    /// @param startNow Whether or not to start the process.
-    /// @param onStart Function to execute before starting the task in a loop.
-    /// @param onFinalize Function to execute once the task is done running.
-    /// @param onResume Function to execute upon resuming after the task paused.
-    /// @param onPause Function to execute upon pause the task.
-    Worker(
-        std::function<void()> task,
-        bool startNow = true,
-        std::function<void()> onStart = [](){},
-        std::function<void()> onFinalize = [](){},
-        std::function<void()> onResume = [](){},
-        std::function<void()> onPause = [](){}
+    /// @param start_now Whether or not to start the process.
+    /// @param on_start Function to execute before starting the task in a loop.
+    /// @param on_finalize Function to execute once the task is done running.
+    /// @param on_resume Function to execute upon resuming after the task paused.
+    /// @param on_pause Function to execute upon pause the task.
+    worker(
+        task_fun task,
+        bool start_now = true,
+        task_fun on_start = [](){},
+        task_fun on_finalize = [](){},
+        task_fun on_resume = [](){},
+        task_fun on_pause = [](){}
     );
-    ~Worker();
+    ~worker();
 
-    // Moving is unsafe. If moving is needed, use unique_ptr<Worker>.
-    Worker(Worker&&) = delete;
+    // Moving is unsafe. If moving is needed, use unique_ptr<worker>.
+    worker(worker&&) = delete;
 
     /////////////////////////////////////////////
     ///                                       ///
-    /// Methods overridden from Interruptible ///
+    /// Methods overridden from interruptible ///
     ///                                       ///
     /////////////////////////////////////////////
 
@@ -125,23 +127,23 @@ public:
 
     virtual bool finalized();
 
-    virtual void waitUntilFinalized(bool finalizeNow = true);
+    virtual void wait_until_finalized(bool finalize_now = true);
 
     virtual void pause();
-    
+
     virtual bool paused();
 
-    virtual void waitUntilPaused(bool pauseNow = true);
+    virtual void wait_until_paused(bool pause_now = true);
 
     virtual void run();
 
     virtual bool running();
 
-    virtual void waitUntilRunning(bool runNow = true);
+    virtual void wait_until_running(bool run_now = true);
 };
 
-using WorkerPtr = std::shared_ptr<Worker>;
+using worker_ptr = std::unique_ptr<worker>;
 
 } // namespace tools
 
-#endif//TOOLS__THREAD__WORKER_HPP
+#endif//CPPTOOLS__THREAD__WORKER_HPP

@@ -1,5 +1,5 @@
-#ifndef TOOLS__UTILITY__STRING_HPP
-#define TOOLS__UTILITY__STRING_HPP
+#ifndef CPPTOOLS__UTILITY__STRING_HPP
+#define CPPTOOLS__UTILITY__STRING_HPP
 
 #include <algorithm>
 #include <filesystem>
@@ -176,7 +176,7 @@ std::string multiline_concatenate(
 /// @note If the delimiter cannot be found in the input string, the function 
 /// will attempt to parse it as a single integral value and return the interval
 /// [value ; value].
-template<integral_type int_t>
+template<concepts::integral_type int_t>
 std::pair<int_t, int_t> parse_int_range(const std::string& str, char delimiter)
 {
     static constexpr bool is_signed = std::is_signed_v<int_t>;
@@ -185,7 +185,7 @@ std::pair<int_t, int_t> parse_int_range(const std::string& str, char delimiter)
     static constexpr int_t max = std::numeric_limits<int_t>::max();
     static constexpr int_t width = std::numeric_limits<int_t>::digits;
     static constexpr int_t max_width = std::numeric_limits<size_t>::digits;
-    
+
     using max_t = typename std::conditional_t<is_signed, long long int, unsigned long long int>;
 
     std::vector<std::string> tokens = tokenize(str, delimiter, false /* discard_empty */);
@@ -259,9 +259,9 @@ std::pair<int_t, int_t> parse_int_range(const std::string& str, char delimiter)
 
         return std::make_pair(left, right);
     }
-    
+
     // too many tokens
-    std::string err = "parseIntRange: Too many delimiters in \"" + str + "\".";
+    std::string err = "parse_int_range: Too many delimiters in \"" + str + "\".";
     throw std::invalid_argument(err.c_str());
 }
 
@@ -297,4 +297,4 @@ std::string from_range(
 
 } // namespace tools::string
 
-#endif//TOOLS__UTILITY__STRING_HPP
+#endif//CPPTOOLS__UTILITY__STRING_HPP

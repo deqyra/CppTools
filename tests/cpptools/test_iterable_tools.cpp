@@ -19,7 +19,7 @@ TEST_CASE("Max iterable length", TAGS)
         std::vector<int>(7)
     };
 
-    REQUIRE(maxIterableLength(vecs) == (size_t)10);
+    REQUIRE(max_iterable_length(vecs) == (size_t)10);
 }
 
 TEST_CASE("Sum 2nd-order nested iterables", TAGS)
@@ -30,7 +30,7 @@ TEST_CASE("Sum 2nd-order nested iterables", TAGS)
     vectors.push_back({2, 7});
     vectors.push_back({9, 12, 5, 8});
 
-    REQUIRE(sum2NestedIterables<int>(vectors) == 64);
+    REQUIRE(sum2nested_iterables<int>(vectors) == 64);
 }
 
 TEST_CASE("Index of max element can be found within a vectors and arrays alike", TAGS)
@@ -40,16 +40,16 @@ TEST_CASE("Index of max element can be found within a vectors and arrays alike",
 
     SECTION("Int vector")
     {
-        REQUIRE(indexOfMaxElement(vec) == 5);
+        REQUIRE(index_of_max_element(vec) == 5);
         vec[3] = 100;
-        REQUIRE(indexOfMaxElement(vec) == 3);
+        REQUIRE(index_of_max_element(vec) == 3);
     }
 
     SECTION("Int array")
     {
-        REQUIRE(indexOfMaxElement(arr, 7) == 5);
+        REQUIRE(index_of_max_element(arr, 7) == 5);
         arr[3] = 100;
-        REQUIRE(indexOfMaxElement(arr, 7) == 3);
+        REQUIRE(index_of_max_element(arr, 7) == 3);
     }
 }
 
@@ -59,11 +59,11 @@ TEST_CASE("Elements can be stripped from a vector", TAGS)
     std::vector<int> ref = std::vector<int>({2, 854, -123, 2759});
 
     // Make sure it works.
-    stripElementFromIterable(vec, 0);
+    strip_element_from_iterable(vec, 0);
     REQUIRE(vec == ref);
 
     // Make sure it is a no-op when no element is present.
-    stripElementFromIterable(vec, 0);
+    strip_element_from_iterable(vec, 0);
     REQUIRE(vec == ref);
 }
 

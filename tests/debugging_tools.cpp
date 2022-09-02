@@ -1,9 +1,9 @@
 #include "debugging_tools.hpp"
 
-void stringDifference(std::string string1, std::string string2)
+void string_difference(std::string string1, std::string string2)
 {
     Catch::cout() << "String 1 len: " << string1.length() << "; string 2 len: " << string2.length() << std::endl;
-    
+
     size_t max = std::max(string1.length(), string2.length());
     for (int i = 0; i < max; i++)
     {

@@ -11,7 +11,7 @@ namespace tools
 namespace String
 {
 
-TEST_CASE("popChar", TAGS)
+TEST_CASE("pop_char", TAGS)
 {
     SECTION("End of string chars")
     {
@@ -19,9 +19,9 @@ TEST_CASE("popChar", TAGS)
         std::string res = "azerty";
         std::string res2 = "azert";
 
-        REQUIRE(popChar(str, '\r'));
+        REQUIRE(pop_char(str, '\r'));
         REQUIRE(str == res);
-        REQUIRE(popChar(str, 'y'));
+        REQUIRE(pop_char(str, 'y'));
         REQUIRE(str == res2);
     }
 
@@ -30,9 +30,9 @@ TEST_CASE("popChar", TAGS)
         std::string str = "azerty\r";
         std::string res = str;
 
-        REQUIRE_FALSE(popChar(str, 'z'));
+        REQUIRE_FALSE(pop_char(str, 'z'));
         REQUIRE(str == res);
-        REQUIRE_FALSE(popChar(str, 'y'));
+        REQUIRE_FALSE(pop_char(str, 'y'));
         REQUIRE(str == res);
     }
 
@@ -40,12 +40,12 @@ TEST_CASE("popChar", TAGS)
     {
         std::string str = "";
 
-        REQUIRE_FALSE(popChar(str, 'a'));
+        REQUIRE_FALSE(pop_char(str, 'a'));
         REQUIRE(str == "");
     }
 }
 
-TEST_CASE("popString", TAGS)
+TEST_CASE("pop_string", TAGS)
 {
     std::string str = "azerty\r";
 
@@ -55,11 +55,11 @@ TEST_CASE("popString", TAGS)
         std::string res2 = "aze";
         std::string res3 = "az";
 
-        REQUIRE(popString(str, "y\r"));
+        REQUIRE(pop_string(str, "y\r"));
         REQUIRE(str == res);
-        REQUIRE(popString(str, "rt"));
+        REQUIRE(pop_string(str, "rt"));
         REQUIRE(str == res2);
-        REQUIRE(popString(str, "e"));
+        REQUIRE(pop_string(str, "e"));
         REQUIRE(str == res3);
     }
 
@@ -67,9 +67,9 @@ TEST_CASE("popString", TAGS)
     {
         std::string res = str;
 
-        REQUIRE_FALSE(popString(str, "ze"));
+        REQUIRE_FALSE(pop_string(str, "ze"));
         REQUIRE(str == res);
-        REQUIRE_FALSE(popString(str, "az"));
+        REQUIRE_FALSE(pop_string(str, "az"));
         REQUIRE(str == res);
     }
 
@@ -78,9 +78,9 @@ TEST_CASE("popString", TAGS)
         std::string empty = "";
         std::string str2 = "azerty";
 
-        REQUIRE(popString(empty, ""));
+        REQUIRE(pop_string(empty, ""));
         REQUIRE(empty == "");
-        REQUIRE(popString(str2, str2));
+        REQUIRE(pop_string(str2, str2));
         REQUIRE(str2 == "");
     }
 
@@ -88,32 +88,32 @@ TEST_CASE("popString", TAGS)
     {
         std::string res = str;
 
-        REQUIRE_FALSE(popString(str, "qsd"));
+        REQUIRE_FALSE(pop_string(str, "qsd"));
         REQUIRE(str == res);
-        REQUIRE_FALSE(popString(str, "azertyuiop"));
+        REQUIRE_FALSE(pop_string(str, "azertyuiop"));
         REQUIRE(str == res);
     }
 }
 
-TEST_CASE("stringContains", TAGS)
+TEST_CASE("string_contains", TAGS)
 {
     SECTION("General case")
     {
         std::string str = "azertyyy";
 
         // Inexact count (at least n occurrences)
-        REQUIRE(stringContains(str, 'y', 0, false));
-        REQUIRE(stringContains(str, 'y', 1, false));
-        REQUIRE(stringContains(str, 'y', 2, false));
-        REQUIRE(stringContains(str, 'y', 3, false));
-        REQUIRE_FALSE(stringContains(str, 'y', 4, false));
+        REQUIRE(string_contains(str, 'y', 0, false));
+        REQUIRE(string_contains(str, 'y', 1, false));
+        REQUIRE(string_contains(str, 'y', 2, false));
+        REQUIRE(string_contains(str, 'y', 3, false));
+        REQUIRE_FALSE(string_contains(str, 'y', 4, false));
 
         // Exact count (exactly n occurrences)
-        REQUIRE_FALSE(stringContains(str, 'y', 0, true));
-        REQUIRE_FALSE(stringContains(str, 'y', 1, true));
-        REQUIRE_FALSE(stringContains(str, 'y', 2, true));
-        REQUIRE(stringContains(str, 'y', 3, true));
-        REQUIRE_FALSE(stringContains(str, 'y', 4, true));
+        REQUIRE_FALSE(string_contains(str, 'y', 0, true));
+        REQUIRE_FALSE(string_contains(str, 'y', 1, true));
+        REQUIRE_FALSE(string_contains(str, 'y', 2, true));
+        REQUIRE(string_contains(str, 'y', 3, true));
+        REQUIRE_FALSE(string_contains(str, 'y', 4, true));
     }
 
     SECTION("Empty string")
@@ -121,12 +121,12 @@ TEST_CASE("stringContains", TAGS)
         std::string str = "";
 
         // Searching for 0 occurrences returns true
-        REQUIRE(stringContains(str, 'y', 0, false));
-        REQUIRE(stringContains(str, 'y', 0, true));
+        REQUIRE(string_contains(str, 'y', 0, false));
+        REQUIRE(string_contains(str, 'y', 0, true));
 
         // Searching for more than 0 occurrences returns false
-        REQUIRE_FALSE(stringContains(str, 'y', 1, false));
-        REQUIRE_FALSE(stringContains(str, 'y', 1, true));
+        REQUIRE_FALSE(string_contains(str, 'y', 1, false));
+        REQUIRE_FALSE(string_contains(str, 'y', 1, true));
     }
 
     SECTION("0-occurrence search")
@@ -134,16 +134,16 @@ TEST_CASE("stringContains", TAGS)
         std::string str = "azerty";
 
         // Inexact search always returns true, no matter whether the queried character is contained in the string
-        REQUIRE(stringContains(str, 'y', 0, false));
-        REQUIRE(stringContains(str, 'w', 0, false));
+        REQUIRE(string_contains(str, 'y', 0, false));
+        REQUIRE(string_contains(str, 'w', 0, false));
 
         // Exact search returns true only if the queried character is not present in the string
-        REQUIRE_FALSE(stringContains(str, 'y', 0, true));
-        REQUIRE(stringContains(str, 'w', 0, true));
+        REQUIRE_FALSE(string_contains(str, 'y', 0, true));
+        REQUIRE(string_contains(str, 'w', 0, true));
     }
 }
 
-TEST_CASE("stringIsNum", TAGS)
+TEST_CASE("string_is_num", TAGS)
 {
     SECTION("General case")
     {
@@ -152,20 +152,20 @@ TEST_CASE("stringIsNum", TAGS)
         std::string alphanum = "321aze456";
         std::string alphabetic = "azeqsdwxc";
 
-        REQUIRE(stringIsNum(numeric, true));
-        REQUIRE(stringIsNum(negative, true));
-        REQUIRE_FALSE(stringIsNum(alphanum, true));
-        REQUIRE_FALSE(stringIsNum(alphabetic, true));
+        REQUIRE(string_is_num(numeric, true));
+        REQUIRE(string_is_num(negative, true));
+        REQUIRE_FALSE(string_is_num(alphanum, true));
+        REQUIRE_FALSE(string_is_num(alphabetic, true));
 
-        REQUIRE(stringIsNum(numeric, false));
-        REQUIRE_FALSE(stringIsNum(negative, false));
-        REQUIRE_FALSE(stringIsNum(alphanum, false));
-        REQUIRE_FALSE(stringIsNum(alphabetic, false));
+        REQUIRE(string_is_num(numeric, false));
+        REQUIRE_FALSE(string_is_num(negative, false));
+        REQUIRE_FALSE(string_is_num(alphanum, false));
+        REQUIRE_FALSE(string_is_num(alphabetic, false));
     }
 
     SECTION("Empty string")
     {
-        REQUIRE_FALSE(stringIsNum(""));
+        REQUIRE_FALSE(string_is_num(""));
     }
 }
 
@@ -175,45 +175,45 @@ TEST_CASE("String tokenization", TAGS)
 
     SECTION("Tokenizing on spaces")
     {
-        std::vector<std::string> spaceTokens = {"Hello,", "world.", "Bleeep", "bloop,", "am", "robot."};
-        REQUIRE(tokenizeString(str, ' ', false) == spaceTokens);
+        std::vector<std::string> space_tokens = {"Hello,", "world.", "Bleeep", "bloop,", "am", "robot."};
+        REQUIRE(tokenize_string(str, ' ', false) == space_tokens);
 
         // Discarding empty tokens makes no difference.
-        REQUIRE(tokenizeString(str, ' ', true) == spaceTokens);
+        REQUIRE(tokenize_string(str, ' ', true) == space_tokens);
     }
 
     SECTION("Tokenizing on commas")
     {
-        std::vector<std::string> commaTokens = {"Hello", " world. Bleeep bloop", " am robot."};
-        REQUIRE(tokenizeString(str, ',', false) == commaTokens);
+        std::vector<std::string> comma_tokens = {"Hello", " world. Bleeep bloop", " am robot."};
+        REQUIRE(tokenize_string(str, ',', false) == comma_tokens);
     }
 
     SECTION("Tokenizing on 'e'")
     {
-        std::vector<std::string> eTokens = {"H", "llo, world. Bl", "", "", "p bloop, am robot."};
-        REQUIRE(tokenizeString(str, 'e', false) == eTokens);
-        
+        std::vector<std::string> e_tokens = {"H", "llo, world. Bl", "", "", "p bloop, am robot."};
+        REQUIRE(tokenize_string(str, 'e', false) == e_tokens);
+
         // Discarding empty tokens works.
-        eTokens = {"H", "llo, world. Bl", "p bloop, am robot."};
-        REQUIRE(tokenizeString(str, 'e', true) == eTokens);
+        e_tokens = {"H", "llo, world. Bl", "p bloop, am robot."};
+        REQUIRE(tokenize_string(str, 'e', true) == e_tokens);
     }
 
     SECTION("String ending with delimiter")
     {
-        std::vector<std::string> dotTokens = {"Hello, world", " Bleeep bloop, am robot", ""};
-        REQUIRE(tokenizeString(str, '.', false) == dotTokens);
+        std::vector<std::string> dot_tokens = {"Hello, world", " Bleeep bloop, am robot", ""};
+        REQUIRE(tokenize_string(str, '.', false) == dot_tokens);
     }
 
     SECTION("String starting with delimiter")
     {
-        std::vector<std::string> hTokens = {"", "ello, world. Bleeep bloop, am robot."};
-        REQUIRE(tokenizeString(str, 'H', false) == hTokens);
+        std::vector<std::string> h_tokens = {"", "ello, world. Bleeep bloop, am robot."};
+        REQUIRE(tokenize_string(str, 'H', false) == h_tokens);
     }
 
     SECTION("Stringconsisting of delimiter")
     {
-        std::vector<std::string> hTokens = {"", ""};
-        REQUIRE(tokenizeString("a", 'a', false) == hTokens);
+        std::vector<std::string> h_tokens = {"", ""};
+        REQUIRE(tokenize_string("a", 'a', false) == h_tokens);
     }
 }
 
@@ -224,7 +224,7 @@ TEST_CASE("Strings parsing to int vector", TAGS)
         std::string str = "5 2 1";
 
         std::vector<int> expected = {5, 2, 1};
-        REQUIRE(stringToIntVector(str, ' ') == expected);
+        REQUIRE(string_to_int_vector(str, ' ') == expected);
     }
 
     SECTION("String with too many delimiters")
@@ -232,32 +232,32 @@ TEST_CASE("Strings parsing to int vector", TAGS)
         std::string str = "     5   2        1      ";
 
         std::vector<int> expected = {5, 2, 1};
-        REQUIRE(stringToIntVector(str, ' ') == expected);
+        REQUIRE(string_to_int_vector(str, ' ') == expected);
     }
 
     SECTION("Ill-formed string")
     {
         std::string str = "5;2;1";
 
-        REQUIRE_THROWS_AS(stringToIntVector(str, ' '), std::invalid_argument);
+        REQUIRE_THROWS_AS(string_to_int_vector(str, ' '), std::invalid_argument);
     }
 }
 
-TEST_CASE("readFileIntoString")
+TEST_CASE("read_file_into_string")
 {
-    std::string expectedWithCarriage = "azeazeaze\r\naaaa\r\ndddd\r\n\r\ntesttest\r\n";
-    std::string expectedNoCarriage = "azeazeaze\naaaa\ndddd\n\ntesttest\n";
+    std::string expected_with_carriage = "azeazeaze\r\naaaa\r\ndddd\r\n\r\ntesttest\r\n";
+    std::string expected_no_carriage = "azeazeaze\naaaa\ndddd\n\ntesttest\n";
 
     std::string result;
-    REQUIRE_NOTHROW(result = readFileIntoString("resources/tests/string/dummy_file.txt"));
+    REQUIRE_NOTHROW(result = read_file_into_string("resources/tests/string/dummy_file.txt"));
 
-    if (stringContains(result, '\r'))
+    if (string_contains(result, '\r'))
     {
-        REQUIRE(result == expectedWithCarriage);
+        REQUIRE(result == expected_with_carriage);
     }
     else
     {
-        REQUIRE(result == expectedNoCarriage);
+        REQUIRE(result == expected_no_carriage);
     }
 }
 
@@ -265,31 +265,31 @@ TEMPLATE_TEST_CASE("Vectors into custom string format", TAGS, int, char, std::st
 {
     SECTION("Non-empty vector")
     {
-        TestType val = TestType();
-        std::vector<TestType> vec = {val, val};
+        test_type val = test_type();
+        std::vector<test_type> vec = {val, val};
 
         // No surrounding characters
         std::string s;
         s += std::to_string(val) + " " + std::to_string(val);
-        REQUIRE(String::iterableToString(vec) == s);
+        REQUIRE(String::iterable_to_string(vec) == s);
 
         // Single surrounding characters
         s = "<[" + std::to_string(val) + "]-[" + std::to_string(val) + "]>";
-        REQUIRE(String::iterableToString(vec, "-", "<", ">", "[", "]") == s);
+        REQUIRE(String::iterable_to_string(vec, "-", "<", ">", "[", "]") == s);
 
         // Surrounding strings
         s = "<~(['" + std::to_string(val) + "'] # ['" + std::to_string(val) + "'])~>";
-        REQUIRE(String::iterableToString(vec, " # ", "<~(", ")~>", "['", "']") == s);
+        REQUIRE(String::iterable_to_string(vec, " # ", "<~(", ")~>", "['", "']") == s);
     }
 
     SECTION("Empty vector")
     {
-        std::vector<TestType> vec;
+        std::vector<test_type> vec;
 
         // Surrounding strings
         std::string s = "<~()~>";
 
-        REQUIRE(String::iterableToString(vec, " # ", "<~(", ")~>", "['", "']") == s);
+        REQUIRE(String::iterable_to_string(vec, " # ", "<~(", ")~>", "['", "']") == s);
     }
 }
 
@@ -309,7 +309,7 @@ TEST_CASE("Multiline string concatenation works properly", TAGS)
                             "String 1 part 2 String 2 part 2\n"
                             "String 1 part 3 String 2 part 3\n";
 
-        REQUIRE(multilineConcatenation(str1, str2) == res);
+        REQUIRE(multiline_concatenation(str1, str2) == res);
     }
 }
 

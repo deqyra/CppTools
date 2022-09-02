@@ -16,143 +16,143 @@ namespace Catch
 namespace Generators
 {
     template<typename T>
-    class ArrayGenerator : public IGenerator<T>
+    class array_generator : public IGenerator<T>
     {
         private:
-            T* _copiedArray;
+            T* _copied_array;
             std::size_t _pos;
             std::size_t _count;
 
         public:
-            ArrayGenerator(const T* const array, std::size_t size);
-            virtual ~ArrayGenerator();
+            array_generator(const T* const array, std::size_t size);
+            virtual ~array_generator();
             virtual bool next();
             virtual T const& get() const;
     };
 
     template<typename T, int N>
-    class StdArrayGenerator : public IGenerator<T>
+    class std_array_generator : public IGenerator<T>
     {
         private:
-            std::array<T, N> _copiedArray;
+            std::array<T, N> _copied_array;
             std::size_t _pos;
             std::size_t _count;
 
         public:
-            StdArrayGenerator(const std::array<T, N> array);
-            virtual ~StdArrayGenerator();
+            std_array_generator(const std::array<T, N> array);
+            virtual ~std_array_generator();
             virtual bool next();
             virtual T const& get() const;
     };
 
     template<typename T>
-    class VectorGenerator : public IGenerator<T>
+    class vector_generator : public IGenerator<T>
     {
         private:
-            std::vector<T> _copiedVector;
+            std::vector<T> _copied_vector;
             std::size_t _pos;
 
         public:
-            VectorGenerator(const std::vector<T> vector, std::size_t size = 0);
-            virtual ~VectorGenerator();
+            vector_generator(const std::vector<T> vector, std::size_t size = 0);
+            virtual ~vector_generator();
             virtual bool next();
             virtual T const& get() const;
     };
 
     template<typename T>
-    ArrayGenerator<T>::ArrayGenerator(const T* const array, std::size_t size) :
-        _copiedArray(new T[size]),
+    array_generator<T>::array_generator(const T* const array, std::size_t size) :
+        _copied_array(new T[size]),
         _pos(0),
         _count(size)
     {
-        std::copy(array, array + size, _copiedArray);
+        std::copy(array, array + size, _copied_array);
     }
 
     template<typename T>
-    ArrayGenerator<T>::~ArrayGenerator()
+    array_generator<T>::~array_generator()
     {
-        delete[] _copiedArray;
+        delete[] _copied_array;
     }
 
     template<typename T>
-    bool ArrayGenerator<T>::next()
+    bool array_generator<T>::next()
     {
         return ++_pos < _count;
     }
 
     template<typename T>
-    T const& ArrayGenerator<T>::get() const
+    T const& array_generator<T>::get() const
     {
-        return _copiedArray[_pos];
+        return _copied_array[_pos];
     }
 
     template<typename T, int N>
-    StdArrayGenerator<T, N>::StdArrayGenerator(const std::array<T, N> array) :
-        _copiedArray(array),
+    std_array_generator<T, N>::std_array_generator(const std::array<T, N> array) :
+        _copied_array(array),
         _pos(0),
         _count(N)
     {
     }
 
     template<typename T, int N>
-    StdArrayGenerator<T, N>::~StdArrayGenerator()
+    std_array_generator<T, N>::~std_array_generator()
     {
     }
 
     template<typename T, int N>
-    bool StdArrayGenerator<T, N>::next()
+    bool std_array_generator<T, N>::next()
     {
         return ++_pos < _count;
     }
 
     template<typename T, int N>
-    T const& StdArrayGenerator<T, N>::get() const
+    T const& std_array_generator<T, N>::get() const
     {
-        return _copiedArray[_pos];
+        return _copied_array[_pos];
     }
 
     template<typename T>
-    VectorGenerator<T>::VectorGenerator(const std::vector<T> vector, std::size_t size) :
-        _copiedVector(vector.begin(), size == 0 ? vector.end() : vector.begin() + size),
+    vector_generator<T>::vector_generator(const std::vector<T> vector, std::size_t size) :
+        _copied_vector(vector.begin(), size == 0 ? vector.end() : vector.begin() + size),
         _pos(0)
     {
     }
 
     template<typename T>
-    VectorGenerator<T>::~VectorGenerator()
+    vector_generator<T>::~vector_generator()
     {
     }
 
     template<typename T>
-    bool VectorGenerator<T>::next()
+    bool vector_generator<T>::next()
     {
-        return ++_pos < _copiedVector.size();
+        return ++_pos < _copied_vector.size();
     }
 
     template<typename T>
-    T const& VectorGenerator<T>::get() const
+    T const& vector_generator<T>::get() const
     {
-        return _copiedVector[_pos];
+        return _copied_vector[_pos];
     }
 } // namespace Generators
 } // namespace Catch
 
 template<typename T>
-Catch::Generators::GeneratorWrapper<T> vector(std::vector<T> vector, std::size_t size = 0)
+Catch::Generators::generator_wrapper<T> vector(std::vector<T> vector, std::size_t size = 0)
 {
-    return Catch::Generators::GeneratorWrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::VectorGenerator<T>(vector, size)));
+    return Catch::Generators::generator_wrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::vector_generator<T>(vector, size)));
 }
 
 template<typename T>
-Catch::Generators::GeneratorWrapper<T> array(const T* const array, std::size_t size)
+Catch::Generators::generator_wrapper<T> array(const T* const array, std::size_t size)
 {
-    return Catch::Generators::GeneratorWrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::ArrayGenerator<T>(array, size)));
+    return Catch::Generators::generator_wrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::array_generator<T>(array, size)));
 }
 
 template<typename T, int N>
-Catch::Generators::GeneratorWrapper<T> stdArray(const std::array<T, N> array)
+Catch::Generators::generator_wrapper<T> std_array(const std::array<T, N> array)
 {
-    return Catch::Generators::GeneratorWrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::StdArrayGenerator<T, N>(array)));
+    return Catch::Generators::generator_wrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::std_array_generator<T, N>(array)));
 }
 
 #endif//TESTS__CATCH2_CUSTOM_GENERATORS_HPP
