@@ -1,5 +1,5 @@
-#ifndef TOOLS__UTILITY__MAP_HPP
-#define TOOLS__UTILITY__MAP_HPP
+#ifndef CPPTOOLS__UTILITY__MAP_HPP
+#define CPPTOOLS__UTILITY__MAP_HPP
 
 #include <utility>
 
@@ -26,4 +26,4 @@ bool contains_pair(
 
 } // namespace tools::map
 
-#endif//TOOLS__UTILITY__MAP_HPP
+#endif//CPPTOOLS__UTILITY__MAP_HPP

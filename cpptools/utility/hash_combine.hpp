@@ -1,5 +1,7 @@
-#ifndef TOOLS__UTILITY__HASH_COMBINE_HPP
-#define TOOLS__UTILITY__HASH_COMBINE_HPP
+#ifndef CPPTOOLS__UTILITY__HASH_COMBINE_HPP
+#define CPPTOOLS__UTILITY__HASH_COMBINE_HPP
+
+#include <utility>
 
 namespace tools
 {
@@ -13,8 +15,8 @@ struct hash_combine_params
 
 constexpr hash_combine_params default_hash_combine_params = {
     .initial_value = 0x9e3779b9,
-    .left_shift = 6;
-    .right_shift = 2;
+    .left_shift = 6,
+    .right_shift = 2
 };
 
 template <
@@ -32,4 +34,4 @@ inline void hash_combine(std::size_t& s, const T& v)
 
 } // namespace tools
 
-#endif//TOOLS__UTILITY__HASH_COMBINE_HPP
+#endif//CPPTOOLS__UTILITY__HASH_COMBINE_HPP

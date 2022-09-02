@@ -1,5 +1,5 @@
-#ifndef TOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
-#define TOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
+#ifndef CPPTOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
+#define CPPTOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
 
 #include <memory>
 
@@ -7,7 +7,7 @@ namespace tools
 {
 
 /// @brief Interface for a class implementing an interruptible process.
-class Interruptible
+class interruptible
 {
 public:
     /// @brief Ask for the threaded process to stop processing and cleanly exit.
@@ -18,12 +18,12 @@ public:
 
     /// @brief Hangs the calling thread until the threaded process is finalized.
     ///
-    /// @param pauseNow Whether or not to request the threaded process to finalize
+    /// @param pause_now Whether or not to request the threaded process to finalize
     /// upon calling this function. Providing false may prove useful when the
     /// threaded process must be requested to finalize by another thread than the
     /// one calling this function, or if the threaded process has already been 
     /// requested to finalize.
-    virtual void waitUntilFinalized(bool pauseNow = true) = 0;
+    virtual void wait_until_finalized(bool pause_now = true) = 0;
 
     /// @brief Pause the execution of the threaded process.
     virtual void pause() = 0;
@@ -33,12 +33,12 @@ public:
 
     /// @brief Hangs the calling thread until the threaded process is paused.
     ///
-    /// @param pauseNow Whether or not to request the threaded process to pause
+    /// @param pause_now Whether or not to request the threaded process to pause
     /// upon calling this function. Providing false may prove useful when the
     /// threaded process must be requested to pause by another thread than the
     /// one calling this function, or if the threaded process has already been 
     /// requested to pause.
-    virtual void waitUntilPaused(bool pauseNow = true) = 0;
+    virtual void wait_until_paused(bool pause_now = true) = 0;
 
     /// @brief Resume the execution of the threaded function.
     virtual void run() = 0;
@@ -48,16 +48,16 @@ public:
 
     /// @brief Hangs the calling thread until the threaded process is running.
     ///
-    /// @param pauseNow Whether or not to request the threaded process to pause
+    /// @param pause_now Whether or not to request the threaded process to pause
     /// upon calling this function. Providing false may prove useful when the
     /// threaded process must be requested to resume by another thread than the
     /// one calling this function, or if the threaded process has already been 
     /// requested to resume.
-    virtual void waitUntilRunning(bool pauseNow = true) = 0;
+    virtual void wait_until_running(bool pause_now = true) = 0;
 };
 
-using InterruptiblePtr = std::shared_ptr<Interruptible>;
+using interruptible_ptr = std::unique_ptr<interruptible>;
 
 }
 
-#endif//TOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP
+#endif//CPPTOOLS__THREAD__INTERFACES__INTERRUPTIBLE_HPP

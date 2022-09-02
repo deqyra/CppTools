@@ -1,5 +1,5 @@
-#ifndef TOOLS__CLI__CLI_COMMAND_HPP
-#define TOOLS__CLI__CLI_COMMAND_HPP
+#ifndef CPPTOOLS__CLI__CLI_COMMAND_HPP
+#define CPPTOOLS__CLI__CLI_COMMAND_HPP
 
 #include <string>
 #include <memory>
@@ -10,27 +10,25 @@
 namespace tools
 {
 
-template<typename CustomState>
-class CLICommand
+template<typename state_t>
+class cli_command
 {
-    public:
-        virtual ~CLICommand();
-        // Display name of the command.
-        virtual std::string getTooltip() = 0;
-        // Run the command.
-        virtual int run(CustomState& state, CLIStreams& streams = CLIInput::defaultStreams) = 0;
+public:
+    enum class code : int
+    {
+        success = 0,
+        failure = -1
+    };
+
+    virtual ~cli_command() = default;
+
+    // Display name of the command.
+    virtual std::string get_tooltip() = 0;
+
+    // Run the command.
+    virtual int run(state_t& state, cli_streams& streams = cli_input::default_streams) = 0;
 };
-
-template<typename CustomState>
-CLICommand<CustomState>::~CLICommand()
-{
-    
-}
-
-// Command exit codes
-inline static const int CLI_COMMAND_SUCCESS = 0;
-inline static const int CLI_COMMAND_FAILURE = -1;
 
 } // namespace tools
 
-#endif//TOOLS__CLI__CLI_COMMAND_HPP
+#endif//CPPTOOLS__CLI__CLI_COMMAND_HPP

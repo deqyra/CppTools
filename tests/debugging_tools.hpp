@@ -5,6 +5,6 @@
 
 #include <string>
 
-void stringDifference(std::string string1, std::string string2);
+void string_difference(std::string string1, std::string string2);
 
 #endif//TEST__DEBUGGING_TOOLS_HPP

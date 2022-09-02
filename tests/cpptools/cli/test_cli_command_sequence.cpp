@@ -15,22 +15,22 @@
 namespace tools
 {
 
-TEST_CASE("CommandSequence end-to-end", TAGS)
+TEST_CASE("command_sequence end-to-end", TAGS)
 {
     std::ifstream f = std::ifstream("resources/tests/tools/cli/menu_input.txt", std::ios::in);
     REQUIRE(f);
     std::stringstream ss;
 
-    CLIStreams s = CLIStreams(f, ss, ss);
+    cli_streams s = cli_streams(f, ss, ss);
     TestCLIState state = TestCLIState();
 
-    TestCLICommandSequence commandSequence = makeBasicTestCommandSequence();
+    TestCLIcommand_sequence command_sequence = make_basic_test_command_sequence();
 
-    commandSequence.run(state, s);
+    command_sequence.run(state, s);
 
     std::string expected = string::from_file("resources/tests/tools/cli/menu_output.txt");
-    expected += "TestCLICommand1 was run.\n"
-                "TestCLICommand2 was run.\n";
+    expected += "Testcli_command1 was run.\n"
+                "Testcli_command2 was run.\n";
 
     std::string str = ss.str();
 

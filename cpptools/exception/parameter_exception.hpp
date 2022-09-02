@@ -37,7 +37,7 @@ public:
 
     const std::string& parameter_name() const;
     const std::string& parameter_value() const;
-    
+
     std::string to_string() const override;
 
 private:

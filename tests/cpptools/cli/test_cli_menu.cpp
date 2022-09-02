@@ -14,19 +14,19 @@
 namespace tools
 {
 
-TEST_CASE("CLIMenu end-to-end", TAGS)
+TEST_CASE("cli_menu end-to-end", TAGS)
 {
     std::ifstream f = std::ifstream("resources/tests/tools/cli/menu_input.txt", std::ios::in);
     REQUIRE(f);
     std::stringstream ss;
 
-    CLIStreams s = CLIStreams(f, ss, ss);
+    cli_streams s = cli_streams(f, ss, ss);
     TestCLIState state = TestCLIState();
 
-    TestCLIMenu menu = makeBasicTestMenu();
+    Testcli_menu menu = make_basic_test_menu();
     menu.show(state, s);
 
-    std::string expected = String::readFileIntoString("resources/tests/tools/cli/menu_output.txt");
+    std::string expected = String::read_file_into_string("resources/tests/tools/cli/menu_output.txt");
 
     REQUIRE(ss.str() == expected);
 

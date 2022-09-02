@@ -3,24 +3,24 @@
 namespace tools
 {
 
-Worker::Worker(
-    std::function<void()> task,
-    bool startNow,
-    std::function<void()> onStart,
-    std::function<void()> onFinalize,
-    std::function<void()> onResume,
-    std::function<void()> onPause
+worker::worker(
+    task_fun task,
+    bool start_now,
+    task_fun on_start,
+    task_fun on_finalize,
+    task_fun on_resume,
+    task_fun on_pause
 ) :
     _exit(false),
-    _execute(startNow),
+    _execute(start_now),
     _finalized(false),
     _paused(false),
     _running(false),
     _task(std::move(task)),
-    _onStart(std::move(onStart)),
-    _onFinalize(std::move(onFinalize)),
-    _onResume(std::move(onResume)),
-    _onPause(std::move(onPause)),
+    _on_start(std::move(on_start)),
+    _on_finalize(std::move(on_finalize)),
+    _on_resume(std::move(on_resume)),
+    _on_pause(std::move(on_pause)),
     _thread(std::async(         // Run the worker right away
         std::launch::async,
         [this]{
@@ -31,105 +31,105 @@ Worker::Worker(
 
 }
 
-Worker::~Worker()
+worker::~worker()
 {
     if (!_exit) finalize();
     _thread.get();
 }
 
-void Worker::finalize()
+void worker::finalize()
 {
-    auto l = std::unique_lock<std::mutex>(_mutexExecute);
+    auto l = std::unique_lock<std::mutex>(_mutex_execute);
     _exit = true;
     // Notify thread to resume execution, only to immediately terminate
-    _semExecute.notify_all();
+    _sem_execute.notify_all();
 }
 
-bool Worker::finalized()
+bool worker::finalized()
 {
-    auto l = std::unique_lock<std::mutex>(_mutexFinalized);
+    auto l = std::unique_lock<std::mutex>(_mutex_finalized);
     return _finalized;
 }
 
-void Worker::waitUntilFinalized(bool finalizeNow)
+void worker::wait_until_finalized(bool finalize_now)
 {
-    if (finalizeNow)
+    if (finalize_now)
     {
         finalize();
     }
 
-    auto l = std::unique_lock<std::mutex>(_mutexFinalized);
+    auto l = std::unique_lock<std::mutex>(_mutex_finalized);
     // Wait until the thread says it finalized itself
-    _semFinalized.wait(l, [&]{
+    _sem_finalized.wait(l, [&]{
         return _finalized;
     });
 }
 
-void Worker::pause()
+void worker::pause()
 {
-    auto l = std::unique_lock<std::mutex>(_mutexExecute);
+    auto l = std::unique_lock<std::mutex>(_mutex_execute);
     _execute = false;
     // Don't notify the thread, as the waiting condition is not going
     // away by setting _execute to false.
 }
 
-bool Worker::paused()
+bool worker::paused()
 {
-    auto l = std::unique_lock<std::mutex>(_mutexPause);
+    auto l = std::unique_lock<std::mutex>(_mutex_pause);
     return _paused;
 }
 
-void Worker::waitUntilPaused(bool pauseNow)
+void worker::wait_until_paused(bool pause_now)
 {
-    if (pauseNow)
+    if (pause_now)
     {
         pause();
     }
 
-    auto l = std::unique_lock<std::mutex>(_mutexPause);
+    auto l = std::unique_lock<std::mutex>(_mutex_pause);
     // Wait until the thread says it paused
-    _semPause.wait(l, [&]{
+    _sem_pause.wait(l, [&]{
         return _paused;
     });
 }
 
-void Worker::run()
+void worker::run()
 {
-    auto l = std::unique_lock<std::mutex>(_mutexExecute);
+    auto l = std::unique_lock<std::mutex>(_mutex_execute);
     _execute = true;
     // Notify thread to resume execution
-    _semExecute.notify_one();
+    _sem_execute.notify_one();
 }
 
-bool Worker::running()
+bool worker::running()
 {
-    auto l = std::unique_lock<std::mutex>(_mutexRun);
+    auto l = std::unique_lock<std::mutex>(_mutex_run);
     return _running;
 }
 
-void Worker::waitUntilRunning(bool runNow)
+void worker::wait_until_running(bool run_now)
 {
-    if (runNow)
+    if (run_now)
     {
         run();
     }
 
-    auto l = std::unique_lock<std::mutex>(_mutexRun);
+    auto l = std::unique_lock<std::mutex>(_mutex_run);
     // Wait until the thread says it resumed
-    _semRunning.wait(l, [&]{
+    _sem_running.wait(l, [&]{
         return _running;
     });
 }
 
-void Worker::_work()
+void worker::_work()
 {
-    bool stopExecution = false;
-    bool wasRunningBefore = false;
+    bool stop_execution = false;
+    bool was_running_before = false;
 
-    _onStart();
+    _on_start();
     while(true)
     {
-        auto l = std::unique_lock<std::mutex>(_mutexExecute);
+        auto l = std::unique_lock<std::mutex>(_mutex_execute);
 
         // If asked to pause...
         if (!_exit && !_execute)
@@ -137,36 +137,36 @@ void Worker::_work()
             // Set the pause flag to true, notify awaiting threads
             // Also set the running flag to false
             {
-                auto p = std::unique_lock<std::mutex>(_mutexPause);
+                auto p = std::unique_lock<std::mutex>(_mutex_pause);
                 _paused = true;
-                _semPause.notify_all();
+                _sem_pause.notify_all();
                 p.unlock();
 
-                auto r = std::unique_lock<std::mutex>(_mutexRun);
+                auto r = std::unique_lock<std::mutex>(_mutex_run);
                 _running = false;
             }
 
-            _onPause();
+            _on_pause();
 
             // Wait for resume signal
-            _semExecute.wait(l, [&]{
+            _sem_execute.wait(l, [&]{
                 return _execute || _exit;
             });
 
             // Signify whether to continue or to stop execution.
-            stopExecution = _exit;
+            stop_execution = _exit;
             l.unlock();
 
             // Reset pause flag
             {
-                auto p = std::unique_lock<std::mutex>(_mutexPause);
+                auto p = std::unique_lock<std::mutex>(_mutex_pause);
                 _paused = false;
             }
-            wasRunningBefore = false;
+            was_running_before = false;
         }
         else if (_exit)
         {
-            stopExecution = _exit;
+            stop_execution = _exit;
             l.unlock();
         }
         else
@@ -174,29 +174,29 @@ void Worker::_work()
             l.unlock();
         }
 
-        if (stopExecution)
+        if (stop_execution)
         {
             // Exit loop if appropriate
             break;
         }
-        else if (!wasRunningBefore)
+        else if (!was_running_before)
         {
             // Otherwise notify continuation of thread
-            auto r = std::unique_lock<std::mutex>(_mutexRun);
+            auto r = std::unique_lock<std::mutex>(_mutex_run);
             _running = true;
-            _semRunning.notify_all();
-            _onResume();
-            wasRunningBefore = true;
+            _sem_running.notify_all();
+            _on_resume();
+            was_running_before = true;
         }
 
         // If continuing execution, do the task
         _task();
     }
-    _onFinalize();
+    _on_finalize();
 
-    auto f = std::unique_lock<std::mutex>(_mutexFinalized);
+    auto f = std::unique_lock<std::mutex>(_mutex_finalized);
     _finalized = true;
-    _semFinalized.notify_all();
+    _sem_finalized.notify_all();
 }
 
 }

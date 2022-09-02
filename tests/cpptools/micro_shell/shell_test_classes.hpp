@@ -10,51 +10,51 @@
 namespace tools
 {
 
-class TestShellState {};
+class test_shell_state {};
 
-using TestShell = MicroShell<TestShellState>;
-using TestShellCommand = MicroShellCommand<TestShellState>;
-using TestShellCommandPtr = std::shared_ptr<TestShellCommand>;
+using test_shell = micro_shell<test_shell_state>;
+using test_shell_command = micro_shell_command<test_shell_state>;
+using test_shell_command_ptr = std::unique_ptr<test_shell_command>;
 
-class TestShellCommand1 : public TestShellCommand
+class test_shell_command1 : public test_shell_command
 {
     public:
-        TestShellCommand1() : TestShellCommand() {}
-        virtual std::string name() {return "TestShellCommand1";}
-        virtual std::string description() {return "Run TestShellCommand1";}
-        virtual std::string help() {return "TestShellCommand1: no arguments expected.";}
-        virtual int processInput(const std::string& command, TestShellState& state, CLIStreams& streams = CLIInput::defaultStreams)
+        test_shell_command1() : test_shell_command() {}
+        virtual std::string name() {return "test_shell_command1";}
+        virtual std::string description() {return "Run test_shell_command1";}
+        virtual std::string help() {return "test_shell_command1: no arguments expected.";}
+        virtual int process_input(const std::string& command, test_shell_state& state, cli_streams& streams = cli_input::default_streams)
         {
-            streams.out() << "TestShellCommand1 was run.\n";
-            return SHELL_COMMAND_SUCCESS;
-        }
-};
- 
-class TestShellCommand2 : public TestShellCommand
-{
-    public:
-        TestShellCommand2() : TestShellCommand() {}
-        virtual std::string name() {return "TestShellCommand2";}
-        virtual std::string description() {return "Run TestShellCommand2";}
-        virtual std::string help() {return "TestShellCommand2: no arguments expected.";}
-        virtual int processInput(const std::string& command, TestShellState& state, CLIStreams& streams = CLIInput::defaultStreams)
-        {
-            streams.out() << "TestShellCommand2 was run.\n";
-            return SHELL_COMMAND_SUCCESS;
+            streams.out << "test_shell_command1 was run.\n";
+            return status_code::command_success;
         }
 };
 
-class TestShellExitCommand : public TestShellCommand
+class test_shell_command2 : public test_shell_command
 {
     public:
-        TestShellExitCommand() : TestShellCommand() {}
-        virtual std::string name() {return "TestShellExitCommand";}
-        virtual std::string description() {return "Run TestShellExitCommand";}
-        virtual std::string help() {return "TestShellExitCommand: no arguments expected.";}
-        virtual int processInput(const std::string& command, TestShellState& state, CLIStreams& streams = CLIInput::defaultStreams)
+        test_shell_command2() : test_shell_command() {}
+        virtual std::string name() {return "test_shell_command2";}
+        virtual std::string description() {return "Run test_shell_command2";}
+        virtual std::string help() {return "test_shell_command2: no arguments expected.";}
+        virtual int process_input(const std::string& command, test_shell_state& state, cli_streams& streams = cli_input::default_streams)
         {
-            streams.out() << "TestShellExitCommand was run.\n";
-            return SHELL_EXIT;
+            streams.out << "test_shell_command2 was run.\n";
+            return status_code::command_success;
+        }
+};
+
+class test_shell_exit_command : public test_shell_command
+{
+    public:
+        test_shell_exit_command() : test_shell_command() {}
+        virtual std::string name() {return "test_shell_exit_command";}
+        virtual std::string description() {return "Run test_shell_exit_command";}
+        virtual std::string help() {return "test_shell_exit_command: no arguments expected.";}
+        virtual int process_input(const std::string& command, test_shell_state& state, cli_streams& streams = cli_input::default_streams)
+        {
+            streams.out << "test_shell_exit_command was run.\n";
+            return status_code::exit;
         }
 };
 

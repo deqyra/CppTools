@@ -70,7 +70,7 @@ private:
     {
     public:
         using size_type = typename std::vector<node*>::size_type;
-        
+
         /// @brief Value attached to this node
         T value;
 
@@ -380,7 +380,7 @@ private:
             CPPTOOLS_DEBUG_ASSERT(parent != nullptr, "tree", pedantic, "has_parent called with nullptr", exception::parameter::null_parameter_error, "parent", nullptr);
 
             auto it = std::find(_parent_chain.begin(), _parent_chain.end(), parent);
-            
+
             return it != _parent_chain.end();
         }
 
@@ -507,7 +507,7 @@ private:
             std::ranges::swap(lhs._node,  tree<T>::_node_from_iterator(rhs));
             std::ranges::swap(lhs._value, tree<T>::_value_from_iterator(rhs));
         }
-        
+
         /// @param other Iterator to copy-assign contents from
         ///
         /// @tparam t2 Type of traversal implemented by the provided iterator
@@ -944,13 +944,13 @@ private:
 
     /// @brief Pointer to the root node of the tree
     node* _root;
-    
+
     /// @brief Pointer to the leftmost node of the tree
     node* _leftmost;
-    
+
     /// @brief Pointer to the rightmost node of the tree
     node* _rightmost;
-    
+
     /// @brief Create and register a new node out of a value, and get a pointer
     /// to it
     ///
@@ -1491,7 +1491,7 @@ public:
             _destruct_branch(child);
         }
         children.clear();
-        
+
         // this way, incrementing the iterator results in the expected behaviour
         // no matter the traversal or direction
         ++to_erase;

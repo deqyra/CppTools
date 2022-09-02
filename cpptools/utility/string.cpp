@@ -1,5 +1,3 @@
-#include "string.hpp"
-
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -9,8 +7,11 @@
 #include <sstream>
 #include <string>
 #include <utility>
-#include "../exceptions/file_not_found_error.hpp"
-#include "../exceptions/range_bounds_exceeded_error.hpp"
+
+#include "string.hpp"
+
+#include <cpptools/exception/exception.hpp>
+#include <cpptools/exception/io_exception.hpp>
 
 namespace tools::string
 {
@@ -140,7 +141,7 @@ bool contains(const std::string& str, char sub, std::size_t n, bool exact)
 bool is_integer(const std::string& str, bool accept_minus)
 {
     if (str.size() == 0) return false;
-    
+
     auto it = str.cbegin();
 
     if (accept_minus)
@@ -199,7 +200,7 @@ std::vector<std::string> tokenize(
     while (std::getline(token_stream, token, delimiter))
     {
         if (discard_empty && token == "") continue;
-        
+
         tokens.push_back(token);
     }
 
@@ -227,7 +228,7 @@ std::vector<std::size_t> parse_integer_sequence(const std::string& str, char del
             {
                 case non_integer_action::drop:
                     continue;
-                    
+
                 case non_integer_action::zero:
                     break;
 
@@ -268,7 +269,7 @@ std::string from_file(const std::filesystem::path& path, bool strip_cr)
         return res;
     }
 
-    throw FileNotFoundError(path.string() + ": file not found.");
+    CPPTOOLS_THROW(exception::io::file_not_found_error, path);
 }
 
 std::string multiline_concatenate(const std::string& first, const std::string& second)
@@ -282,7 +283,7 @@ std::string multiline_concatenate(const std::string& first, const std::string& s
     {
         pop_cr(str);
     }
-    
+
     for (auto& str : second_tokens)
     {
         pop_cr(str);
