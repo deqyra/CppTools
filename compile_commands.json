@@ -1,47 +1,97 @@
 [
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\cli\\cli_streams.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\cli\\cli_streams.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/cli/cli_streams.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\cli\\command.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\cli\\command.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/cli/command.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\bad_syntax_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\bad_syntax_error.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/bad_syntax_error.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\cli\\input.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\cli\\input.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/cli/input.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\file_not_found_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\file_not_found_error.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/file_not_found_error.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\exception\\error_category.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\exception\\error_category.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/exception/error_category.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\index_out_of_bounds_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\index_out_of_bounds_error.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/index_out_of_bounds_error.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\exception\\exception.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\exception\\exception.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/exception/exception.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\range_bounds_exceeded_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\range_bounds_exceeded_error.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/range_bounds_exceeded_error.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\exception\\io_exception.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\exception\\io_exception.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/exception/io_exception.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\exceptions\\unmatched_array_size_error.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\exceptions\\unmatched_array_size_error.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/exceptions/unmatched_array_size_error.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\thread\\worker.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\thread\\worker.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/thread/worker.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\thread\\worker.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\thread\\worker.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/thread/worker.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\cpptools\\utility\\string.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\cpptools\\utility\\string.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/cpptools/utility/string.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\utility\\string.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\utility\\string.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/utility/string.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\debugging_tools.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\debugging_tools.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/debugging_tools.cpp"
 },
 {
   "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
-  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -Dcpptools_EXPORTS -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools.dir\\tools\\utility\\type_impl\\instance_counter.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tools\\utility\\type_impl\\instance_counter.cpp",
-  "file": "C:/Users/francois.brachais/source/repos/CppTools/tools/utility/type_impl/instance_counter.cpp"
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\main.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\main.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/main.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_classes.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_classes.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_classes.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_command_sequence.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_command_sequence.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_command_sequence.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_input.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_input.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_input.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_menu.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_menu.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_menu.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_menu_command.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_menu_command.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_menu_command.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_shell.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_shell.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_shell.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\cli\\test_streams.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\cli\\test_streams.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/cli/test_streams.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\container\\test_tree.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\container\\test_tree.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/container/test_tree.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\utility\\test_string.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\utility\\test_string.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/utility/test_string.cpp"
+},
+{
+  "directory": "C:/Users/francois.brachais/source/repos/CppTools/build",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -I../ -I../external/include -g -Xclang -gcodeview -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu++20 -o CMakeFiles\\cpptools_tests.dir\\tests\\utility\\test_predicate.cpp.obj -c C:\\Users\\francois.brachais\\source\\repos\\CppTools\\tests\\utility\\test_predicate.cpp",
+  "file": "C:/Users/francois.brachais/source/repos/CppTools/tests/utility/test_predicate.cpp"
 }
 ]

@@ -4,20 +4,19 @@
 #include <algorithm>
 #include <functional>
 
-#include <cpptools/utility/lambda_maker.hpp>
+#include <cpptools/utility/predicate.hpp>
 
-#define TAGS "[lambda_maker]"
+#define TAGS "[predicate]"
 
-namespace tools
-{
-namespace lambda_maker
+namespace tools::predicate
 {
     std::vector<int> values = {15, 3, 21, 14, 5, 9, 0};
     std::vector<bool> result = std::vector<bool>(values.size());
 
-    void test_lambda(std::function<bool(const int&)> lambda)
+    template<typename T>
+    void test_lambda(pred_t<T> pred)
     {
-        std::transform(values.begin(), values.end(), result.begin(), lambda);
+        std::transform(values.begin(), values.end(), result.begin(), pred);
     }
 
     TEST_CASE("Test greater_than", TAGS)
@@ -61,5 +60,4 @@ namespace lambda_maker
         test_lambda(strictly_between(9, 14));
         REQUIRE(result == expected);
     }
-} // namespace lambda_maker
-} // namespace tools
+} // namespace tools::predicate

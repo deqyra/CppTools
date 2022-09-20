@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace tools
+namespace tools::oo
 {
 
 /// @brief Interface for a class able to receive events and queue them.
@@ -16,13 +16,13 @@ public:
     /// @brief Register a critical event to the window.
     ///
     /// @param event Literal describing the event to queue.
-    virtual void queue_event(const E event) = 0;
+    virtual void queue_event(const E& event) = 0;
 };
 
 template<typename E>
 using event_receiver_ptr = std::unique_ptr<event_receiver<E>>;
 
-} // namespace tools
+} // namespace tools::oo
 
 
 #endif//CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP

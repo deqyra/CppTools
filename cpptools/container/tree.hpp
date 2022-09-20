@@ -29,7 +29,7 @@
 #   include <cpptools/_internal/debug.hpp>
 #endif
 
-namespace tools
+namespace tools::container
 {
 
 enum class tree_traversal
@@ -1699,7 +1699,7 @@ public:
     }
 };
 
-} // namespace tools
+} // namespace tools::container
 
 #if CPPTOOLS_DEBUG_TREE != 0
 #   undef CPPTOOLS_DEBUG_ASSERT

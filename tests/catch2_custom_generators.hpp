@@ -138,21 +138,21 @@ namespace Generators
 } // namespace Catch
 
 template<typename T>
-Catch::Generators::generator_wrapper<T> vector(std::vector<T> vector, std::size_t size = 0)
+Catch::Generators::GeneratorWrapper<T> vector(std::vector<T> vector, std::size_t size = 0)
 {
-    return Catch::Generators::generator_wrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::vector_generator<T>(vector, size)));
+    return Catch::Generators::GeneratorWrapper<T>(std::make_unique<Catch::Generators::vector_generator<T>>(vector, size));
 }
 
 template<typename T>
-Catch::Generators::generator_wrapper<T> array(const T* const array, std::size_t size)
+Catch::Generators::GeneratorWrapper<T> array(const T* const array, std::size_t size)
 {
-    return Catch::Generators::generator_wrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::array_generator<T>(array, size)));
+    return Catch::Generators::GeneratorWrapper<T>(std::make_unique<Catch::Generators::array_generator<T>>(array, size));
 }
 
 template<typename T, int N>
-Catch::Generators::generator_wrapper<T> std_array(const std::array<T, N> array)
+Catch::Generators::GeneratorWrapper<T> std_array(const std::array<T, N> array)
 {
-    return Catch::Generators::generator_wrapper<T>(std::unique_ptr<Catch::Generators::IGenerator<T>>(new Catch::Generators::std_array_generator<T, N>(array)));
+    return Catch::Generators::GeneratorWrapper<T>(std::make_unique<Catch::Generators::std_array_generator<T, N>>(array));
 }
 
 #endif//TESTS__CATCH2_CUSTOM_GENERATORS_HPP

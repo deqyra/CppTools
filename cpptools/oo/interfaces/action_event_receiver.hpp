@@ -5,7 +5,7 @@
 
 #include <cpptools/utility/type_utils.hpp>
 
-namespace tools
+namespace tools::oo
 {
 
 /// @brief Interface for an object able to receive and process events related to
@@ -21,19 +21,17 @@ public:
     /// @brief Start the processing for an action.
     ///
     /// @param action Object describing the action to start processing.
-    /// @param args Arguments of the action to send along with the stop signal.
     virtual void trigger_action(const T& action) = 0;
 
     /// @brief Stop the processing for an action.
     ///
     /// @param action Object describing the action to stop processing.
-    /// @param args Arguments of the action to send along with the stop signal.
     virtual void stop_action(const T& action) = 0;
 };
 
 template<typename T>
 using action_event_receiver_ptr = std::unique_ptr<action_event_receiver<T>>;
 
-} // namespace tools
+} // namespace tools::oo
 
 #endif//CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER

@@ -1,0 +1,22 @@
+
+Test menu:
+1. test_command1
+2. test_command2
+0. Exit
+Please make a choice: 
+test_command1:
+test_command1 was run.
+
+Test menu:
+1. test_command1
+2. test_command2
+0. Exit
+Please make a choice: 
+test_command2:
+test_command2 was run.
+
+Test menu:
+1. test_command1
+2. test_command2
+0. Exit
+Please make a choice: Successful exit.

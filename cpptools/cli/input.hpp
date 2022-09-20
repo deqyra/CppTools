@@ -1,20 +1,20 @@
-#ifndef CPPTOOLS__CLI__CLI_INPUT
-#define CPPTOOLS__CLI__CLI_INPUT
+#ifndef CPPTOOLS__CLI__INPUT
+#define CPPTOOLS__CLI__INPUT
 
 #include <iostream>
 #include <string>
 
 #include <cpptools/utility/string.hpp>
 
-#include "cli_streams.hpp"
+#include "streams.hpp"
 
-namespace tools::cli_input
+namespace tools::cli::input
 {
     // Default streams to be used
-    inline cli_streams default_streams = cli_streams{};
+    inline cli::streams default_streams = cli::streams{};
 
     template<typename T>
-    T ask_for_input(const std::string& title, cli_streams& streams)
+    T ask_for_input(std::string_view title, cli::streams& streams)
     {
         // Prompt the user for a value until a valid one is entered.
         while (true)
@@ -32,7 +32,7 @@ namespace tools::cli_input
     }
 
     template<typename T>
-    T ask_for_min_input(const std::string& title, T min, cli_streams& streams)
+    T ask_for_min_input(std::string_view title, T min, cli::streams& streams)
     {
         // Ask for input until the entered value is valid and at least min.
         while (true)
@@ -49,7 +49,7 @@ namespace tools::cli_input
     }
 
     template<typename T>
-    T ask_for_max_input(const std::string& title, T max, cli_streams& streams)
+    T ask_for_max_input(std::string_view title, T max, cli::streams& streams)
     {
         // Ask for input until the entered value is valid and at most max.
         while (true)
@@ -66,7 +66,7 @@ namespace tools::cli_input
     }
 
     template<typename T>
-    T ask_for_bounded_input(const std::string& title, T min, T max, cli_streams& streams)
+    T ask_for_bounded_input(std::string_view title, T min, T max, cli::streams& streams)
     {
         // Ask for input until the entered value is between min and max.
         while (true)
@@ -83,7 +83,7 @@ namespace tools::cli_input
     }
 
     template<typename T>
-    T wait_for_input(cli_streams& streams)
+    T wait_for_input(cli::streams& streams)
     {
         std::string input;
         // Get input.
@@ -95,37 +95,37 @@ namespace tools::cli_input
     }
 
     template<typename T>
-    T parse_string(const std::string& input) = delete;
+    T parse_string(std::string_view input) = delete;
 
     template<typename T>
-    std::string type_name() = delete;
+    std::string_view type_name() = delete;
 
     //
     // Specializations of parse_string.
     //
 
     template<>
-    std::string parse_string(const std::string& input);
+    std::string parse_string(std::string_view input);
 
     template<>
-    int parse_string(const std::string& input);
+    int parse_string(std::string_view input);
 
     template<>
-    bool parse_string(const std::string& input);
+    bool parse_string(std::string_view input);
 
     //
     // Specializations of type_name.
     //
 
     template <>
-    std::string type_name<std::string>();
+    std::string_view type_name<std::string>();
 
     template <>
-    std::string type_name<int>();
+    std::string_view type_name<int>();
 
     template <>
-    std::string type_name<bool>();
+    std::string_view type_name<bool>();
 
-} // namespace tools::cli_input
+} // namespace tools::cli::input
 
-#endif//CPPTOOLS__CLI__CLI_INPUT
+#endif//CPPTOOLS__CLI__INPUT

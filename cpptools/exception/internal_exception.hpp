@@ -13,7 +13,7 @@ class internal_exception : public base_exception
 {
 public:
     static constexpr error_category error_category = error_category::internal;
-    enum class error_code
+    enum class ecode
     {
         out_of_memory           = 0,
         not_implemented         = 1,
@@ -25,14 +25,58 @@ public:
 };
 
 template<>
-constexpr std::string_view default_error_message(const internal_exception::error_code& code);
+constexpr std::string_view default_error_message(const internal_exception::ecode& code)
+{
+    using e = internal_exception::ecode;
+
+    switch (code)
+    {
+    case e::out_of_memory:
+        return "Out of memory";
+    case e::not_implemented:
+        return "Not implemented";
+    case e::invalid_state:
+        return "Invalid state";
+    case e::precondition_failure:
+        return "Precondition failure";
+    case e::postcondition_failure:
+        return "Postcondition failure";
+    case e::unexpected:
+        return "An unexpected error occurred";
+
+    default:
+        return "???";
+    }
+}
 
 template<>
-constexpr std::string_view to_string(const internal_exception::error_code& code);
+constexpr std::string_view to_string(const internal_exception::ecode& code)
+{
+    using e = internal_exception::ecode;
+
+    switch (code)
+    {
+    case e::out_of_memory:
+        return "out_of_memory";
+    case e::not_implemented:
+        return "not_implemented";
+    case e::invalid_state:
+        return "invalid_state";
+    case e::precondition_failure:
+        return "precondition_failure";
+    case e::postcondition_failure:
+        return "postcondition_failure";
+    case e::unexpected:
+        return "unexpected";
+
+    default:
+        return "???";
+    }
+}
 
 namespace internal
 {
-    using e = internal_exception::error_code;
+    using e = internal_exception::ecode;
 
     using out_of_memory_error = exception<internal_exception, e::out_of_memory>;
     using not_implemented_error = exception<internal_exception, e::not_implemented>;

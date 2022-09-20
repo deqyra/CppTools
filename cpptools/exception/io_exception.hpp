@@ -1,6 +1,7 @@
 #ifndef CPPTOOLS__EXCEPTION__IO_EXCEPTION_HPP
 #define CPPTOOLS__EXCEPTION__IO_EXCEPTION_HPP
 
+#include <filesystem>
 #include <string_view>
 
 #include "exception.hpp"
@@ -13,7 +14,7 @@ class io_exception : public base_exception
 {
 public:
     static constexpr error_category error_category = error_category::io;
-    enum class error_code
+    enum class ecode
     {
         file_not_found          = 0,
         access_denied           = 1,
@@ -21,7 +22,8 @@ public:
         invalid_output_stream   = 3,
     };
 
-    io_exception(const std::string_view& stream_name);
+    io_exception(std::string stream_name);
+    io_exception(std::filesystem::path stream_path);
 
     std::string to_string() const override;
 
@@ -30,14 +32,50 @@ private:
 };
 
 template<>
-constexpr std::string_view default_error_message(const io_exception::error_code& code);
+constexpr std::string_view default_error_message(const io_exception::ecode& code)
+{
+    using e = io_exception::ecode;
+
+    switch (code)
+    {
+    case e::file_not_found:
+        return "The file could not be found";
+    case e::access_denied:
+        return "Access to the file was denied";
+    case e::invalid_input_stream:
+        return "Invalid input stream";
+    case e::invalid_output_stream:
+        return "Invalid output stream";
+
+    default:
+        return "???";
+    }
+}
 
 template<>
-constexpr std::string_view to_string(const io_exception::error_code& code);
+constexpr std::string_view to_string(const io_exception::ecode& code)
+{
+    using e = io_exception::ecode;
+
+    switch (code)
+    {
+    case e::file_not_found:
+        return "file_not_found";
+    case e::access_denied:
+        return "access_denied";
+    case e::invalid_input_stream:
+        return "invalid_input_stream";
+    case e::invalid_output_stream:
+        return "invalid_output_stream";
+
+    default:
+        return "???";
+    }
+}
 
 namespace io
 {
-    using e = io_exception::error_code;
+    using e = io_exception::ecode;
 
     using file_not_found_error = exception<io_exception, e::file_not_found>;
     using access_denied_error = exception<io_exception, e::access_denied>;

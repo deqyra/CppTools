@@ -7,7 +7,7 @@ namespace tools::predicate
 {
 
 template<typename T>
-using pred_t = bool (*)(const T&);
+using pred_t = std::function<bool(const T&)>;
 
 template<typename T>
 pred_t<T> logical_not(pred_t<T> pred)

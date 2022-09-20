@@ -16,27 +16,33 @@ class parameter_exception : public base_exception
 {
 public:
     static constexpr enum error_category error_category = error_category::parameter;
-    enum class error_code
+    enum class ecode
     {
         invalid_value   = 0,
         null_parameter  = 1,
         lossy_cast      = 2
     };
 
-    parameter_exception(const std::string_view& parameter_name, std::string parameter_value = "<undefined>");
+    parameter_exception(std::string_view parameter_name, std::string parameter_value = "<undefined>");
 
     template<typename T>
-    parameter_exception(const std::string_view& parameter_name, const T& parameter_value) :
+    parameter_exception(std::string_view parameter_name, const T& parameter_value) :
         base_exception(),
         _parameter_name(parameter_name),
-        _parameter_value(parameter_value)
+        _parameter_value()
     {
         using std::to_string;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmicrosoft-template"
+
         _parameter_value = to_string(parameter_value);
+
+#pragma clang diagnostic pop
     }
 
-    const std::string& parameter_name() const;
-    const std::string& parameter_value() const;
+    std::string_view parameter_name() const;
+    std::string_view parameter_value() const;
 
     std::string to_string() const override;
 
@@ -46,14 +52,42 @@ private:
 };
 
 template<>
-constexpr std::string_view default_error_message<parameter_exception::error_code>(const parameter_exception::error_code& code);
+constexpr std::string_view default_error_message<parameter_exception::ecode>(const parameter_exception::ecode& code)
+{
+    switch (code)
+    {
+    case parameter_exception::ecode::invalid_value:
+        return "Parameter has invalid value";
+    case parameter_exception::ecode::null_parameter:
+        return "Parameter is null";
+    case parameter_exception::ecode::lossy_cast:
+        return "A data loss would incur from casting to the expected type";
+
+    default:
+        return "???";
+    }
+}
 
 template<>
-constexpr std::string_view to_string<parameter_exception::error_code>(const parameter_exception::error_code& code);
+constexpr std::string_view to_string<parameter_exception::ecode>(const parameter_exception::ecode& code)
+{
+    switch (code)
+    {
+    case parameter_exception::ecode::invalid_value:
+        return "invalid_value";
+    case parameter_exception::ecode::null_parameter:
+        return "null_parameter";
+    case parameter_exception::ecode::lossy_cast:
+        return "lossy_cast";
+
+    default:
+        return "???";
+    }
+}
 
 namespace parameter
 {
-    using e = parameter_exception::error_code;
+    using e = parameter_exception::ecode;
 
     using invalid_value_error = exception<parameter_exception, e::invalid_value>;
     using null_parameter_error = exception<parameter_exception, e::null_parameter>;

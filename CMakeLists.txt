@@ -82,46 +82,43 @@ project( "CppTools"
 set(CPPTOOLS_LIB_NAME "cpptools")
 
 set( CPPTOOLS_SOURCE_FILES
-    cpptools/cli/cli_streams.cpp
-    cpptools/cli/cli_streams.hpp
-    cpptools/cli/cli_input.hpp
-    cpptools/cli/cli_command.hpp
-    cpptools/cli/cli_menu.hpp
+    cpptools/cli/command.cpp
+    cpptools/cli/command.hpp
     cpptools/cli/command_sequence.hpp
+    cpptools/cli/input.cpp
+    cpptools/cli/input.hpp
+    cpptools/cli/menu.hpp
     cpptools/cli/menu_command.hpp
+    cpptools/cli/shell.hpp
+    cpptools/cli/streams.hpp
     cpptools/container/tree.hpp
-    cpptools/exceptions/make_basic_exception.hpp
-    cpptools/exceptions/file_not_found_error.cpp
-    cpptools/exceptions/file_not_found_error.hpp 
-    cpptools/exceptions/index_out_of_bounds_error.cpp
-    cpptools/exceptions/index_out_of_bounds_error.hpp
-    cpptools/exceptions/range_bounds_exceeded_error.cpp
-    cpptools/exceptions/range_bounds_exceeded_error.hpp 
-    cpptools/exceptions/unmatched_array_size_error.cpp
-    cpptools/exceptions/unmatched_array_size_error.hpp
-    cpptools/exceptions/bad_syntax_error.cpp 
-    cpptools/exceptions/bad_syntax_error.hpp 
-    cpptools/oo/notifier.hpp
-    cpptools/oo/interfaces/event_receiver.hpp
-    cpptools/oo/interfaces/action_event_receiver.hpp
+    cpptools/exception/error_category.cpp
+    cpptools/exception/error_category.hpp 
+    cpptools/exception/exception.cpp
+    cpptools/exception/exception.hpp
+    cpptools/exception/internal_exception.hpp 
+    cpptools/exception/io_exception.cpp
+    cpptools/exception/io_exception.hpp
+    cpptools/exception/iterator_exception.hpp 
+    cpptools/exception/parameter_exception.cpp 
+    cpptools/exception/parameter_exception.hpp 
+    cpptools/exception/range_exception.hpp 
+    cpptools/exception/range_exception.hpp 
     cpptools/math/sine_generator.hpp
-    cpptools/micro_shell/micro_shell.hpp
-    cpptools/micro_shell/micro_shell_codes.hpp
-    cpptools/micro_shell/micro_shell_command.hpp
+    cpptools/oo/notifier.hpp
+    cpptools/oo/interfaces/action_event_receiver.hpp
+    cpptools/oo/interfaces/event_receiver.hpp
     cpptools/thread/worker.cpp
     cpptools/thread/worker.hpp
     cpptools/thread/interfaces/interruptible.hpp
+    cpptools/utility/bitwise_enum_ops.hpp
+    cpptools/utility/concepts.hpp
     cpptools/utility/hash_combine.hpp
-    cpptools/utility/iterable_tools.hpp
-    cpptools/utility/lambda_maker.hpp
-    cpptools/utility/map_tools.hpp
-    cpptools/utility/string_tools.cpp
-    cpptools/utility/string_tools.hpp
+    cpptools/utility/map.hpp
+    cpptools/utility/predicate.hpp
+    cpptools/utility/string.cpp
+    cpptools/utility/string.hpp
     cpptools/utility/type_utils.hpp
-    cpptools/utility/type_utils_impl/container_traits.hpp
-    cpptools/utility/type_utils_impl/container_traits_detail.hpp
-    cpptools/utility/type_utils_impl/instance_counter.hpp
-    cpptools/utility/type_utils_impl/instance_counter.cpp
     cpptools/utility/type_utils_impl/type_list.hpp
 )
 
@@ -176,19 +173,17 @@ if(NOT CPPTOOLS_SKIP_TESTS)
         tests/debugging_tools.cpp
         tests/debugging_tools.hpp
         tests/main.cpp
-        tests/cpptools/test_string_tools.cpp
-        tests/cpptools/test_iterable_tools.cpp
-        tests/cpptools/test_lambda_maker.cpp
-        tests/cpptools/container/test_tree.cpp
-        tests/cpptools/cli/cli_test_classes.cpp
-        tests/cpptools/cli/cli_test_classes.hpp
-        tests/cpptools/cli/test_cli_command_sequence.cpp
-        tests/cpptools/cli/test_cli_input.cpp
-        tests/cpptools/cli/test_cli_menu.cpp
-        tests/cpptools/cli/test_cli_menu_command.cpp
-        tests/cpptools/cli/test_cli_streams.cpp
-        tests/cpptools/micro_shell/shell_test_classes.hpp
-        tests/cpptools/micro_shell/test_micro_shell.cpp
+        tests/cli/test_classes.cpp
+        tests/cli/test_classes.hpp
+        tests/cli/test_command_sequence.cpp
+        tests/cli/test_input.cpp
+        tests/cli/test_menu.cpp
+        tests/cli/test_menu_command.cpp
+        tests/cli/test_shell.cpp
+        tests/cli/test_streams.cpp
+        tests/container/test_tree.cpp
+        tests/utility/test_string.cpp
+        tests/utility/test_predicate.cpp
     )
 
     target_include_directories(
@@ -203,7 +198,7 @@ if(NOT CPPTOOLS_SKIP_TESTS)
         TARGET "${CPPTOOLS_LIB_NAME}_tests"
         COMMENT "Copying resource folder"
         PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/tests/resources ${CMAKE_BINARY_DIR}/resources
     )
 
     add_test(
