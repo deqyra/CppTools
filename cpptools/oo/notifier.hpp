@@ -4,11 +4,11 @@
 #include <functional>
 #include <unordered_map>
 
-namespace tools
+namespace tools::oo
 {
 
 template <typename ...ArgTypes>
-class Notifier
+class notifier
 {
 public:
     using listener_fun = void (*)(ArgTypes&&...);
@@ -18,7 +18,7 @@ private:
     unsigned int _count;
 
 public:
-    Notifier() :
+    notifier() :
         _listeners(),
         _count(0)
     {
@@ -45,6 +45,6 @@ public:
     }
 };
 
-} // namespace tools
+} // namespace tools::oo
 
 #endif //CPPTOOLS__NOTIFIER_HPP

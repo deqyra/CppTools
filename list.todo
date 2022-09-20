@@ -1,18 +1,21 @@
 CppTools:
     (partially imported from RenderBoi on 20-11-25 09:28)
-    ☐ Go over basically everything to see what needs improving
+    ✔ Go over basically everything to see what needs improving @done(22-09-06 13:32)
     ☐ Put documentation EVERYWHERE
     Iterable Tools:
-        ☐ In `stripElementFromIterable` the iterator may be invalidated
+        ✘ In `stripElementFromIterable` the iterator may be invalidated @cancelled(22-09-06 13:32)
     Array2D:
         ☐ Import it from PicrossEngine and clean it up
     Tree:
-        ☐ Iterator semantics
+        ✔ Iterator semantics @done(22-09-06 13:32)
         ✔ Clean up the massive mess going on @done(20-10-13 15:46)
         ✔ `clear()` method @done(20-10-22 10:11)
         ✔ Change weak pointers to shared pointers where possible, refactor @done(20-10-22 10:11)
         ✔ Documentation @done(20-10-25 02:50)
-        ☐ Keep shared pointers even between nodes, manage proper destruction
+        ✘ Keep shared pointers even between nodes, manage proper destruction @cancelled(22-09-06 13:32)
     C preprocessor:
         ✘ Build upon the stub in StringTools @cancelled(20-11-26 02:12)
-        ☐ Implement functions defined in header
+        ✘ Implement functions defined in header @cancelled(22-09-06 13:32)
+    CLI:
+        ☐ Figure out std::initializer_list constructors for std::unique_ptr
+        ☐ Store command help strings ?

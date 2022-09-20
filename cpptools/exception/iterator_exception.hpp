@@ -17,7 +17,7 @@ class iterator_exception : public base_exception
 {
 public:
     static constexpr enum error_category error_category = error_category::iterator;
-    enum class error_code
+    enum class ecode
     {
         incremented_past_end    = 0,
         decremented_past_begin  = 1,
@@ -32,7 +32,7 @@ class template_iterator_exception : public base_exception
 {
 public:
     static constexpr enum error_category error_category = iterator_exception::error_category;
-    using error_code = iterator_exception::error_code;
+    using ecode = iterator_exception::ecode;
     using it_type = It;
 
     template_iterator_exception(It iterator);
@@ -47,14 +47,42 @@ private:
 */
 
 template<>
-constexpr std::string_view default_error_message<iterator_exception::error_code>(const iterator_exception::error_code& code);
+constexpr std::string_view default_error_message<iterator_exception::ecode>(const iterator_exception::ecode& code)
+{
+    switch (code)
+    {
+    case iterator_exception::ecode::incremented_past_end:
+        return "Iterator was incremented past end of container";
+    case iterator_exception::ecode::decremented_past_begin:
+        return "Iterator was decremented past begin of container";
+    case iterator_exception::ecode::illegal_dereference:
+        return "Invalid iterator was dereferenced";
+
+    default:
+        return "???";
+    }
+}
 
 template<>
-constexpr std::string_view to_string<iterator_exception::error_code>(const iterator_exception::error_code& code);
+constexpr std::string_view to_string<iterator_exception::ecode>(const iterator_exception::ecode& code)
+{
+    switch (code)
+    {
+    case iterator_exception::ecode::incremented_past_end:
+        return "incremented_past_end";
+    case iterator_exception::ecode::decremented_past_begin:
+        return "decremented_past_begin";
+    case iterator_exception::ecode::illegal_dereference:
+        return "illegal_dereference";
+
+    default:
+        return "???";
+    }
+}
 
 namespace iterator
 {
-    using e = iterator_exception::error_code;
+    using e = iterator_exception::ecode;
 
     using incremented_past_end_error = exception<iterator_exception, e::incremented_past_end>;
     using decremented_past_begin_error = exception<iterator_exception, e::decremented_past_begin>;

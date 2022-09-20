@@ -1,6 +1,6 @@
 #include "worker.hpp"
 
-namespace tools
+namespace tools::thread
 {
 
 worker::worker(
@@ -199,4 +199,4 @@ void worker::_work()
     _sem_finalized.notify_all();
 }
 
-}
+} // namespace tools::thread

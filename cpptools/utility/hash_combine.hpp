@@ -13,7 +13,7 @@ struct hash_combine_params
     size_t right_shift;
 };
 
-constexpr hash_combine_params default_hash_combine_params = {
+inline constexpr hash_combine_params default_hash_combine_params = {
     .initial_value = 0x9e3779b9,
     .left_shift = 6,
     .right_shift = 2

@@ -10,7 +10,7 @@
 
 #include "interfaces/interruptible.hpp"
 
-namespace tools
+namespace tools::thread
 {
 
 class worker : public interruptible
@@ -144,6 +144,6 @@ public:
 
 using worker_ptr = std::unique_ptr<worker>;
 
-} // namespace tools
+} // namespace tools::thread
 
 #endif//CPPTOOLS__THREAD__WORKER_HPP

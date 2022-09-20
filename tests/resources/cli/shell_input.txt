@@ -1,0 +1,6 @@
+help
+help test_shell_command1
+help test_shell_command2
+test_shell_command1
+test_shell_command2
+exit

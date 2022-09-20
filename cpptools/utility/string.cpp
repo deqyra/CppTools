@@ -26,7 +26,7 @@ void pop_char(std::string& str, char c)
     }
 }
 
-void pop_string(std::string& str, const std::string& sub)
+void pop_string(std::string& str, std::string_view sub)
 {
     if (str.size() < sub.size()) return;
 
@@ -55,10 +55,12 @@ void pop_crlf(std::string& str)
 
 void strip_cr(std::string& str)
 {
-    std::size_t pos = 0;
-    while ((pos = str.find('\r'), pos) != std::string::npos)
+    for (auto it = str.rbegin(); it != str.rend(); ++it)
     {
-        str.erase(pos);
+        if (*it == '\r')
+        {
+            str.erase(it.base() - 1);
+        }
     }
 }
 
@@ -106,7 +108,7 @@ void strip_c_comments(std::string& str)
     }
 }
 
-bool contains(const std::string& str, char sub, std::size_t n, bool exact)
+bool contains(std::string_view str, char sub, std::size_t n, bool exact)
 {
     if (str.size() == 0) return n == 0;
     if (!exact && n == 0) return true;
@@ -138,7 +140,7 @@ bool contains(const std::string& str, char sub, std::size_t n, bool exact)
     }
 }
 
-bool is_integer(const std::string& str, bool accept_minus)
+bool is_integer(std::string_view str, bool accept_minus)
 {
     if (str.size() == 0) return false;
 
@@ -157,7 +159,7 @@ bool is_integer(const std::string& str, bool accept_minus)
     return true;
 }
 
-bool is_whitespace(const std::string& str)
+bool is_whitespace(std::string_view str)
 {
     for (auto it = str.cbegin(); it != str.cend(); ++it)
     {
@@ -181,7 +183,7 @@ void trim(std::string& str)
 }
 
 std::vector<std::string> tokenize(
-    const std::string& str,
+    std::string_view str,
     char delimiter,
     bool discard_empty
 )
@@ -190,12 +192,12 @@ std::vector<std::string> tokenize(
     {
         if (str == "" && discard_empty) return {};
 
-        return {str};
+        return {std::string{str}};
     }
 
     std::vector<std::string> tokens;
     std::string token;
-    std::istringstream token_stream(str);
+    std::istringstream token_stream(std::string{str});
 
     while (std::getline(token_stream, token, delimiter))
     {
@@ -213,10 +215,10 @@ std::vector<std::string> tokenize(
     return tokens;
 }
 
-std::vector<std::size_t> parse_integer_sequence(const std::string& str, char delimiter, non_integer_action action)
+std::vector<std::size_t> parse_integer_sequence(std::string_view str, char delimiter, non_integer_action action)
 {
     std::vector<std::size_t> ints;
-    std::vector<std::string> tokens = tokenize(str, delimiter);
+    std::vector<std::string> tokens = tokenize(str, delimiter, /* discardEmpty */ true);
 
     for (auto it = tokens.cbegin(); it != tokens.cend(); it++)
     {
@@ -226,15 +228,15 @@ std::vector<std::size_t> parse_integer_sequence(const std::string& str, char del
         {
             switch (action)
             {
-                case non_integer_action::drop:
-                    continue;
+            case non_integer_action::drop:
+                continue;
 
-                case non_integer_action::zero:
-                    break;
+            case non_integer_action::zero:
+                break;
 
-                case non_integer_action::except:
-                    auto n = (it - tokens.begin());
-                    throw std::invalid_argument("Substring" + std::to_string(n) + " is not an integer.");
+            case non_integer_action::exception:
+                auto n = (it - tokens.begin());
+                throw std::invalid_argument("Substring" + std::to_string(n) + " is not an integer.");
             }
         }
         else
@@ -272,7 +274,7 @@ std::string from_file(const std::filesystem::path& path, bool strip_cr)
     CPPTOOLS_THROW(exception::io::file_not_found_error, path);
 }
 
-std::string multiline_concatenate(const std::string& first, const std::string& second)
+std::string multiline_concatenate(std::string_view first, std::string_view second)
 {
     // split along new lines
     std::vector<std::string> first_tokens = tokenize(first, '\n');

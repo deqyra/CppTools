@@ -1,48 +1,51 @@
 #ifndef CPPTOOLS__CLI__MENU_COMMAND_HPP
 #define CPPTOOLS__CLI__MENU_COMMAND_HPP
 
+#include <array>
 #include <string>
 
-#include "cli_command.hpp"
-#include "cli_menu.hpp"
-#include "cli_streams.hpp"
+#include "command.hpp"
+#include "menu.hpp"
+#include "streams.hpp"
 
-namespace tools
+namespace tools::cli
 {
 
 // Extended command wrapping a menu.
-template<typename state_t>
-class menu_command : public cli_command<state_t>
+template<typename context_t, std::size_t N>
+class menu_command : public command<context_t>
 {
 public:
-    using code = typename cli_command<state_t>::code;
+    using code = typename command<context_t>::code;
 
 private:
-    cli_menu<state_t> _inner_menu;
+    menu<context_t, N> _inner_menu;
 
 public: 
-    menu_command(cli_menu<state_t> inner_menu) :
-        cli_command<state_t>(),
-        _inner_menu(inner_menu)
+    menu_command(menu<context_t, N>&& inner_menu) :
+        command<context_t>(),
+        _inner_menu(std::move(inner_menu))
     {
 
     }
+
+    menu_command(menu_command&& other) = default;
 
     virtual ~menu_command() = default;
 
-    virtual std::string get_tooltip()
+    virtual std::string tooltip() const override
     {
-        return _inner_menu.get_tooltip();
+        return _inner_menu.tooltip();
     }
 
     // Run the menu_command (show the inner menu).
-    virtual int run(state_t& state, cli_streams& streams)
+    virtual code run(context_t& state, cli::streams& streams) override
     {
         _inner_menu.show(state, streams);
         return code::success;
     }
 };
 
-} // namespace tools
+} // namespace tools::cli
 
 #endif//CPPTOOLS__CLI__MENU_COMMAND_HPP

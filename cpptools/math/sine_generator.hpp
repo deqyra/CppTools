@@ -6,7 +6,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-namespace tools
+namespace tools::math
 {
 
 template<typename prec = float>
@@ -85,6 +85,6 @@ public:
     }
 };
 
-} // namespace tools
+} // namespace tools::math
 
 #endif//CPPTOOLS__MATH__SINE_GENERATOR_HPP

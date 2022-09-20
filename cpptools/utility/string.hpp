@@ -24,7 +24,7 @@ void pop_char(std::string& str, char c);
 ///
 /// @param str String to process
 /// @param sub String to pop off str
-void pop_string(std::string& str, const std::string& sub);
+void pop_string(std::string& str, std::string_view sub);
 
 /// @brief Remove any single trailing '\r' at the end of a string
 ///
@@ -65,7 +65,7 @@ void strip_c_comments(std::string& str);
 /// @note When exact is false, the function checks if c occurs at least n times
 /// in str.
 bool contains(
-    const std::string& str,
+    std::string_view str,
     char c,
     std::size_t n = 1,
     bool exact = false
@@ -75,12 +75,12 @@ bool contains(
 ///
 /// @param str String to process
 /// @param accept_minus Whether or not to accept a single hyphen as a minus sign
-bool is_integer(const std::string& str, bool accept_minus = true);
+bool is_integer(std::string_view str, bool accept_minus = true);
 
 /// @brief Check whether a string is only made of whitespaces
 ///
 /// @param str String to process
-bool is_whitespace(const std::string& str);
+bool is_whitespace(std::string_view str);
 
 /// @brief Remove whitespace characters from both ends of the string
 ///
@@ -95,7 +95,7 @@ void trim(std::string& str);
 ///
 /// @return A vector filled with the found tokens
 std::vector<std::string> tokenize(
-    const std::string& str,
+    std::string_view str,
     char delimiter,
     bool discard_empty = false
 );
@@ -109,7 +109,7 @@ enum class non_integer_action
     /// @brief Consider non-integer tokens as 0-valued
     zero,
     /// @brief Throw an exception upon encountering a non-integer token
-    except
+    exception
 };
 
 /// @brief Parse an integer sequence from a string
@@ -121,9 +121,9 @@ enum class non_integer_action
 ///
 /// @return A vector filled with the found integers
 std::vector<std::size_t> parse_integer_sequence(
-    const std::string& str,
+    std::string_view str,
     char delimiter,
-    non_integer_action action = non_integer_action::except
+    non_integer_action action = non_integer_action::exception
 );
 
 /// @brief Open the file located at the provided path and read its contents into
@@ -144,8 +144,8 @@ std::string from_file(const std::filesystem::path& path, bool strip_cr = true);
 ///
 /// @return A single string containing the result of the concatenation
 std::string multiline_concatenate(
-    const std::string& first,
-    const std::string& second
+    std::string_view first,
+    std::string_view second
 );
 
 /// @brief Parse two integers forming the boundaries of an interval
@@ -177,7 +177,7 @@ std::string multiline_concatenate(
 /// will attempt to parse it as a single integral value and return the interval
 /// [value ; value].
 template<concepts::integral_type int_t>
-std::pair<int_t, int_t> parse_int_range(const std::string& str, char delimiter)
+std::pair<int_t, int_t> parse_int_range(std::string_view str, char delimiter)
 {
     static constexpr bool is_signed = std::is_signed_v<int_t>;
     static constexpr bool accept_minus = is_signed;
@@ -261,7 +261,7 @@ std::pair<int_t, int_t> parse_int_range(const std::string& str, char delimiter)
     }
 
     // too many tokens
-    std::string err = "parse_int_range: Too many delimiters in \"" + str + "\".";
+    std::string err = "parse_int_range: Too many delimiters in \"" + std::string{str} + "\".";
     throw std::invalid_argument(err.c_str());
 }
 
@@ -270,12 +270,12 @@ std::pair<int_t, int_t> parse_int_range(const std::string& str, char delimiter)
 /// @param str String to process
 template<std::ranges::range R>
 std::string from_range(
-    R range,                           const std::string& delimiter = " ",
-    const std::string& prefix = "",    const std::string& suffix = "",
-    const std::string& elt_prefix = "", const std::string& elt_suffix = ""
+    R range,                     std::string delimiter = " ",
+    std::string prefix = "",     std::string suffix = "",
+    std::string elt_prefix = "", std::string elt_suffix = ""
 )
 {
-    std::string s = prefix;
+    std::string s{prefix};
     using std::to_string;
     using std::ranges::cbegin;
     using std::ranges::cend;
@@ -283,7 +283,15 @@ std::string from_range(
     auto last = cend(range);
     for (auto it = cbegin(range); it != last; it++)
     {
-        s += elt_prefix + to_string(*it) + elt_suffix;
+        if constexpr (std::is_same_v<std::remove_cvref_t<decltype(*it)>, std::string>)
+        {
+            s += elt_prefix + *it + elt_suffix;
+        }
+        else
+        {
+            s += elt_prefix + to_string(*it) + elt_suffix;
+        }
+
         if (it != last - 1)
         {
             s += delimiter;

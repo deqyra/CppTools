@@ -3,7 +3,7 @@
 namespace tools::exception
 {
 
-std::string_view to_string(error_category cat)
+std::string_view error_category_name(error_category cat)
 {
     switch (cat)
     {

@@ -1,61 +1,58 @@
 #ifndef CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
 #define CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "cli_command.hpp"
-#include "cli_input.hpp"
+#include "command.hpp"
+#include "input.hpp"
 
-namespace tools
+namespace tools::cli
 {
 
 // Extended command allowing to run several commands in a row.
-template <typename state_t>
-class command_sequence : public cli_command<state_t>
+template <typename context_t, std::size_t N>
+class command_sequence : public cli::command<context_t>
 {
 public:
-    using command_ptr = std::unique_ptr<cli_command<state_t>>;
-    using code = typename cli_command<state_t>::code;
+    using command_ptr = std::unique_ptr<cli::command<context_t>>;
+    using code = typename cli::command<context_t>::code;
 
 private:
     // Ordered commands to run.
-    std::vector<command_ptr> _command_list;
+    std::array<command_ptr, N> _commands;
 
     // Display name of the command sequence.
     std::string _tooltip;
 
-public: 
-    command_sequence(std::vector<command_ptr> command_list, std::string tooltip = "") :
-        cli_command<state_t>(),
-        _command_list(command_list),
-        _tooltip(tooltip)
+public:
+    command_sequence(std::array<command_ptr, N>&& commands, std::string tooltip = "") :
+        cli::command<context_t>(),
+        _commands(std::move(commands)),
+        _tooltip(std::move(tooltip))
     {
 
     }
 
     virtual ~command_sequence() = default;
 
-    virtual std::string get_tooltip()
+    virtual std::string tooltip() const override
     {
-        if (!_tooltip.empty())
-        {
-            return _tooltip;
-        }
-        return _command_list[0]->get_tooltip();
+        return _tooltip;
     }
 
     // Run the command sequence.
-    virtual code run(state_t& state, cli_streams& streams = cli_input::default_streams)
+    virtual code run(context_t& state, cli::streams& streams = cli::input::default_streams) override
     {
         // Run all commands in order.
-        for (auto it = _command_list.begin(); it != _command_list.end(); it++)
+        for (auto& command : _commands)
         {
-            int status;
+            code status;
             try
             {
-                status = (*it)->run(state, streams);
+                status = command->run(state, streams);
             }
             catch (const std::exception& e)
             {
@@ -70,7 +67,7 @@ public:
             if (status != code::success)
             {
                 // Log error and return prematurely.
-                streams.out << "Command \"" + (*it)->get_tooltip() + "\" returned with value " + std::to_string(status) + "\n";
+                streams.out << "Command \"" + command->tooltip() + "\" returned with value " + to_string(status) + "\n";
                 streams.out << "Command sequence \"" + _tooltip + "\" aborted." << std::endl;
                 return status;
             }
@@ -80,7 +77,6 @@ public:
     }
 };
 
-
-} // namespace tools
+} // namespace tools::cli
 
 #endif//CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP

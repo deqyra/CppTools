@@ -9,7 +9,7 @@ std::string base_exception::to_string() const
 {
     std::stringstream result;
     result << "Category: " << error_category_name(category())
-           << ", error: (" << error_code() << ") " << error_code_to_string() << '\n';
+           << ", error: (" << error_code() << ") " << ecode_to_string() << '\n';
     result << "Function <" << function() << ">, line: " << line() << '\n';
     result << "Message: " << message() << '\n';
 
@@ -22,11 +22,11 @@ std::ostream& operator<<(std::ostream& out, const base_exception& e)
 }
 
 template<>
-constexpr std::string_view default_error_message<unknown_exception::error_code>(const unknown_exception::error_code& code)
+constexpr std::string_view default_error_message<unknown_exception::ecode>(const unknown_exception::ecode& code)
 {
     switch (code)
     {
-        case unknown_exception::error_code::unknown:
+        case unknown_exception::ecode::unknown:
             return "An unknown error occurred";
 
         default:
@@ -35,11 +35,11 @@ constexpr std::string_view default_error_message<unknown_exception::error_code>(
 }
 
 template<>
-constexpr std::string_view to_string<unknown_exception::error_code>(const unknown_exception::error_code& code)
+constexpr std::string_view to_string<unknown_exception::ecode>(const unknown_exception::ecode& code)
 {
     switch (code)
     {
-        case unknown_exception::error_code::unknown:
+        case unknown_exception::ecode::unknown:
             return "unknown";
 
         default:

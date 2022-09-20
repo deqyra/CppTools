@@ -13,6 +13,6 @@ concept integral_type = requires { std::is_integral_v<T>; };
 template<typename T>
 concept addable = requires (T a, T b) { {a + b} -> std::convertible_to<T>; };
 
-} // namespace tools
+} // namespace tools::concepts
 
 #endif//CPPTOOLS__UTILITY__CONCEPTS_HPP
