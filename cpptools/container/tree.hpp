@@ -14,20 +14,17 @@
 #include <utility>
 #include <vector>
 
+#include <cpptools/exception/exception.hpp>
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
 #include <cpptools/exception/iterator_exception.hpp>
 
-#define CPPTOOLS_DEBUG_ENABLED 1
-#define CPPTOOLS_DEBUG_POLICY CPPTOOLS_DEBUG_POLICY_LOG_AND_THROW
-#define CPPTOOLS_DEBUG_TREE 1
-
 #if CPPTOOLS_DEBUG_TREE != 0
 #   if not defined CPPTOOLS_DEBUG_ENABLED or CPPTOOLS_DEBUG_ENABLED == 0
-#       warning CPPTOOLS_TREE_DEBUG_ENABLED is defined and non-zero but CPPTOOLS_DEBUG_ENABLED is not
+#       warning CPPTOOLS_DEBUG_TREE is defined and non-zero but CPPTOOLS_DEBUG_ENABLED is not
 #   endif
-#   include <cpptools/_internal/debug.hpp>
 #endif
+#include <cpptools/_internal/debug.hpp>
 
 namespace tools::container
 {
@@ -151,7 +148,7 @@ private:
         ///
         /// @note It is a precondition that this node must have a non-null
         /// parent when calling this function.
-        bool is_leftmost_sibling() const noexcept(!(CPPTOOLS_DEBUG_ENABLED && CPPTOOLS_DEBUG_TREE))
+        bool is_leftmost_sibling() const
         {
             CPPTOOLS_DEBUG_ASSERT(_parent != nullptr, "tree", critical, "called is_leftmost_sibling on node with no parent", exception::internal::precondition_failure_error);
             return _parent_index == 0;
@@ -715,17 +712,6 @@ private:
         }
     };
 
-    /// @brief Constant iterator to an element in the tree. Allows bidirectional
-    /// DFS traversal of the tree.
-    /// 
-    /// @tparam t Type of traversal to be implemented by the iterator
-    ///
-    /// @note Iterators are invalidated only when the node they point to is no
-    /// longer part of the tree which it originally belonged to when the 
-    /// iterator was first instantiated.
-    template<traversal t>
-    class const_iterator : public iterator_impl<t> {};
-
     /// @brief Mutable iterator to an element in the tree. Allows bidirectional
     /// DFS traversal of the tree and insertion, copy and move operations on 
     /// node and branches.
@@ -929,6 +915,24 @@ private:
 
             node* new_branch = this->_tree->_copy_branch_across(this->_node, dest, other);
             return iterator(other, new_branch);
+        }
+    };
+
+    /// @brief Constant iterator to an element in the tree. Allows bidirectional
+    /// DFS traversal of the tree.
+    /// 
+    /// @tparam t Type of traversal to be implemented by the iterator
+    ///
+    /// @note Iterators are invalidated only when the node they point to is no
+    /// longer part of the tree which it originally belonged to when the 
+    /// iterator was first instantiated.
+    template<traversal t>
+    class const_iterator : public iterator_impl<t>
+    {
+        template<traversal t2>
+        const_iterator(const iterator<t2>& other) : 
+            iterator_impl<t2>(other)
+        {
         }
     };
 
@@ -1345,9 +1349,10 @@ public:
     }
 
     /// @param other Tree to copy-assign contents from
-    tree<T>& operator=(tree<T> other)
+    tree<T>& operator=(const tree<T>& other)
     {
-        swap(*this, other);
+        tree<T> tmp{other};
+        swap(*this, tmp);
     }
 
     /// @param other Tree to move-assign contents from
@@ -1514,7 +1519,7 @@ public:
     /// @param rhs Other tree to compare this tree to
     ///
     /// @return Whether this tree and rhs are equal
-    bool operator==(const tree<T>& other)
+    bool operator==(const tree<T>& other) const
     {
         if (&other == this) return true;
 
