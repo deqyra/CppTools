@@ -55,8 +55,8 @@
                 CPPTOOLS_THROW(ex_t, ##__VA_ARGS__).with_message(message);     \
             }
 #   else
-#       define CPPTOOLS_DEBUG_ASSERT(level, channel, cond, message, throw_cond)
+#       define CPPTOOLS_DEBUG_ASSERT(cond, channel, level, message, ex_t, ...)
 #   endif
 #else
-#   define CPPTOOLS_DEBUG_ASSERT(level, channel, cond, message, throw_cond)
+#   define CPPTOOLS_DEBUG_ASSERT(cond, channel, level, message, ex_t, ...)
 #endif

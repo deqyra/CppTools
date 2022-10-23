@@ -19,7 +19,6 @@ Currently made up of the following:
 |                    | [**`hash_combine`**][hash_combine]         | A janky implementation of a hash function to help defining an `std::hash` specialization for custom types. Best not to use for serious applications.                                   |
 |                    | [**`map`**][map]                           | A collection of tools that apply to maps.                                                                                                                                              |
 |                    | [**`predicate`**][predicate]               | A library of parametric lambda functions for common numerical comparisons and functional combinatorics.                                                                                |
-|                    | [**`ranges`**][ranges]                     | Operations on ranges, numerical or otherwise: sum elements in nested iterables, ...                                                                                                    |
 |                    | [**`string`**][string]                     | Basic string processing: tokenization, char removal, formatting iterables and so forth.                                                                                                |
 |                    | [**`type_utils`**][type_utils]             | Custom type traits.                                                                                                                                                                    |
 
@@ -43,7 +42,6 @@ on at present.
 [hash_combine]:     https://github.com/deqyra/CppTools/blob/master/cpptools/utility/hash_combine.hpp
 [map]:              https://github.com/deqyra/CppTools/blob/master/cpptools/utility/map.hpp
 [predicate]:        https://github.com/deqyra/CppTools/blob/master/cpptools/utility/predicate.hpp
-[ranges]:           https://github.com/deqyra/CppTools/blob/master/cpptools/utility/ranges.hpp
 [string]:           https://github.com/deqyra/CppTools/blob/master/cpptools/utility/string.hpp
 [type_utils]:       https://github.com/deqyra/CppTools/blob/master/cpptools/utility/type_utils.hpp
 [todo]:             https://github.com/deqyra/CppTools/blob/master/list.todo
