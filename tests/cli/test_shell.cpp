@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <memory>
 #include <string>
@@ -18,7 +18,6 @@ namespace tools::cli
 
 TEST_CASE("shell")
 {
-    test_state state;
     test_shell_command1 com1{};
     test_shell_command2 com2{};
     test_shell_exit_command exit{};

@@ -25,7 +25,7 @@ public:
     io_exception(std::string stream_name);
     io_exception(std::filesystem::path stream_path);
 
-    std::string to_string() const override;
+    std::string_view to_string() const override;
 
 private:
     std::string _stream_name;

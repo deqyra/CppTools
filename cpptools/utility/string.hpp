@@ -62,8 +62,8 @@ void strip_c_comments(std::string& str);
 ///
 /// @return Whether str contains c as many times as described by n and exact
 ///
-/// @note When exact is false, the function checks if c occurs at least n times
-/// in str.
+/// @note When exact is false, the function checks whether c occurs at least n
+/// times in str.
 bool contains(
     std::string_view str,
     char c,
@@ -176,7 +176,7 @@ std::string multiline_concatenate(
 /// @note If the delimiter cannot be found in the input string, the function 
 /// will attempt to parse it as a single integral value and return the interval
 /// [value ; value].
-template<concepts::integral_type int_t>
+template<std::integral int_t>
 std::pair<int_t, int_t> parse_int_range(std::string_view str, char delimiter)
 {
     static constexpr bool is_signed = std::is_signed_v<int_t>;
@@ -276,7 +276,6 @@ std::string from_range(
 )
 {
     std::string s{prefix};
-    using std::to_string;
     using std::ranges::cbegin;
     using std::ranges::cend;
 

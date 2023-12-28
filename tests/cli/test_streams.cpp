@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <iostream>
 #include <fstream>

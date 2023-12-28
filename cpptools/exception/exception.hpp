@@ -2,6 +2,7 @@
 #define CPPTOOLS__EXCEPTION__EXCEPTION_HPP
 
 #include <ostream>
+#include <source_location>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -28,8 +29,6 @@ namespace tools::exception
 /// - Every exception class meant to be throwable must be a specialization of the `exception` template, which:
 ///     - uses CRTP to inherit from a type T as described above
 ///     - is also template-parameterized on a specific error code literal in T::error_code
-/// - Using the macros in exception_list.hpp, specific exceptions types relating to all error cases of
-/// different error categories may be aliased to the corresponding specialization of `exception`
 
 class base_exception;
 
@@ -60,8 +59,7 @@ template<concrete_exception T, typename T::ecode code>
 class exception : public T
 {
 private:
-    size_t _line;
-    std::string _function;
+    std::source_location _source_location;
     std::string _message;
 
 public:
@@ -69,70 +67,52 @@ public:
     /// @param line Number of the line where the exception was thrown
     /// @param args Arguments to forward to the constructor of T
     template<typename... ArgTypes>
-    explicit exception(std::string_view function, size_t line, ArgTypes&&... args) :
+    explicit exception(std::source_location&& source_location, ArgTypes&&... args) :
         T(std::forward<ArgTypes&&>(args)...),
-        _line(line),
-        _function(function),
+        _source_location(std::move(source_location)),
         _message(default_error_message(code))
     {
     }
 
     exception(const exception &e) = default;
 
-    error_category category() const override
-    {
-        return T::error_category;
-    }
-
-    std::size_t error_code() const override
-    {
-        return static_cast<std::size_t>(code);
-    }
-
-    std::string_view ecode_to_string() const override
-    {
-        return tools::exception::to_string(code);
-    }
-
     // Overrides from base_exception
 
-    const std::size_t& line()     const override { return _line; }
-    std::string_view function() const override { return _function; }
-    std::string_view message()  const override { return _message; }
+    error_category   category()        const override { return T::error_category; }
+    std::size_t      error_code()      const override { return static_cast<std::size_t>(code); }
+    std::string_view ecode_to_string() const override { return tools::exception::to_string(code); }
 
-    std::size_t& line()     override { return _line; }
-    std::string& function() override { return _function; }
-    std::string& message()  override { return _message; }
+    const std::source_location& source_location() const override { return _source_location; }
+          std::string_view      message()         const override { return _message; }
+          std::string&          message()               override { return _message; }
 
     /// @brief Set a new message for this exception
     ///
     /// @param message The new message
     exception& with_message(std::string_view message)
     {
-        message = std::move(message);
+        _message = message;
         return *this;
     }
 };
 
 /// @brief Base class which has to be inherited by all new exception classes
-class base_exception
+class base_exception : public std::exception
 {
 public:
     virtual ~base_exception() = default;
 
-    virtual error_category category()               const = 0;
-    virtual std::size_t error_code()                const = 0;
+    virtual error_category   category()        const = 0;
+    virtual std::size_t      error_code()      const = 0;
     virtual std::string_view ecode_to_string() const = 0;
 
-    virtual const std::size_t& line()       const = 0;
-    virtual std::string_view function()   const = 0;
-    virtual std::string_view message()    const = 0;
+    virtual const std::source_location& source_location() const = 0;
+    virtual       std::string_view      message()         const = 0;
+    virtual       std::string&          message()               = 0;
 
-    virtual std::size_t& line()       = 0;
-    virtual std::string& function()   = 0;
-    virtual std::string& message()    = 0;
+    [[nodiscard]] virtual const char* what() const override;
 
-    virtual std::string to_string() const;
+    virtual std::string_view to_string() const;
 };
 
 std::ostream& operator<<(std::ostream& out, const base_exception& e);
@@ -158,6 +138,6 @@ using unknown_error = exception<unknown_exception, unknown_exception::ecode::unk
 
 } // namespace tools::exception
 
-#define CPPTOOLS_THROW(exception_type, ...) throw exception_type(__FUNCTION__, __LINE__,  ##__VA_ARGS__ )
+#define CPPTOOLS_THROW(exception_type, ...) throw exception_type(std::source_location::current(),  ##__VA_ARGS__ )
 
 #endif//CPPTOOLS__EXCEPTION__EXCEPTION_HPP

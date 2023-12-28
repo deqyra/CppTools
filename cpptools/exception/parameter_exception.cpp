@@ -22,16 +22,13 @@ std::string_view parameter_exception::parameter_value() const
     return _parameter_value;
 }
 
-std::string parameter_exception::to_string() const
+std::string_view parameter_exception::to_string() const
 {
-    std::stringstream result;
-    result << "Category: " << error_category_name(category())
-           << ", error: (" << error_code() << ") " << ecode_to_string() << '\n';
-    result << "Function <" << function() << ">, line: " << line() << '\n';
-    result << "Parameter: " << _parameter_name << ", value: " << _parameter_value << '\n';
-    result << "Message: " << message() << '\n';
+    static const std::string result =
+        std::string(base_exception::to_string()) + '\n' +
+        "Parameter: " + _parameter_name + ", value: " + _parameter_value;
 
-    return result.str();
+    return result;
 }
 
 }

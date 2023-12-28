@@ -1,7 +1,7 @@
 #ifndef TESTS__CATCH2_CUSTOM_GENERATORS_HPP
 #define TESTS__CATCH2_CUSTOM_GENERATORS_HPP
 
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <cstddef>
 #include <iterator>

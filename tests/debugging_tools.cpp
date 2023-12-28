@@ -1,5 +1,9 @@
 #include "debugging_tools.hpp"
 
+#include <iostream>
+
+#include <catch2/catch_all.hpp>
+
 void string_difference(std::string string1, std::string string2)
 {
     Catch::cout() << "String 1 len: " << string1.length() << "; string 2 len: " << string2.length() << std::endl;

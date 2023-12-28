@@ -1,8 +1,6 @@
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
-#include <string>
 #include <utility>
-#include <vector>
 
 #define CPPTOOLS_DEBUG_ENABLED 1
 #define CPPTOOLS_DEBUG_POLICY CPPTOOLS_DEBUG_POLICY_LOG_AND_THROW
@@ -12,201 +10,69 @@
 
 #include "tree_test_utilities.hpp"
 
-#define TAGS "[container][tree]"
+#undef CPPTOOLS_DEBUG_ENABLED
+#undef CPPTOOLS_DEBUG_POLICY
+#undef CPPTOOLS_DEBUG_TREE
 
-namespace tools::container
+inline constexpr char TAGS[] = "[container][tree]";
+
+namespace tools::test
 {
 
-class custom
-{
-private:
-    static size_t _copy_constructed;
-    static size_t _move_constructed;
+TEST_CASE( "A default constructed tree is an empty tree", TAGS ) {
+    tree<int> t;
 
-public:
-    const int a;
-    const std::string b;
-
-    custom(int a = 0, const std::string& b = "") : a(a), b(b) {};
-
-    custom(custom& o) : a(o.a), b(o.b)
-    { ++_copy_constructed; }
-
-    custom(custom&& o) : a(std::move(o.a)), b(std::move(o.b)) 
-    { ++_move_constructed; }
-
-    bool operator==(const custom& o) const
-    { return (a == o.a) && (b == o.b); };
-
-    static const size_t& copy_constructed;
-    static const size_t& move_constructed;
-};
-
-const size_t& custom::copy_constructed = custom::_copy_constructed;
-const size_t& custom::move_constructed = custom::_move_constructed;
-
-TEST_CASE("tree default constructs as an empty tree", TAGS)
-{
-    tree<int> t{};
-
-    // empty
-    REQUIRE(t.empty());
+    assert_tree_is_empty(t);
 }
 
-TEST_CASE("tree root constructor can forward construction parameters to root constructor", TAGS)
-{
-    tree<custom> t{9, "abc"};
+TEST_CASE( "A tree copied from another has the same contents", TAGS ) {
+    const auto original = make_sample_tree();
+    auto original_elements = get_elements_and_addresses(original);
 
-    // not empty
-    REQUIRE(!t.empty());
+    SECTION( "copy construction" ) {
+        tree<int> copy_constructed(original);
+        assert_trees_were_copied(original, copy_constructed, original_elements);
+    }
 
-    // one element equal to that constructed by arguments
-    auto b = t.cbegin();
-    REQUIRE(*b == custom{9, "abc"});
-    REQUIRE(++b == t.cend());
+    SECTION( "copy assignment" ) {
+        tree<int> copy_assigned;
+        copy_assigned = original;
+        assert_trees_were_copied(original, copy_assigned, original_elements);
+    }
 }
 
-TEST_CASE("tree root constructor can copy-construct root value", TAGS)
-{
-    size_t copy_constructed = custom::copy_constructed;
-    size_t move_constructed = custom::move_constructed;
+TEST_CASE( "A tree moved from another has the same contents, but moved", TAGS ) {
+    auto original = make_sample_tree();
+    auto original_elements = get_elements_and_addresses(original);
 
-    auto c = custom{9, "abc"};
-    tree<custom> t{c};
+    SECTION( "move construction" ) {
+        tree<int> move_constructed(std::move(original));
+        assert_trees_were_moved(original, move_constructed, original_elements);
+    }
 
-    // not empty
-    REQUIRE(!t.empty());
-    // copy constructed
-    REQUIRE(custom::copy_constructed == copy_constructed + 1);
-    // not move constructed
-    REQUIRE(custom::move_constructed == move_constructed);
-
-    // one element equal to the copied instance
-    auto b = t.cbegin();
-    REQUIRE(*b == c);
-    REQUIRE(++b == t.cend());
+    SECTION( "move assignment" ) {
+        tree<int> move_assigned;
+        move_assigned = std::move(original);
+        assert_trees_were_moved(original, move_assigned, original_elements);
+    }
 }
 
-TEST_CASE("tree root constructor can move-construct root value", TAGS)
-{
-    auto c1 = custom{9, "abc"};
-    auto c2 = c1;
-    size_t copy_constructed = custom::copy_constructed;
-    size_t move_constructed = custom::move_constructed;
+TEST_CASE( "Tree initializer yields a tree with correct contents and structure", TAGS ) {
+    SECTION( "direct-initialization with non-empty init-list" ) {
+        tree<int> t{ make_sample_tree_initializer() };
 
-    tree<custom> t1{custom{9, "abc"}};
-    tree<custom> t2{std::move(c2)};
-    
-    // not empty
-    REQUIRE(!t1.empty());
-    REQUIRE(!t2.empty());
-    // not copy constructed
-    REQUIRE(custom::copy_constructed == copy_constructed);
-    // move constructed
-    REQUIRE(custom::move_constructed == move_constructed + 2);
+        assert_sample_tree_contents_and_structure_are_correct(t);
+    }
 
-    // one element equal to a copy of the moved instance
-    auto b1 = t1.cbegin();
-    REQUIRE(*b1 == c1);
-    REQUIRE(++b1 == t1.cend());
+    SECTION( "copy assignment from a non-empty init-list" ) {
+        tree<int> t;
+        t = make_sample_tree_initializer();
 
-    // ...
-    auto b2 = t2.cbegin();
-    REQUIRE(*b2 == c1);
-    REQUIRE(++b2 == t2.cend());
+        assert_sample_tree_contents_and_structure_are_correct(t);
+    }
 }
 
-TEST_CASE("tree copy constructor", TAGS)
-{
-    tree<int> t1{{
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-
-    tree<int> t2{t1};
-
-    tree_copy_assertions(t1, t2);
-}
-
-TEST_CASE("tree move constructor", TAGS)
-{
-    tree<int> t1{{
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-
-    tree<int> t2{t1};
-    auto addr1 = &(*t1.cbegin());
-
-    tree<int> t3{std::move(t1)};
-
-    tree_move_assertions(t1, t2, t3, addr1);
-}
-
-TEST_CASE("tree init constructor", TAGS)
-{
-    tree<int> t1{{
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-
-    tree_init_assertions(t1);
-}
-
-TEST_CASE("tree copy assignment", TAGS)
-{
-    tree<int> t1{{
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-
-    tree<int> t2;
-    t2 = t1;
-
-    tree_copy_assertions(t1, t2);
-}
-
-TEST_CASE("tree move assignment", TAGS)
-{
-    tree<int> t1{{
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-
-    tree<int> t2{t1};
-    auto addr1 = &(*t1.cbegin());
-
-    tree<int> t3;
-    t3 = std::move(t1);
-
-    tree_move_assertions(t1, t2, t3, addr1);
-}
-
-TEST_CASE("tree init assignment", TAGS)
-{
-    tree<int> t1;
-    t1 = {{
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-
-    tree_init_assertions(t1);
-}
-
-TEST_CASE("tree root", TAGS)
-{
+TEST_CASE( "Fetching the root of the tree yields a handle to the root node of the tree", TAGS ) {
     tree<int> t1{{
         1,  {{2},
              {5}}
@@ -222,54 +88,181 @@ TEST_CASE("tree root", TAGS)
              {2}}
     }};
 
-    // root values are correct
-    REQUIRE(*t1.root() == 1);
-    REQUIRE(*t2.root() == 2);
-    REQUIRE(*t5.root() == 5);
-
-    // const variant
-    const tree<int>& ct1 = t1;
-    const tree<int>& ct2 = t2;
-    const tree<int>& ct5 = t5;
-
-    // root values are correct
-    REQUIRE(*ct1.root() == 1);
-    REQUIRE(*ct2.root() == 2);
-    REQUIRE(*ct5.root() == 5);
+    REQUIRE( *t1.root() == 1 );
+    REQUIRE( *t2.root() == 2 );
+    REQUIRE( *t5.root() == 5 );
 }
 
-TEST_CASE("tree find", TAGS)
-{
-    tree<int> t1{{
-        1,  {{  2,  {   {3},
-                        {1, {3}}}},
-             {  5,  {   {6},
-                        {7}}}}
-    }};
-    // const variant
-    const tree<int>& ct1 = t1;
+TEST_CASE( "Tree nodes know their respective child count and descendant count", TAGS ) {
+    auto t = make_sample_tree();
 
-    // find const and non-const, in pre- and post-order
-    auto  it_pr1 =  t1.find<tree_traversal::pre_order>(1);
-    auto cit_pr1 = ct1.find<tree_traversal::pre_order>(1);
-    auto  it_po1 =  t1.find<tree_traversal::post_order>(1);
-    auto cit_po1 = ct1.find<tree_traversal::post_order>(1);
+    auto n1 = t.root();
+    REQUIRE(n1.child_count() == 2);
+    REQUIRE(n1.descendant_count() == 6);
 
-    // correct value was found
-    REQUIRE(*it_pr1  == 1);
-    REQUIRE(*cit_pr1 == 1);
-    REQUIRE(*it_po1  == 1);
-    REQUIRE(*cit_po1 == 1);
+    auto n2 = n1.children()[0];
+    REQUIRE(n2.child_count() == 2);
+    REQUIRE(n2.descendant_count() == 2);
 
-    // correct node was found
-    auto it_pr1_values  = tree_enumerate_children<int, tree_traversal::pre_order>(it_pr1);
-    REQUIRE(it_pr1_values == std::vector<int>{2, 5});
-    auto cit_pr1_values = tree_enumerate_children<int, tree_traversal::pre_order>(cit_pr1);
-    REQUIRE(cit_pr1_values == std::vector<int>{2, 5});
-    auto it_po1_values  = tree_enumerate_children<int, tree_traversal::post_order>(it_po1);
-    REQUIRE(it_po1_values == std::vector<int>{3});
-    auto cit_po1_values = tree_enumerate_children<int, tree_traversal::post_order>(cit_po1);
-    REQUIRE(cit_po1_values == std::vector<int>{3});
+    auto n5 = n1.children()[1];
+    REQUIRE(n5.child_count() == 2);
+    REQUIRE(n5.descendant_count() == 2);
+
+    auto n3 = n2.children()[0];
+    REQUIRE(n3.child_count() == 0);
+    REQUIRE(n3.descendant_count() == 0);
+
+    auto n6 = n2.children()[0];
+    REQUIRE(n6.child_count() == 0);
+    REQUIRE(n6.descendant_count() == 0);
+
+    auto n4 = n2.children()[1];
+    REQUIRE(n4.child_count() == 0);
+    REQUIRE(n4.descendant_count() == 0);
+
+    auto n7 = n2.children()[1];
+    REQUIRE(n7.child_count() == 0);
+    REQUIRE(n7.descendant_count() == 0);
+}
+
+TEST_CASE( "Erasing a leaf element from a tree erases the correct element", TAGS ) {
+    auto t = make_sample_tree();
+    auto n7 = t.root().children()[1].children()[1];
+    auto n5 = n7.parent();
+
+    t.erase_subtree(n7);
+    REQUIRE( t.size() == 6 );
+    REQUIRE( n5.child_count() == 1 );
+}
+
+TEST_CASE( "Erasing a non-leaf element from a tree erases the whole branch", TAGS ) {
+    auto t = make_sample_tree();
+    auto n1 = t.root();
+    auto n2 = n1.children()[0];
+
+    t.erase_subtree(n2);
+    REQUIRE( t.size() == 4 );
+    REQUIRE( n1.child_count() == 1 );
+    REQUIRE( n1.descendant_count() == 3 );
+}
+
+TEST_CASE( "Erasing the root of a tree makes it an empty tree", TAGS ) {
+    auto t = make_sample_tree();
+
+    t.erase_subtree(t.root());
+    assert_tree_is_empty(t);
+}
+
+TEST_CASE( "Clearing a tree makes it an empty tree", TAGS ) {
+    auto t = make_sample_tree();
+    t.clear();
+    assert_tree_is_empty(t);
+}
+
+TEST_CASE( "Emplacing a child in an empty tree creates a root node in the tree" ) {
+    tree<int> t;
+
+    SECTION( "empty tree" ) {
+
+    }
+
+    SECTION( "cleared tree" ) {
+        t = make_sample_tree();
+        t.clear();
+    }
+
+    auto root = t.emplace_node(t.root(), 50293844);
+
+    REQUIRE( t.size() == 1 );
+    REQUIRE( *root == 50293844 );
+}
+
+TEST_CASE( "Trees can be swapped", TAGS ) {
+    auto t1_original = make_sample_tree();
+    auto t1_copy = t1_original;
+
+    auto t2_original = make_sample_tree();
+    auto t2_n2 = t2_original.root().child(0);
+    t2_original.erase_subtree(t2_n2);
+    auto t2_copy = t2_original;
+
+    swap(t1_copy, t2_copy);
+    REQUIRE( t1_copy == t2_original );
+    REQUIRE( t2_copy == t1_original );
+}
+
+TEST_CASE( "Same trees should compare equal", TAGS ) {
+    auto t1 = make_sample_tree();
+    auto t2 = make_sample_tree();
+
+    REQUIRE(       t1 == t2 );
+    REQUIRE_FALSE( t1 != t2 );
+}
+
+TEST_CASE( "Different trees do not compare equal", TAGS ) {
+    auto t1 = make_sample_tree();
+    auto t2 = make_sample_tree();
+    *(t2.begin()) = 3;
+
+    REQUIRE(       t1 != t2 );
+    REQUIRE_FALSE( t1 == t2 );
+}
+
+TEST_CASE( "Same iterators from the same tree instances compare equal", TAGS ) {
+    auto t = make_sample_tree();
+
+    REQUIRE(       t.begin() == t.begin() );
+    REQUIRE_FALSE( t.begin() != t.begin() );
+}
+
+TEST_CASE( "Different iterators do not compare equal", TAGS ) {
+    auto t1 = make_sample_tree();
+    auto t2 = make_sample_tree();
+
+    REQUIRE(       t1.begin() != t1.end() );
+    REQUIRE_FALSE( t1.begin() == t1.end() );
+}
+
+TEMPLATE_TEST_CASE( "An iterator to a node knows about its parent and children nodes", TAGS, tree<int>, const tree<int> ) {
+    TestType t = make_sample_tree();
+
+    auto root = t.root();
+    auto root_children = root.children();
+    
+    auto node2 = root_children[0];
+    auto node2_parent = node2.parent();
+    auto node2_children = node2.children();
+    
+    auto node5 = root_children[1];
+    auto node5_parent = node5.parent();
+    auto node5_children = node5.children();
+
+    auto child3 = node2_children[0];
+    auto child4 = node2_children[1];
+    auto child6 = node5_children[0];
+    auto child7 = node5_children[1];
+
+    REQUIRE( node2_parent == root );
+    REQUIRE( node5_parent == root );
+
+    REQUIRE( node2.child_count() == 2 );
+    REQUIRE( node2_children.size() == 2 );
+    REQUIRE( *child3 == 3 );
+    REQUIRE( *child4 == 4 );
+
+    REQUIRE( child3.has_parent(node2) );
+    REQUIRE( child3.has_parent(root) );
+    REQUIRE( child4.has_parent(node2) );
+    REQUIRE( child4.has_parent(root) );
+
+    REQUIRE( node2.is_parent_of(child3) );
+    REQUIRE( node2.is_parent_of(child4) );
+    REQUIRE( root.is_parent_of(child3) );
+    REQUIRE( root.is_parent_of(child4) );   
+}
+
+TEST_CASE( "A node can be emplaced in the tree as child of a mutable iterator", TAGS ) {
+
 }
 
 } // namespace tools::container

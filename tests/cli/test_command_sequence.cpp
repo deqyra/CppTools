@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
 #include "test_classes.hpp"
 
@@ -6,6 +6,7 @@
 #include <cpptools/cli/streams.hpp>
 #include <cpptools/utility/string.hpp>
 
+#include <filesystem>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -17,6 +18,8 @@ namespace tools::cli
 
 TEST_CASE("command_sequence end-to-end", TAGS)
 {
+    auto a = std::filesystem::current_path();
+
     std::ifstream f = std::ifstream("resources/cli/menu_input.txt", std::ios::in);
     REQUIRE(f);
     std::stringstream ss;
