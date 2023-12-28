@@ -29,7 +29,7 @@ class test_command1 : public test_command
 {
 public:
     test_command1() : test_command() {}
-    std::string tooltip() const override;
+    std::string_view tooltip() const override;
     code run(test_state& state, streams& streams) override;
 };
 
@@ -37,7 +37,7 @@ class test_command2 : public test_command
 {
 public:
     test_command2() : test_command() {}
-    std::string tooltip() const override;
+    std::string_view tooltip() const override;
     code run(test_state& state, streams& streams) override;
 };
 
@@ -45,7 +45,7 @@ class test_exit_command : public test_command
 {
 public:
     test_exit_command() : test_command() {}
-    std::string tooltip() const override;
+    std::string_view tooltip() const override;
     code run(test_state& state, streams& streams) override;
 };
 

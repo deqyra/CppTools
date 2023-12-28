@@ -3,22 +3,20 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <utility>
-#include <vector>
 
 #include "command.hpp"
 #include "input.hpp"
 
-namespace tools::cli
-{
+namespace tools::cli {
 
 // Extended command allowing to run several commands in a row.
-template <typename context_t, std::size_t N>
-class command_sequence : public cli::command<context_t>
-{
+template <typename Context, std::size_t N>
+class command_sequence : public command<Context> {
 public:
-    using command_ptr = std::unique_ptr<cli::command<context_t>>;
-    using code = typename cli::command<context_t>::code;
+    using command_ptr = std::unique_ptr<command<Context>>;
+    using code = typename command<Context>::code;
 
 private:
     // Ordered commands to run.
@@ -29,7 +27,7 @@ private:
 
 public:
     command_sequence(std::array<command_ptr, N>&& commands, std::string tooltip = "") :
-        cli::command<context_t>(),
+        command<Context>(),
         _commands(std::move(commands)),
         _tooltip(std::move(tooltip))
     {
@@ -38,14 +36,12 @@ public:
 
     virtual ~command_sequence() = default;
 
-    virtual std::string tooltip() const override
-    {
+    virtual std::string_view tooltip() const override {
         return _tooltip;
     }
 
     // Run the command sequence.
-    virtual code run(context_t& state, cli::streams& streams = cli::input::default_streams) override
-    {
+    virtual code run(Context& state, streams& streams = input::default_streams) override {
         // Run all commands in order.
         for (auto& command : _commands)
         {
@@ -59,7 +55,7 @@ public:
                 // Informative error logging.
                 streams.err << "Exception thrown:\n";
                 streams.err << e.what() << '\n';
-                streams.out << "Command sequence \"" + _tooltip + "\" aborted." << std::endl;
+                streams.out << "Command sequence \"" << _tooltip << "\" aborted." << std::endl;
                 return code::failure;
             }
 
@@ -67,8 +63,8 @@ public:
             if (status != code::success)
             {
                 // Log error and return prematurely.
-                streams.out << "Command \"" + command->tooltip() + "\" returned with value " + to_string(status) + "\n";
-                streams.out << "Command sequence \"" + _tooltip + "\" aborted." << std::endl;
+                streams.out << "Command \"" << command->tooltip() << "\" returned with value " << to_string(status) << "\n";
+                streams.out << "Command sequence \"" << _tooltip << "\" aborted." << std::endl;
                 return status;
             }
         }

@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <string>
 #include <type_traits>
@@ -282,8 +282,7 @@ TEMPLATE_TEST_CASE("Vectors into custom string format", TAGS, int, char, std::st
         }
         else
         {
-            using std::to_string;
-            string_val = to_string(val);
+            string_val = tools::to_string(val);
         }
 
         // No surrounding characters

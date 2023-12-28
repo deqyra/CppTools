@@ -2,8 +2,6 @@
 #define CPPTOOLS__CLI__SHELL_HPP
 
 #include <algorithm>
-#include <initializer_list>
-#include <iterator>
 #include <map>
 #include <set>
 #include <string>
@@ -13,11 +11,9 @@
 #include <cpptools/utility/string.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
 
-namespace tools::cli
-{
+namespace tools::cli {
 
-enum class shell_command_code
-{
+enum class shell_command_code {
     exit = -1,
     success = 0,
     failure = 1,
@@ -27,19 +23,16 @@ enum class shell_command_code
 
 std::string to_string(shell_command_code c);
 
-struct shell_command_keywords
-{
+struct shell_command_keywords {
     static constexpr std::string_view help = "help";
     static constexpr std::string_view exit = "exit";
     static constexpr std::string_view _all_keywords = "help, exit";
 };
 
 template<typename context_t>
-class shell
-{
+class shell {
 public:
-    class command
-    {
+    class command {
     public: 
         using code = shell_command_code;
         
@@ -72,20 +65,18 @@ public:
     {
         std::set<std::string_view> command_names;
 
-        size_t i = 0;
-        for (auto& c : commands)
-        {
-            auto name = c->name();
-            if (_is_forbidden_command_name(name) || command_names.find(name) != command_names.end())
-            {
-                CPPTOOLS_THROW(exception::parameter::invalid_value_error, "commands[" + std::to_string(i) + "].name()", std::string{name});
+        for (const auto& c : commands) {
+            const auto& name = c->name();
+            if (_is_forbidden_command_name(name)) {
+                CPPTOOLS_THROW(exception::parameter::invalid_value_error, "commands[...]", std::string{name});
+            }
+            if(command_names.find(name) != command_names.end()) {
+                CPPTOOLS_THROW(exception::parameter::invalid_value_error, "commands[...]", std::string{name});
             }
             command_names.insert(name);
-            ++i;
         }
 
-        for (auto& c : commands)
-        {
+        for (auto& c : commands) {
             _commands.insert_or_assign(std::string{c->name()}, std::move(c));
         }
     }
@@ -94,22 +85,22 @@ public:
     // Command chain manipulation
     //
 
-    void add_command(command_ptr&& command)
-    {
+    void add_command(command_ptr&& command) {
         // Do not accept several commands with the same name, nor any command named 'exit' or 'help'.
         auto name = command->name();
 
-        if (!_is_valid_command_name(name))
+        if (!_is_valid_command_name(name)) {
             CPPTOOLS_THROW(exception::parameter::invalid_value_error, "command", std::string{name});
+        }
 
         _commands.insert({std::string{name}, std::move(command)});
     }
 
-    command_ptr remove_command(const std::string& name)
-    {
+    command_ptr remove_command(const std::string& name) {
         auto it = _commands.find(name);
-        if (it == _commands.end())
+        if (it == _commands.end()) {
             CPPTOOLS_THROW(exception::parameter::invalid_value_error, "name", std::string{name});
+        }
 
         command_ptr removed = std::move(it->second); 
         // Remove command.
@@ -118,16 +109,14 @@ public:
         return removed;
     }
 
-    command_ptr set_exit_command(command_ptr&& command)
-    {
+    command_ptr set_exit_command(command_ptr&& command) {
         command_ptr previous_exit_command = std::move(_exit_command);
         _exit_command = std::move(command);
 
         return previous_exit_command;
     }
 
-    void clear_commands()
-    {
+    void clear_commands() {
         _commands.clear();
     }
 
@@ -135,18 +124,17 @@ public:
     // Getters
     //
 
-    command& get_command(const std::string& name)
-    {
+    command& get_command(const std::string& name) {
         // Try to fetch the command at provided index.
         auto it = _commands.find(name);
-        if (it == _commands.end())
+        if (it == _commands.end()) {
             CPPTOOLS_THROW(exception::parameter::invalid_value_error, "name", std::string{name});
+        }
 
         return *(it->second);
     }
 
-    command& get_exit_command()
-    {
+    command& get_exit_command() {
         return *_exit_command;
     }
 
@@ -154,45 +142,38 @@ public:
     // Command chain inspection
     //
 
-    bool has_command(const std::string& name)
-    {
+    bool has_command(const std::string& name) {
         return _commands.find(name) != _commands.end();
     }
 
     // Run the shell.
-    code run(context_t& state, streams& streams = input::default_streams)
-    {
+    code run(context_t& state, streams& streams = input::default_streams) {
         // Run the shell: prompt the user repeatedly and interpret the commands that were entered.
-        code shell_code;
-        do
-        {
-            std::string command_line = input::ask_for_input<std::string>("$ ", streams);
+        code shell_code = code::success;
+        while (shell_code != code::exit) {
+            std::string command_line = input::prompt<std::string>("$ ", streams);
             shell_code = _process_input(command_line, state, streams);
-        } while (shell_code != code::exit);      // Exit when the proper signal is returned.
+        }
 
         return code::exit;
     }
 
 private:
     // Process user input.
-    code _process_input(const std::string& input, context_t& state, streams& streams)
-    {
+    code _process_input(const std::string& input, context_t& state, streams& streams) {
         // Tokenise the string on spaces to extract the command and its arguments.
         std::vector<std::string> tokens = string::tokenize(input, ' ', true);
-        if (!tokens.size()) return code::not_found;
+        if (!tokens.size()) {
+            return code::not_found;
+        }
 
         // If help was requested, respond accordingly.
-        if (tokens[0] == shell_command_keywords::help)
-        {
+        if (tokens[0] == shell_command_keywords::help) {
             // If more than one token was extracted, the second one is
             // probably the command the user want to get help about.
-            if (tokens.size() > 1)
-            {
+            if (tokens.size() > 1) {
                 streams.out << _command_help_string(tokens[1]) << std::endl;;
-            }
-            // Otherwise, display an informative list of commands.
-            else
-            {
+            } else { // Otherwise, display an informative list of commands.
                 streams.out << _global_help_string() << std::endl;
             }
 
@@ -200,26 +181,22 @@ private:
         }
 
         // If exit was entered, handle the exit procedure.
-        if (tokens[0] == shell_command_keywords::exit)
-        {
+        if (tokens[0] == shell_command_keywords::exit) {
             return _handle_exit(input, state, streams);
         }
 
         // Otherwise, search for a command sharing the name of the first token...
         auto it = _commands.find(tokens[0]);
-        if (it == _commands.end())
-        {
+        if (it == _commands.end()) {
             streams.out << tokens[0] << ": command not found.\n";
             return code::not_found;
         }
 
         // ...and run that command.
-        try
-        {
+        try {
             return it->second->process_input(input, state, streams);
         }
-        catch(const std::exception& e)
-        {
+        catch(const std::exception& e) {
             // Informative error logging.
             streams.err << "Exception thrown by command \"" + it->second->name() + "\":\n";
             streams.err << e.what() << '\n';
@@ -230,12 +207,10 @@ private:
     }
 
     // Generate a docstring descriptive of all contained commands.
-    std::string _global_help_string()
-    {
+    std::string _global_help_string() {
         // List available commands.
         std::string s = "Available commands:\n";
-        for (auto& [name, command] : _commands)
-        {
+        for (auto& [name, command] : _commands) {
             s += "  - " + command->name() + ": " + command->description() + "\n";
         }
         s += "Type 'help <command>' to get help about one command.\n";
@@ -244,13 +219,13 @@ private:
     }
 
     // Generate the docstring for a given command.
-    std::string _command_help_string(const std::string& name)
-    {
+    std::string _command_help_string(const std::string& name) {
         std::string s;
 
         auto it = _commands.find(name);
-        if (it == _commands.end())
+        if (it == _commands.end()) {
             CPPTOOLS_THROW(exception::parameter::invalid_value_error, "command_name", std::string{name});
+        }
 
         // Get the docstring of the command which was requested.
         s = "'" + std::string(name) + "' help:\n";
@@ -260,25 +235,21 @@ private:
     }
 
     // Handle exit procedure.
-    code _handle_exit(const std::string& name, context_t& state, streams& streams)
-    {
+    code _handle_exit(const std::string& name, context_t& state, streams& streams) {
         // If not exit command was provided, just exit immediately.
-        if (!_exit_command)
-        {
+        if (!_exit_command) {
             return code::exit;
         }
         // Otherwise run the provided exit command.
         return _exit_command->process_input(name, state, streams);
     }
 
-    bool _is_valid_command_name(const std::string& name)
-    {
+    bool _is_valid_command_name(const std::string& name) {
         return !_is_forbidden_command_name(name) 
             && (_commands.find(name) == _commands.end());
     }
 
-    static bool _is_forbidden_command_name(const std::string& name)
-    {
+    static bool _is_forbidden_command_name(const std::string& name) {
         return (name == shell_command_keywords::exit)
             || (name == shell_command_keywords::help);
     }

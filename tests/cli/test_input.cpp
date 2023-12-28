@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -21,19 +21,19 @@ TEST_CASE("CLI input", TAGS)
         std::stringstream ss;
         streams s = streams{f, ss, ss};
 
-        REQUIRE(input::ask_for_input<int>("input1: ", s) == 30);
-        REQUIRE(input::ask_for_input<int>("input2: ", s) == -20);
-        REQUIRE(input::ask_for_min_input<int>("min_input: ", 40, s) == 40);
-        REQUIRE(input::ask_for_max_input<int>("max_input: ", 40, s) == 40);
-        REQUIRE(input::ask_for_bounded_input<int>("bounded_input: ", 15, 25, s) == 20);
+        REQUIRE(input::prompt<int>("input1: ", s) == 30);
+        REQUIRE(input::prompt<int>("input2: ", s) == -20);
+        REQUIRE(input::prompt_min<int>("min: ", 40, s) == 40);
+        REQUIRE(input::prompt_max<int>("max: ", 40, s) == 40);
+        REQUIRE(input::prompt_bounded<int>("bounded: ", 15, 25, s) == 20);
 
         std::string expected =
-            "input1: Invalid input, please enter a integer.\n"
-            "input1: input2: min_input: Invalid input, please enter a value that is greater than 40.\n"
-            "min_input: max_input: Invalid input, please enter a value that is less than 40.\n"
-            "max_input: bounded_input: Invalid input, please enter a value between 15 and 25.\n"
-            "bounded_input: Invalid input, please enter a value between 15 and 25.\n"
-            "bounded_input: ";
+            "input1: Please enter a integer.\n"
+            "input1: input2: min: Please enter a value greater than 40.\n"
+            "min: max: Please enter a value less than 40.\n"
+            "max: bounded: Please enter a value between 15 and 25.\n"
+            "bounded: Please enter a value between 15 and 25.\n"
+            "bounded: ";
 
         REQUIRE(ss.str() == expected);
 
@@ -47,15 +47,15 @@ TEST_CASE("CLI input", TAGS)
         std::stringstream ss;
         streams s = streams{f, ss, ss};
 
-        REQUIRE(input::ask_for_input<bool>("inputY: ", s));
-        REQUIRE(input::ask_for_input<bool>("input_yes: ", s));
-        REQUIRE(input::ask_for_input<bool>("input_true: ", s));
-        REQUIRE_FALSE(input::ask_for_input<bool>("inputN: ", s));
-        REQUIRE_FALSE(input::ask_for_input<bool>("input_no: ", s));
-        REQUIRE_FALSE(input::ask_for_input<bool>("input_false: ", s));
+        REQUIRE(input::prompt<bool>("inputY: ", s));
+        REQUIRE(input::prompt<bool>("input_yes: ", s));
+        REQUIRE(input::prompt<bool>("input_true: ", s));
+        REQUIRE_FALSE(input::prompt<bool>("inputN: ", s));
+        REQUIRE_FALSE(input::prompt<bool>("input_no: ", s));
+        REQUIRE_FALSE(input::prompt<bool>("input_false: ", s));
 
         std::string expected =
-            "inputY: Invalid input, please enter a boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\").\n"
+            "inputY: Please enter a boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\").\n"
             "inputY: input_yes: input_true: inputN: input_no: input_false: ";
 
         REQUIRE(ss.str() == expected);

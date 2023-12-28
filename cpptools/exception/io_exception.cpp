@@ -1,8 +1,6 @@
 #include "io_exception.hpp"
 #include "exception.hpp"
 
-#include <sstream>
-
 namespace tools::exception
 {
 
@@ -20,16 +18,13 @@ io_exception::io_exception(std::filesystem::path stream_path) :
 
 }
 
-std::string io_exception::to_string() const
+std::string_view io_exception::to_string() const
 {
-    std::stringstream result;
-    result << "Category: " << error_category_name(category())
-           << ", error: (" << error_code() << ") " << ecode_to_string() << '\n';
-    result << "Function <" << function() << ">, line: " << line() << '\n';
-    result << "Stream name: " << _stream_name << '\n';
-    result << "Message: " << message() << '\n';
+    static const std::string result =
+        std::string(base_exception::to_string()) + '\n' +
+        "Stream name: " + _stream_name;
 
-    return result.str();
+    return result;
 }
 
 }

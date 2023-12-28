@@ -1,19 +1,24 @@
 #include "exception.hpp"
 
-#include <sstream>
+#include <cpptools/utility/to_string.hpp>
 
 namespace tools::exception
 {
 
-std::string base_exception::to_string() const
+const char* base_exception::what() const
 {
-    std::stringstream result;
-    result << "Category: " << error_category_name(category())
-           << ", error: (" << error_code() << ") " << ecode_to_string() << '\n';
-    result << "Function <" << function() << ">, line: " << line() << '\n';
-    result << "Message: " << message() << '\n';
+    return to_string().data();
+}
 
-    return result.str();
+std::string_view base_exception::to_string() const
+{
+    static const std::string result =
+        "Category: " + std::string(error_category_name(category())) +
+        ", error: (" + std::to_string(error_code()) + ") " + std::string(ecode_to_string()) + '\n' +
+        "Location: " + tools::to_string(source_location()) + '\n' +
+        "Message: "  + std::string(message());
+
+    return result;
 }
 
 std::ostream& operator<<(std::ostream& out, const base_exception& e)

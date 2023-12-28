@@ -12,10 +12,24 @@ CppTools:
         ✔ `clear()` method @done(20-10-22 10:11)
         ✔ Change weak pointers to shared pointers where possible, refactor @done(20-10-22 10:11)
         ✔ Documentation @done(20-10-25 02:50)
+        ☐ Sequential layout of values
+        ✔ Fast, unordered iterators @done(24-01-01 22:23)
+        ☐ Profile performance:
+            ☐ Insertion
+            ☐ Removal
+            ☐ Iteration
+            ☐ Copy (see how impactful switching method amidst copy is)
+            ☐ See how impactful lighter / heavier book-keeping is
+        ✔ Investigate turning debug assertions into assumptions @done(23-09-05 17:56)
+            Some assertions use debug-only members, which should not be present on release builds, although those would 
+            ideally have been built using assumptions made from said debug assertions. This needs to be sorted out.
+            Maybe the debug-only members can be promoted to full members, provided the assumptions they're part are
+            actually useful.
         ✘ Keep shared pointers even between nodes, manage proper destruction @cancelled(22-09-06 13:32)
     C preprocessor:
         ✘ Build upon the stub in StringTools @cancelled(20-11-26 02:12)
         ✘ Implement functions defined in header @cancelled(22-09-06 13:32)
     CLI:
-        ☐ Figure out std::initializer_list constructors for std::unique_ptr
+        ✘ Figure out std::initializer_list constructors for std::unique_ptr @cancelled(24-01-01 22:23)
         ☐ Store command help strings ?
+        ☐ Arg parsing facility

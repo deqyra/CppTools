@@ -10,7 +10,7 @@
 namespace tools::cli
 {
 
-std::string test_command1::tooltip() const
+std::string_view test_command1::tooltip() const
 {
     return "test_command1";
 }
@@ -21,7 +21,7 @@ auto test_command1::run(test_state& state, streams& streams) -> code
     return code::success;
 }
 
-std::string test_command2::tooltip() const
+std::string_view test_command2::tooltip() const
 {
     return "test_command2";
 }
@@ -32,7 +32,7 @@ auto test_command2::run(test_state& state, streams& streams) -> code
     return code::success;
 }
 
-std::string test_exit_command::tooltip() const
+std::string_view test_exit_command::tooltip() const
 {
     return "Exit";
 }

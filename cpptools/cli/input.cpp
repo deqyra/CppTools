@@ -1,16 +1,16 @@
 #include "input.hpp"
 
-namespace tools::cli::input
+namespace tools::detail
 {
 
 template<>
-std::string parse_string(std::string_view input)
+std::string parse_as(std::string_view input)
 {
     return std::string(input);
 }
 
 template<>
-int parse_string(std::string_view input)
+int parse_as(std::string_view input)
 {
     if (!string::is_integer(input))
     {
@@ -20,7 +20,7 @@ int parse_string(std::string_view input)
 }
 
 template<>
-bool parse_string(std::string_view input)
+bool parse_as(std::string_view input)
 {
     if (input == "y" || input == "yes" || input == "true")
     {
@@ -53,4 +53,4 @@ std::string_view type_name<bool>()
     return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
 }
 
-} // namespace tools::cli::input
+} // namespace tools::detail

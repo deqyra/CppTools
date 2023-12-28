@@ -1,8 +1,9 @@
 #ifndef CPPTOOLS__CLI__MENU_HPP
 #define CPPTOOLS__CLI__MENU_HPP
 
+#include <array>
 #include <string>
-#include <vector>
+#include <string_view>
 #include <memory>
 
 #include <cpptools/utility/string.hpp>
@@ -12,14 +13,12 @@
 #include "command.hpp"
 #include "input.hpp"
 
-namespace tools::cli
-{
+namespace tools::cli {
 
-template<typename context_t, std::size_t N>
-class menu
-{
+template<typename Context, std::size_t N>
+class menu {
 public:
-    using command_ptr = std::unique_ptr<cli::command<context_t>>;
+    using command_ptr = std::unique_ptr<cli::command<Context>>;
 
 private:
     // Commands to be available in the menu.
@@ -56,14 +55,12 @@ public:
 
     menu(menu&& other) = default;
 
-    std::string tooltip() const
-    {
+    std::string_view tooltip() const {
         return _tooltip;
     }
 
     // Print the menu and handle input.
-    void show(context_t& state, cli::streams& streams = cli::input::default_streams)
-    {
+    void show(Context& state, cli::streams& streams = cli::input::default_streams) {
         // While user did not ask to exit...
         while (true)
         {
@@ -74,7 +71,7 @@ public:
 
             // Prompt the user.
             int n_options = (int)_commands.size();
-            int input = cli::input::ask_for_bounded_input<int>("Please make a choice: ", 0, n_options, streams);
+            int input = cli::input::prompt_bounded<int>("Please make a choice: ", 0, n_options, streams);
 
             // Handle exit if required.
             if (input == 0)
@@ -97,7 +94,7 @@ public:
             catch (const std::exception& e)
             {
                 // Informative error logging.
-                streams.err << "Exception thrown by command \"" + _commands[input - 1]->tooltip() + "\":\n";
+                streams.err << "Exception thrown by command \"" << _commands[input - 1]->tooltip() << "\":\n";
                 streams.err << e.what() << '\n';
                 streams.out << "Aborting." << std::endl;
             }
@@ -106,28 +103,23 @@ public:
 
 private:
     // Generate display string for a given tooltip.
-    std::string _option_string(int n, std::string_view tooltip)
-    {
+    std::string _option_string(int n, std::string_view tooltip) {
         std::string s = std::to_string(n) + ". " + std::string(tooltip) + "\n";
         return s;
     }
 
     // Generate display strings for all options.
-    std::string_view _all_option_strings()
-    {
-        static std::string s;
-        static bool run_once = false;
-
-        if (!run_once)
-        {
+    std::string_view _all_option_strings() {
+        static std::string s = [this](){
+            std::string result;
             for (int i = 0; i < _commands.size(); i++)
             {
-                s += _option_string(i + 1, _commands[i]->tooltip());
+                result += _option_string(i + 1, _commands[i]->tooltip());
             }
-            s += _option_string(0, _exit_name);
+            result += _option_string(0, _exit_name);
 
-            run_once = true;
-        }
+            return result;
+        }();
 
         return s;
     }
