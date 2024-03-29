@@ -33,7 +33,7 @@ if( WIN32 AND ( STATIC_OR_SHARED STREQUAL "SHARED" ) )
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 endif( )
 
-set( CMAKE_EXPORT_COMPILE_COMMAND ON )
+set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 
 
@@ -74,7 +74,6 @@ add_library( cpptools ${STATIC_OR_SHARED}
     cpptools/cli/shell.hpp
     cpptools/cli/streams.hpp
     cpptools/container/tree.hpp
-    cpptools/container/iterator/iterator_adapter.hpp
     cpptools/container/tree/node.hpp
     cpptools/container/tree/traversal.hpp
     cpptools/container/tree/unsafe_tree.hpp

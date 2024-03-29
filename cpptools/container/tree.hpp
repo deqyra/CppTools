@@ -4,23 +4,14 @@
 #include <algorithm>
 #include <utility>
 
-#include <cpptools/container/tree/node.hpp>
-#include <cpptools/container/tree/traversal.hpp>
-#include <cpptools/container/tree/unsafe_tree.hpp>
+#include "tree/traversal.hpp"
+#include "tree/unsafe_tree.hpp"
 
-#include <cpptools/exception/exception.hpp>
-#include <cpptools/exception/internal_exception.hpp>
-#include <cpptools/exception/parameter_exception.hpp>
-#include <cpptools/exception/iterator_exception.hpp>
 #include <cpptools/utility/merging_strategy.hpp>
 #include <cpptools/utility/type_utils.hpp>
 
 #ifndef CPPTOOLS_DEBUG_TREE
-# if CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH != 0
-#   define CPPTOOLS_DEBUG_TREE 1
-# else
-#   define CPPTOOLS_DEBUG_TREE 0
-# endif
+# define CPPTOOLS_DEBUG_TREE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
 #endif
 
 #define CPPTOOLS_I_HAVE_INCLUDED_UNDEF_DEBUG_MACROS_LATER_ON_IN_THIS_FILE
@@ -32,54 +23,42 @@ namespace tools {
 /// @brief An arbitrary tree. STL-compatible.
 ///
 /// @tparam T Type of values to be stored
-///
-/// @note Enable debug assertions with #define CPPTOOLS_DEBUG_TREE 1
 template<typename T>
-class tree : private detail::tree::unsafe_tree<T> {
-/// @note On debug assertions:
-/// Some assertions enforce that compound statements hold true, and it can be 
-/// hard to make sense of those compound statements. Easier understanding can be
-/// achieved by taking short-circuiting into account, and so an assertion that
-/// verifies "A || B" can (and should) be read as "if not A, then B".
+class tree : private detail::unsafe_tree<T> {
+    using base                = detail::unsafe_tree<T>;
+    using node_t              = base::node_t;
 
-    using base              = detail::tree::unsafe_tree<T>;
-
-public:
-    using value_type        = typename base::value_type;
-    using reference         = typename base::reference;
-    using const_reference   = typename base::const_reference;
-
-private:
-    using node              = base::node;
     static constexpr bool NoExceptErasure = base::NoExceptErasure;
 
 public:
-    using size_type         = typename base::size_type;
-    using pointer           = typename base::pointer;
-    using const_pointer     = typename base::const_pointer;
-    using difference_type   = typename base::difference_type;
-    using key_equal         = typename base::key_equal;
-    using allocator_type    = typename base::allocator_type;
+    using value_type          = typename base::value_type;
+    using reference           = typename base::reference;
+    using const_reference     = typename base::const_reference;
+    using size_type           = typename base::size_type;
+    using pointer             = typename base::pointer;
+    using const_pointer       = typename base::const_pointer;
+    using difference_type     = typename base::difference_type;
+    using key_equal           = typename base::key_equal;
+    using allocator_type      = typename base::allocator_type;
 
-    using const_node_handle = base::const_node_handle;
-    using node_handle       = base::node_handle;
+    using const_node_handle_t = const_node_handle<T>;
+    using node_handle_t       = node_handle<T>;
 
-    using const_iterator    = base::const_iterator;
-    using iterator          = base::iterator;
+    using const_iterator      = typename base::const_iterator;
+    using iterator            = typename base::iterator;
 
-    using initializer       = base::initializer;
+    using initializer         = typename base::initializer;
 
 private:
-    tree(node* copy_from) :
+    tree(const node_t* copy_from) :
         base(copy_from)
     {
-
     }
 
-    // tree(const base& other) :
-    //     base(other)
-    // {
-    // }
+    tree(const base& other) :
+        base(other)
+    {
+    }
 
     tree(base&& other) :
         base(std::move(other))
@@ -93,17 +72,14 @@ public:
     }
 
     /// @param other Tree to copy-construct from
-    ///
-    /// @exception Any exception thrown in a constructor of the value type
-    /// will be forwarded to the caller
     tree(const tree& other) :
-        base(static_cast<const base&>(other))
+        base(other)
     {
     }
 
     /// @param other Tree to move-construct from
     tree(tree&& other) :
-        base(static_cast<base&&>(std::move(other)))
+        base(std::move(other))
     {
     }
 
@@ -112,16 +88,21 @@ public:
     {
     }
 
+    explicit tree(const const_node_handle_t& subtree_root) :
+        base(subtree_root.ptr())
+    {
+    }
+
     /// @param other Tree to copy-assign contents from
     tree& operator=(const tree& other) {
-        *this = tree{other};
+        *this = tree(other);
 
         return *this;
     }
 
     /// @param other Tree to move-assign contents from
     tree& operator=(tree&& other) {
-        static_cast<base&>(*this) = static_cast<base&&>(std::move(other));
+        base::operator=(std::move(other));
 
         return *this;
     }
@@ -134,15 +115,12 @@ public:
         return *this;
     }
 
-    /// @brief Get a copy of a subtree
-    ///
-    /// @param subtree_root Root of the subtree to be copied
-    ///
-    /// @return A new tree whose root is the copied subtree
-    tree copy_subtree(const const_node_handle& subtree_root) const {
-        return tree(
-            base::copy_subtree(base::node_from(subtree_root))
-        );
+    /// @param subtree_root Root of the subtree to copy contents from
+    tree& operator=(const const_node_handle_t& subtree_root)
+    {
+        *this = tree(subtree_root);
+
+        return *this;
     }
 
     /// @brief Detach a subtree
@@ -150,55 +128,47 @@ public:
     /// @param subtree_root Root of the subtree to be detached
     ///
     /// @return A new tree whose root is the detached subtree
-    tree chop_subtree(const node_handle& subtree_root) {
+    tree chop_subtree(const node_handle_t& subtree_root) {
         return tree(
-            base::chop_subtree(base::node_from(subtree_root))
+            base::chop_subtree(subtree_root.ptr())
         );
     }
 
     /// @brief Acquire the nodes of another tree, making it a subtree of this
     /// tree.
     ///
-    /// @param other Tree to steal nodes from
     /// @param destination Node where that should be parent to the stolen nodes
+    /// @param other Tree to steal nodes from
     ///
-    /// @return Pointer to the newly adopted subtree
-    node_handle adopt_subtree(tree&& other, const node_handle& destination) {
-        return base::handle_from(
-            base::adopt_subtree(
-                static_cast<base&&>(std::move(other)),
-                base::node_from(destination)
-            )
-        );
+    /// @return Handle to the newly adopted subtree
+    node_handle_t adopt_subtree(const node_handle_t& destination, tree&& other) {
+        return {
+            base::adopt_subtree(destination.ptr(), std::move(other))
+        };
     }
 
-    node_handle root() {
-        return base::handle_from(base::root());
+    node_handle_t root() {
+        return { base::root() };
     }
 
-    const_node_handle root() const {
-        return base::const_handle_from(base::root());
+    const_node_handle_t root() const {
+        return { base::root() };
     }
 
     /// @brief Move a subtree from somewhere in this tree to somewhere else in
     /// this tree
     ///
-    /// @param root The root node of the subtree to move
     /// @param destination The node which the moved subtree should be 
-    void move_subtree(const node_handle& subtree_root, const node_handle& destination) {
-        base::move_subtree(
-            base::node_from(subtree_root),
-            base::node_from(destination)
-        );
+    /// @param root The root node of the subtree to move
+    void move_subtree(const node_handle_t& destination, const node_handle_t& subtree_root) {
+        base::move_subtree(subtree_root.ptr(), destination.ptr());
     }
 
     /// @brief Erase an entire subtree and its values
     ///
     /// @param to_erase The root node of the subtree to erase
-    void erase_subtree(const node_handle& subtree_root) {
-        base::erase_subtree(
-            base::node_from(subtree_root)
-        );
+    void erase_subtree(const node_handle_t& subtree_root) {
+        base::erase_subtree(subtree_root.ptr());
     }
 
     /// @brief Emplace a new value in the tree, as a new child node to the
@@ -217,13 +187,10 @@ public:
     /// @exception Any exception thrown in the resulting constructor call of
     /// the value type will be let through to the caller
     template<typename ...ArgTypes>
-    node_handle emplace_node(const node_handle& where, ArgTypes&&... args) {
-        return base::handle_from(
-            base::emplace_node(
-                base::node_from(where),
-                std::forward<ArgTypes&&>(args)...
-            )
-        );
+    node_handle_t emplace_node(const node_handle_t& where, ArgTypes&&... args) {
+        return {
+            base::emplace_node(where.ptr(), std::forward<ArgTypes>(args)...)
+        };
     }
 
     /// @brief Merge this node into its parent node:
@@ -239,9 +206,9 @@ public:
     /// merging_strategy concept for this tree's value type. The default
     /// merging strategy discards this node's value and keeps the parent
     /// node's value.
-    template<merging_strategy<T> merge_t = merging_strategies::keep_original>
-    void merge_with_parent(const node_handle& n) {
-        base::template merge_with_parent<T>(base::node_from(n));
+    template<merging_strategy<T> merge_t = merge::keep_original>
+    void merge_with_parent(const node_handle_t& n) {
+        base::template merge_with_parent<T>(n.ptr());
     }
 
     /// @brief Check that this tree's structure and its ordered values are the
@@ -251,7 +218,7 @@ public:
     ///
     /// @return Whether this tree and other are equal
     bool operator==(const tree& other) const {
-        return static_cast<const base&>(*this) == static_cast<const base&>(other);
+        return base::operator==(other);
     }
 
     friend void swap(tree& lhs, tree& rhs) {
@@ -266,6 +233,16 @@ public:
     using base::end;
     using base::cbegin;
     using base::cend;
+
+    template<traversal::order O>
+    friend detail::dfs_proxy<T, O, true> dfs(const tree<T>& t) {
+        return dfs(static_cast<const base&>(t));
+    }
+
+    template<traversal::order O>
+    friend detail::dfs_proxy<T, O, false> dfs(tree<T>& t) {
+        return dfs(static_cast<base&>(t));
+    }
 };
 
 } // namespace tools
@@ -276,7 +253,7 @@ public:
 ////// TODO //////
 //////////////////
 
-// - do likeliness annotations really make a difference? if not a ternary would read better in some places
+// - do likeliness annotations really make a difference?
 // - custom allocators (and then scary iterators)
 // - store values contiguously instead of within a node map. std::hive comes to mind
 

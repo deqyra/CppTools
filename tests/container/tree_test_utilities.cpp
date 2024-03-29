@@ -1,15 +1,14 @@
 #include "tree_test_utilities.hpp"
-#include "cpptools/container/tree.hpp"
-#include "tests/container/tree_test_utilities.hpp"
+
+#include <stack>
+#include <vector>
 
 #include <catch2/catch_all.hpp>
 
-#include <vector>
+#include <cpptools/container/tree.hpp>
 
 namespace tools::test
 {
-
-using namespace Catch::Matchers;
 
 tree<int>::initializer make_sample_tree_initializer()
 {
@@ -26,38 +25,37 @@ tree<int> make_sample_tree()
     return { make_sample_tree_initializer() };
 }
 
-void assert_trees_were_copied(const tree<int>& original, const tree<int>& copy, const addressed_elements& original_elements)
+addressed_elements get_elements_and_addresses(const const_node_handle<int>& subtree_root)
 {
-    auto elements_after_copy = get_elements_and_addresses(original);
-    auto copied_elements     = get_elements_and_addresses(copy);
+    using cnh = const_node_handle<int>;
+    addressed_elements result;
 
-    // contents from the copied tree should have been left untouched
-    REQUIRE_THAT( elements_after_copy.values,    UnorderedRangeEquals(original_elements.values) );
-    REQUIRE_THAT( elements_after_copy.addresses, UnorderedRangeEquals(original_elements.addresses) );
+    std::stack<cnh> node_stack;
+    auto n = subtree_root;
 
-    // the copied tree should have the same elements
-    REQUIRE_THAT( copied_elements.values, UnorderedRangeEquals(original_elements.values) );
+    do {
+        result.insert({n.value(), &n.value()});
+        // okay because:
+        // 1. the underlying unique_ptr-based storage guarantees address stability
+        // 2. we deal with copyable types
 
-    // the elements of the copied tree should live at different memory addresses from the original elements
-    REQUIRE( copied_elements.addresses.size() == original_elements.addresses.size() );
-    for (size_t i = 0; i < copied_elements.addresses.size(); ++i) {
-        REQUIRE( copied_elements.addresses[i] != original_elements.addresses[i] );
-    }
+        if (n.child_count() > 0) {
+            node_stack.push(n);
+            n = n.child(0);
+        } else {
+            // unstack to a non-rightmost node
+            while (!node_stack.empty() && n.parent() != cnh::null_handle && n.is_rightmost_sibling()) {
+                n = node_stack.top();
+                node_stack.pop();
+            }
 
-    /* C++23
-    for (const auto [copied_address, original_address] : std::views::zip(copied_elements.addresses, original_elements.addresses)) {
-        REQUIRE( copied_address != original_address );
-    }
-    */
-}
+            if (!node_stack.empty()) {
+                n = n.right_sibling();
+            }
+        }
+    } while (!node_stack.empty());
 
-void assert_trees_were_moved(const tree<int>& original, const tree<int>& moved, const addressed_elements& original_elements)
-{
-    assert_tree_is_empty(original);
-
-    auto moved_elements = get_elements_and_addresses(moved);
-    // the moved tree should have the same elements as the original prior to moving, living at the same memory addresses
-    REQUIRE( moved_elements == original_elements );
+    return result;
 }
 
 void assert_tree_is_empty(const tree<int>& t)
@@ -66,20 +64,44 @@ void assert_tree_is_empty(const tree<int>& t)
     REQUIRE( t.size() == 0 );
 }
 
-addressed_elements get_elements_and_addresses(const tree<int>& tree)
+void assert_subtrees_were_copied(const const_node_handle<int>& original, const const_node_handle<int>& copy, const addressed_elements& original_elements)
 {
-    addressed_elements result;
+    auto original_elements_after_copy = get_elements_and_addresses(original);
+    auto copied_elements              = get_elements_and_addresses(copy);
 
-    result.values.reserve(tree.size());
-    result.addresses.reserve(tree.size());
+    // contents from the copied tree should have been left untouched
+    REQUIRE( original_elements_after_copy == original_elements );
 
-    for (const auto& e : tree)
-    {
-        result.values.push_back(e);
-        result.addresses.push_back(&e);
+    // the copied tree should have the same elements
+    auto orig_it  = original_elements.begin();
+    auto orig_end = original_elements.end();
+    auto copy_it  = copied_elements.begin();
+    auto copy_end = copied_elements.end();
+
+    for (; orig_it != orig_end && copy_it != copy_end; ++orig_it, ++copy_it) {
+        REQUIRE( copy_it->first  == orig_it->first  ); // equal values
+        REQUIRE( copy_it->second != orig_it->second ); // different addresses, aka copies
     }
 
-    return result;
+    /* C++23
+    for (const auto& [original, copied] : std::views::zip(original_elements, copied_elements)) {
+        REQUIRE( copied.second == original.second );
+        REQUIRE( copied.first  != original.first  );
+    }
+    */
+}
+
+void assert_trees_were_copied(const tree<int>& original, const tree<int>& copy, const addressed_elements& original_elements) {
+    assert_subtrees_were_copied(original.root(), copy.root(), original_elements);
+}
+
+void assert_trees_were_moved(const tree<int>& original, const tree<int>& moved, const addressed_elements& original_elements)
+{
+    assert_tree_is_empty(original);
+
+    auto moved_elements = get_elements_and_addresses(moved.root());
+    // the moved tree should have the same elements as the original prior to moving, living at the same memory addresses
+    REQUIRE( moved_elements == original_elements );
 }
 
 void assert_sample_tree_contents_and_structure_are_correct(const tree<int>& t)
