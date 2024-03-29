@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include <cpptools/utility/string.hpp>
+#include <cpptools/utility/to_string.hpp>
 
 #define TAGS "[string]"
 
@@ -249,7 +250,7 @@ TEST_CASE("Strings parsing to int vector", TAGS)
     }
 }
 
-TEST_CASE("read_file_into_string")
+TEST_CASE("Dump a file into a string")
 {
     std::string expected_with_carriage = "azeazeaze\r\naaaa\r\ndddd\r\n\r\ntesttest\r\n";
     std::string expected_no_carriage = "azeazeaze\naaaa\ndddd\n\ntesttest\n";

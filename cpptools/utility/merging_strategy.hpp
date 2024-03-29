@@ -27,7 +27,7 @@ template<typename merge_t, typename value_t>
 constexpr bool is_noexcept_merging_strategy_v = is_noexcept_merging_strategy<merge_t, value_t>::value;
 
 /// @brief Collection of merging strategy implementations.
-namespace merging_strategies
+namespace merge
 {
 
 /// @brief Keep the original value and do nothing with the other.
@@ -47,7 +47,7 @@ struct replace_original
     }
 };
 
-/// @brief Replace the original value by move-assigning the other o it.
+/// @brief Replace the original value by move-assigning the other to it.
 struct move_replace_original
 {
     template<typename T>

@@ -2,6 +2,7 @@
 #define TESTS__CONTAINER__TREE_TEST_UTILITIES_HPP
 
 #include <ranges>
+#include <map>
 #include <vector>
 
 #include <catch2/catch_all.hpp>
@@ -11,20 +12,17 @@
 namespace tools::test
 {
 
-struct addressed_elements {
-    std::vector<int> values;
-    std::vector<const int*> addresses;
-
-    bool operator==(const addressed_elements& other) const = default;
-};
+using addressed_elements = std::map<int, const int*>;
 
 tree<int>::initializer make_sample_tree_initializer();
 tree<int> make_sample_tree();
 void assert_tree_is_empty(const tree<int>& t);
-void assert_trees_were_copied(const tree<int>& original, const tree<int>& copy,  const addressed_elements& original_elements);
-void assert_trees_were_moved (const tree<int>& original, const tree<int>& moved, const addressed_elements& original_elements);
+void assert_subtrees_were_copied(const const_node_handle<int>& original, const const_node_handle<int>& copy,  const addressed_elements& original_elements);
+void assert_trees_were_copied   (const tree<int>& original,              const tree<int>& copy,               const addressed_elements& original_elements);
+void assert_trees_were_moved    (const tree<int>& original,              const tree<int>& moved,              const addressed_elements& original_elements);
 void assert_sample_tree_contents_and_structure_are_correct(const tree<int>& t);
 
+addressed_elements get_elements_and_addresses(const const_node_handle<int>& subtree_root);
 addressed_elements get_elements_and_addresses(const tree<int>& tree);
 
 template<typename T, typename NodeHandle>

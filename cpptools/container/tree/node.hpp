@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <iterator>
 #include <numeric>
-#include <ranges>
 #include <type_traits>
 #include <vector>
 
@@ -14,21 +13,18 @@
 #include <cpptools/utility/merging_strategy.hpp>
 
 #ifndef CPPTOOLS_DEBUG_NODE
-# if CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH != 0
-#   define CPPTOOLS_DEBUG_NODE 1
-# else
-#   define CPPTOOLS_DEBUG_NODE 0
-# endif
+# define CPPTOOLS_DEBUG_NODE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
 #endif
 
 #define CPPTOOLS_I_HAVE_INCLUDED_UNDEF_DEBUG_MACROS_LATER_ON_IN_THIS_FILE
 #define CPPTOOLS_LOCAL_DEBUG_MACRO CPPTOOLS_DEBUG_NODE
 #include <cpptools/_internal/debug_macros.hpp>
 
-namespace tools::detail::tree
-{
+namespace tools::detail {
 
-/// @brief A node in an arbitrary tree
+/// @brief A node in an arbitrary tree, to be used with unsafe_tree<T>.
+///
+/// @note Enable debug assertions with #define CPPTOOLS_DEBUG_NODE 1
 template<typename T>
 class node {
 public:
@@ -296,241 +292,7 @@ public:
     }
 };
 
-template<typename T, typename MyContainer>
-class const_node_handle {
-protected:
-    // Allow construction from a node pointer by the container class
-    friend MyContainer;
-
-    using node     = tools::detail::tree::node<T>;
-    using node_ptr = const node*;
-
-    node_ptr _node;
-
-    node_ptr ptr() const {
-        return _node;
-    }
-
-    const_node_handle(node_ptr from_node) :
-        _node(from_node) {
-
-    }
-
-    static const_node_handle _handle_from_node(node* const& n) {
-        return const_node_handle(n);
-    }
-
-    static const_node_handle _handle_from_node_storage_iterator(const typename node::storage_type::const_iterator& it) {
-        return _handle_from_node(*it);
-    }
-
-public:
-    using value_type      = T;
-    using size_type       = typename node::size_type;
-    using const_reference = const T&;
-    using const_pointer   = const T*;
-    using reference       = const_reference;
-    using pointer         = const_pointer;
-
-    const_node_handle(const const_node_handle&  other)            = default;
-    const_node_handle(      const_node_handle&& other)            = default;
-    const_node_handle& operator=(const const_node_handle&  other) = default;
-    const_node_handle& operator=(      const_node_handle&& other) = default;
-
-    const_node_handle left_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return const_node_handle(_node->left_sibling());
-    }
-
-    const_node_handle right_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return const_node_handle(_node->right_sibling());
-    }
-
-    bool is_leftmost_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->is_leftmost_sibling();
-    }
-
-    bool is_rightmost_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->is_rightmost_sibling();
-    }
-
-    const_node_handle parent() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return const_node_handle(_node->parent());
-    }
-
-    bool has_parent(const const_node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->has_parent(other._node);
-    }
-
-    bool is_parent_of(const const_node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return other.has_parent(*this);
-    }
-
-    const_node_handle child(size_type index) const {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node),              "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-        CPPTOOLS_DEBUG_ASSERT(index < _node->child_count(), "const_node_handle", critical, "index out of bounds", exception::parameter::invalid_value_error, "index", index);
-        
-        return const_node_handle(_node->children()[index]);
-    };
-
-    auto children() const {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-        
-        return _node->children() | std::views::transform([](node* n) { return const_node_handle(n); });
-    }
-
-    size_type child_count() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->child_count();
-    }
-
-    size_type descendant_count() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->descendant_count();
-    }
-
-    size_t sibling_index() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->sibling_index();
-    }
-
-    size_t sibling_count() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->sibling_count();
-    }
-
-    const_reference operator*() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->value;
-    }
-
-    const_pointer operator->() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return &(_node->value);
-    }
-
-    bool operator==(const const_node_handle& other) const noexcept {
-        return _node == other._node;
-    }
-};
-
-template<typename T, typename My_container>
-class node_handle : private const_node_handle<T, My_container> {
-private:
-    // Allow construction from a node pointer by the container class
-    friend My_container;
-
-    using base     = const_node_handle<T, My_container>;
-    using node     = typename base::node;
-    using node_ptr = node*;
-
-public:
-    node_ptr ptr() const {
-        return const_cast<node*>(this->_node);
-    }
-
-    node_handle(const base& other) = delete;
-
-    using base::const_node_handle;
-
-    static node_handle _handle_from_node(node* const& n) {
-        return node_handle(n);
-    }
-
-    static node_handle _handle_from_node_storage_iterator(const node::storage_type::const_iterator& it) {
-        return node_handle(*it);
-    }
-
-public:
-    using value_type      = T;
-    using size_type       = typename base::size_type;
-    using const_reference = typename base::const_reference;
-    using const_pointer   = typename base::const_pointer;
-    using reference       = T&;
-    using pointer         = T*;
-
-    node_handle(const node_handle&  other)            = default;
-    node_handle(      node_handle&& other)            = default;
-    node_handle& operator=(const node_handle&  other) = default;
-    node_handle& operator=(      node_handle&& other) = default;
-
-    node_handle left_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(this->_node), "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return node_handle(const_cast<node*>(this->_node->left_sibling()));
-    }
-
-    node_handle right_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(this->_node), "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return node_handle(const_cast<node*>(this->_node->right_sibling()));
-    }
-
-    node_handle parent() const CPPTOOLS_NOEXCEPT_RELEASE {
-        return node_handle(const_cast<node*>(this->_node->parent()));
-    }
-
-    bool has_parent(const node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
-        return base::has_parent(static_cast<const base&>(other));
-    }
-
-    bool is_parent_of(const node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
-        return base::is_parent_of(static_cast<const base&>(other));
-    }
-
-    using base::is_leftmost_sibling;
-    using base::is_rightmost_sibling;
-    using base::child_count;
-    using base::descendant_count;
-    using base::sibling_index;
-    using base::sibling_count;
-
-    node_handle child(size_type index) const {
-        CPPTOOLS_DEBUG_ASSERT(not_null(this->_node),              "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-        CPPTOOLS_DEBUG_ASSERT(index < this->_node->child_count(), "node_handle", critical, "index out of bounds", exception::parameter::invalid_value_error, "index", index);
-        
-        return node_handle(this->_node->children()[index]);
-    };
-
-    auto children() const {
-        CPPTOOLS_DEBUG_ASSERT(not_null(this->_node), "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-        
-        return this->_node->children() | std::views::transform([](node* n) { return node_handle(n); });
-    }
-
-    reference operator*() const CPPTOOLS_NOEXCEPT_RELEASE {
-        return const_cast<reference>(base::operator*());
-    }
-
-    pointer operator->() const CPPTOOLS_NOEXCEPT_RELEASE {
-        return const_cast<pointer>(base::operator->());
-    }
-
-    bool operator==(const node_handle& other) const noexcept {
-        return static_cast<const base&>(*this) == static_cast<const base&>(other);
-    }
-};
-
-} // namespace detail::tree
+} // namespace tools::detail
 
 #include <cpptools/_internal/undef_debug_macros.hpp>
 

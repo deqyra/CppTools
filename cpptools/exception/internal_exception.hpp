@@ -78,12 +78,12 @@ namespace internal
 {
     using e = internal_exception::ecode;
 
-    using out_of_memory_error = exception<internal_exception, e::out_of_memory>;
-    using not_implemented_error = exception<internal_exception, e::not_implemented>;
-    using invalid_state_error = exception<internal_exception, e::invalid_state>;
-    using precondition_failure_error = exception<internal_exception, e::precondition_failure>;
+    using out_of_memory_error         = exception<internal_exception, e::out_of_memory>;
+    using not_implemented_error       = exception<internal_exception, e::not_implemented>;
+    using invalid_state_error         = exception<internal_exception, e::invalid_state>;
+    using precondition_failure_error  = exception<internal_exception, e::precondition_failure>;
     using postcondition_failure_error = exception<internal_exception, e::postcondition_failure>;
-    using unexpected_error = exception<internal_exception, e::unexpected>;
+    using unexpected_error            = exception<internal_exception, e::unexpected>;
 }
 
 } // namespace tools::exception

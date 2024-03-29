@@ -18,7 +18,7 @@
 // - DOES NOT undef the definitions prior to redefining them.
 // Every source file which includes this file MUST undef all the definitions
 // once it has no need for them anymore. This can be done by including 
-// undef_debug_assert.hpp.
+// undef_debug_macros.hpp.
 // To prevent accidents, this file emits an error if a reminder macro has not
 // been defined prior to its own inclusion. If the macro is defined, no error is
 // emitted and the macro is then undefined.
@@ -101,12 +101,12 @@
         }                                                                      \
       }
 # else
-#   warn CPPTOOLS_DEBUG_POLICY identifies an unknown policy. Debug assertions will be disabled.
+#   warn CPPTOOLS_DEBUG_POLICY is defined as an unknown policy. Debug assertions will be disabled.
 #   define CPPTOOLS_DEBUG_ASSERT(cond, channel, level, message, ex_t, ...)
 # endif
 #elif defined(CPPTOOLS_TURN_DEBUG_ASSERTIONS_INTO_ASSUMPTIONS)
 # ifndef CPPTOOLS_ASSUME
-#   error CPPTOOLS_ASSUME is undefined because no suitable implementation was found on your system. If appropriate, consider defining CPPTOOLS_ALLOW_EVALUATING_ASSUMPTIONS to a non-0 value if not done already.
+#   error CPPTOOLS_ASSUME is undefined because no suitable implementation was found on your system. If appropriate, consider defining CPPTOOLS_ALLOW_EVALUATING_ASSUMPTIONS to a non-0 value.
 # else
 #   define CPPTOOLS_DEBUG_ASSERT(cond, channel, level, message, ex_t, ...)     \
       CPPTOOLS_ASSUME(cond);
