@@ -1,9 +1,12 @@
 #ifndef CPPTOOLS__CONTAINER__TREE__TRAVERSAL_HPP
 #define CPPTOOLS__CONTAINER__TREE__TRAVERSAL_HPP
 
+#include <iterator>
+#include <ranges>
 #include <type_traits>
 
 #include <cpptools/exception/iterator_exception.hpp>
+#include <cpptools/utility/concepts.hpp>
 
 #include "unsafe_tree.hpp"
 #include "node.hpp"
@@ -44,8 +47,8 @@ using order_tag = std::conditional_t<
 /// pre-order traversal of the tree
 ///
 /// @return A pointer as described above
-template<typename T>
-node<T>* dfs_next(const node<T>* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
+template<typename T, any_cvref<node<T>> Node>
+Node* dfs_next(Node* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
     // Structure:        Traversal:                     //
     //        N                --- N (begin)            //
     //      /   \             /                         //
@@ -84,8 +87,8 @@ node<T>* dfs_next(const node<T>* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
 /// @return A pointer as described above
 ///
 /// @pre \c this node must not be orphaned.
-template<typename T>
-node<T>* dfs_previous(const node<T>* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
+template<typename T, any_cvref<node<T>> Node>
+Node* dfs_previous(Node* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
     // Structure:        Traversal (reversed):          //
     //        N                --- N - (end)            //
     //      /   \             /                         //
@@ -106,8 +109,8 @@ node<T>* dfs_previous(const node<T>* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE
 /// @return A pointer as described above
 ///
 /// @pre \c this node must not be orphaned.
-template<typename T>
-node<T>* dfs_next(const node<T>* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
+template<typename T, any_cvref<node<T>> Node>
+Node* dfs_next(Node* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
     // Structure:                Traversal:             //
     //        N                   (end) - N --          //
     //      /   \                             \         //
@@ -128,8 +131,8 @@ node<T>* dfs_next(const node<T>* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
 /// @return A pointer as described above
 ///
 /// @pre \c this node must not be orphaned.
-template<typename T>
-node<T>* dfs_previous(const node<T>* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
+template<typename T, any_cvref<node<T>> Node>
+Node* dfs_previous(Node* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
     // Structure:                Traversal (reversed):  //
     //        N                   (begin) N --          //
     //      /   \                             \         //
@@ -193,19 +196,19 @@ public:
     using iterator_category   = std::bidirectional_iterator_tag;
 
 protected:
-    using node_t              = const typename container_t::node;
+    using node_t              = const typename container_t::node_t;
     using order_tag_t         = order_tag<O>;
     using const_node_handle_t = const_node_handle<value_type>;
 
     /// @brief Pointer to the tree being traversed
-    container_t* _tree;
+    const container_t* _tree;
 
     /// @brief Pointer to the tree node currently being iterated over
     ///
     /// @note If _node is nullptr, then this iterator is a past-the-end iterator.
     node_t* _node;
 
-    const_dfs_iterator(container_t* tree, node_t* node) noexcept :
+    const_dfs_iterator(const container_t* tree, node_t* node) noexcept :
         _tree(tree),
         _node(node)
     {
@@ -244,15 +247,17 @@ public:
     }
 
     const_dfs_iterator& operator++() CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "tree", critical, "cannot prefix-increment a past-the-end iterator", exception::iterator::incremented_past_end_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_tree), "tree", critical, "cannot prefix-increment a default-constructed iterator", exception::iterator::incremented_past_end_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "tree", critical, "cannot prefix-increment a past-the-end iterator",        exception::iterator::incremented_past_end_error);
 
-        _node = dfs_next(_node, order_tag_t{});
+        _node = dfs_next<T>(_node, order_tag_t{});
 
         return *this;
     }
 
     const_dfs_iterator operator++(int) CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "tree", critical, "cannot postfix-increment a past-the-end iterator", exception::iterator::incremented_past_end_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_tree), "tree", critical, "cannot postfix-increment a default-constructed iterator", exception::iterator::incremented_past_end_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "tree", critical, "cannot postfix-increment a past-the-end iterator",        exception::iterator::incremented_past_end_error);
 
         const_dfs_iterator tmp = *this;
         ++*this;
@@ -260,19 +265,21 @@ public:
     }
 
     const_dfs_iterator& operator--() CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(*this != _tree->template begin<O>(), "tree", critical, "cannot prefix-decrement begin iterator",      exception::iterator::decremented_past_begin_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_tree),                              "tree", critical, "cannot prefix-decrement a default-constructed iterator", exception::iterator::decremented_past_begin_error);
+        CPPTOOLS_DEBUG_ASSERT(_node != dfs_begin<T>(*_tree, order_tag_t{}), "tree", critical, "cannot prefix-decrement begin iterator",                 exception::iterator::decremented_past_begin_error);
 
         if (_node) [[likely]] {
-            _node = dfs_previous(_node, order_tag_t{});
+            _node = dfs_previous<T>(_node, order_tag_t{});
         } else {
-            _node = dfs_end(_tree, order_tag_t{});
+            _node = dfs_last<T>(*_tree, order_tag_t{});
         }
 
         return *this;
     }
 
     const_dfs_iterator operator--(int) CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(*this != _tree->template begin<O>(), "tree", critical, "cannot postfix-decrement begin iterator",      exception::iterator::decremented_past_begin_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_tree),                              "tree", critical, "cannot postfix-decrement a default-constructed iterator", exception::iterator::decremented_past_begin_error);
+        CPPTOOLS_DEBUG_ASSERT(_node != dfs_begin<T>(*_tree, order_tag_t{}), "tree", critical, "cannot postfix-decrement begin iterator",                 exception::iterator::decremented_past_begin_error);
 
         const_dfs_iterator tmp = *this;
         --*this;
@@ -323,12 +330,17 @@ class dfs_iterator : private const_dfs_iterator<T, O> {
 
     using base          = const_dfs_iterator<T, O>;
     using container_t   = typename base::container_t;
+    using node_t        = typename base::node_t;
     using node_handle_t = node_handle<T>;
 
     template<order_t O2>
     dfs_iterator(const const_dfs_iterator<T, O2>& other) = delete;
 
-    using base::const_dfs_iterator;
+    dfs_iterator(container_t* tree, node_t* node) noexcept :
+        base(tree, node)
+    {
+
+    }
 
 public:
     using value_type        = typename base::value_type;
@@ -342,7 +354,8 @@ public:
 
     /// @brief Default constructor
     dfs_iterator() noexcept :
-        base(nullptr, nullptr) {
+        base(nullptr, nullptr)
+    {
 
     }
 
@@ -355,7 +368,7 @@ public:
 
     template<order_t O2>
     friend void swap(dfs_iterator& lhs, dfs_iterator<T, O2>& rhs) noexcept {
-        std::swap(
+        swap(
             static_cast<const_dfs_iterator<T, O>>(lhs),
             static_cast<const_dfs_iterator<T, O2>>(rhs)
         );
@@ -403,7 +416,7 @@ public:
     }
 
     bool operator==(const dfs_iterator& rhs) const CPPTOOLS_NOEXCEPT_RELEASE {
-        return base::operator==(*this, rhs);
+        return base::operator==(rhs);
     }
 
     node_handle_t as_node() CPPTOOLS_NOEXCEPT_RELEASE {
@@ -411,27 +424,42 @@ public:
     }
 };
 
-template<typename T>
-unsafe_tree<T>::node* dfs_begin(const unsafe_tree<T>& t, pre_order_tag) noexcept
+template<typename T, any_cvref<unsafe_tree<T>> Tree>
+auto dfs_begin(Tree& t, pre_order_tag) noexcept
 {
     return t.root();
 }
-template<typename T>
-unsafe_tree<T>::node* dfs_end(const unsafe_tree<T>& t, pre_order_tag) noexcept
+
+template<typename T, any_cvref<unsafe_tree<T>> Tree>
+auto dfs_last(Tree& t, pre_order_tag) noexcept
 {
     return t.rightmost();
 }
 
-template<typename T>
-unsafe_tree<T>::node* dfs_begin(const unsafe_tree<T>& t, post_order_tag) noexcept
+template<typename T, any_cvref<unsafe_tree<T>> Tree>
+auto dfs_end(Tree& t, pre_order_tag) noexcept
+{
+    using node_t = std::conditional_t<std::is_const_v<Tree>, const typename Tree::node_t, typename Tree::node_t>;
+    return static_cast<node_t*>(nullptr);
+}
+
+template<typename T, any_cvref<unsafe_tree<T>> Tree>
+auto dfs_begin(Tree& t, post_order_tag) noexcept
 {
     return t.leftmost();
 }
 
-template<typename T>
-unsafe_tree<T>::node* dfs_end(const unsafe_tree<T>& t, post_order_tag) noexcept
+template<typename T, any_cvref<unsafe_tree<T>> Tree>
+auto dfs_last(Tree& t, post_order_tag) noexcept
 {
     return t.root();
+}
+
+template<typename T, any_cvref<unsafe_tree<T>> Tree>
+auto dfs_end(Tree& t, post_order_tag) noexcept
+{
+    using node_t = std::conditional_t<std::is_const_v<Tree>, const typename Tree::node_t, typename Tree::node_t>;
+    return static_cast<node_t*>(nullptr);
 }
 
 template<typename T, order_t O, bool Is_const>
@@ -441,8 +469,8 @@ class dfs_proxy {
 
     container_t& _tree;
 
-    dfs_proxy(const dfs_proxy& other)            = delete;
-    dfs_proxy(dfs_proxy&& other)                 = delete;
+    dfs_proxy(const dfs_proxy& other)            = default;
+    dfs_proxy(dfs_proxy&& other)                 = default;
     dfs_proxy& operator=(const dfs_proxy& other) = delete;
     dfs_proxy& operator=(dfs_proxy&& other)      = delete;
 
@@ -454,11 +482,39 @@ public:
     >;
 
     iterator begin() const noexcept {
-        return iterator(_tree, dfs_begin(_tree, order_tag_t{}));
+        return iterator(&_tree, dfs_begin<T>(_tree, order_tag_t{}));
     }
 
     iterator end() const noexcept {
-        return iterator(_tree, dfs_end(_tree, order_tag_t{}));
+        return iterator(&_tree, dfs_end<T>(_tree, order_tag_t{}));
+    }
+};
+
+template<typename T, order_t O, bool Is_const>
+class reverse_dfs_proxy {
+    using container_t = std::conditional_t<Is_const, const unsafe_tree<T>, unsafe_tree<T>>;
+
+    dfs_proxy<T, O, Is_const> _forward_dfs;
+
+    reverse_dfs_proxy(const reverse_dfs_proxy& other)            = default;
+    reverse_dfs_proxy(reverse_dfs_proxy&& other)                 = default;
+    reverse_dfs_proxy& operator=(const reverse_dfs_proxy& other) = delete;
+    reverse_dfs_proxy& operator=(reverse_dfs_proxy&& other)      = delete;
+
+public:
+    reverse_dfs_proxy(container_t& tree) noexcept : _forward_dfs(tree) {}
+
+    using iterator = std::reverse_iterator<
+        std::conditional_t<Is_const,
+            const_dfs_iterator<T, O>, dfs_iterator<T, O>
+    >>;
+
+    iterator begin() const noexcept {
+        return iterator(_forward_dfs.end());
+    }
+
+    iterator end() const noexcept {
+        return iterator(_forward_dfs.begin());
     }
 };
 
@@ -472,11 +528,24 @@ detail::dfs_proxy<T, O, false> dfs(unsafe_tree<T>& t) {
     return { t };
 }
 
+template<order_t O, typename T>
+detail::reverse_dfs_proxy<T, O, true> reverse_dfs(const unsafe_tree<T>& t) {
+    return { t };
+}
+
+template<order_t O, typename T>
+detail::reverse_dfs_proxy<T, O, false> reverse_dfs(unsafe_tree<T>& t) {
+    return { t };
+}
+
 } // namespace detail
 
 namespace traversal {
 
 using order = detail::order_t;
+
+constexpr order pre_order  = order::pre;
+constexpr order post_order = order::post;
 
 } // namespace traversal
 

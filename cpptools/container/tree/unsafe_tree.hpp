@@ -5,6 +5,7 @@
 #include <memory>
 #include <ranges>
 #include <stack>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -13,8 +14,7 @@
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
 #include <cpptools/exception/iterator_exception.hpp>
-#include <cpptools/utility/merging_strategy.hpp>
-#include <cpptools/utility/type_utils.hpp>
+#include <cpptools/utility/merge_strategy.hpp>
 
 #include "node.hpp"
 
@@ -40,7 +40,7 @@ namespace tools::detail
 /// @note Enable debug assertions with #define CPPTOOLS_DEBUG_TREE 1
 template<typename T>
 class unsafe_tree {
-protected:
+public:
     using value_type        = T;
     using reference         = value_type&;
     using const_reference   = const value_type&;
@@ -58,6 +58,7 @@ protected:
     using allocator_type    = typename storage_t::allocator_type;
 
     static constexpr bool NoExceptErasure = noexcept(std::declval<storage_t>().erase(std::declval<key_type>()));
+    static constexpr bool NoExceptSwap    = noexcept(std::swap(std::declval<storage_t>(), std::declval<storage_t>()));
 
 private:
     static const_reference _value_const_ref_from_storage_value(const typename storage_t::value_type& pair) {
@@ -68,7 +69,7 @@ private:
         return (pair.second)->value;
     }
 
-protected:
+public:
     using const_value_view_t = decltype(std::declval<const storage_t&>() | std::views::transform(_value_const_ref_from_storage_value));
     using       value_view_t = decltype(std::declval<      storage_t&>() | std::views::transform(_value_ref_from_storage_value));
 
@@ -78,6 +79,14 @@ protected:
 
     value_view_t& values() {
         return _values;
+    }
+
+    const_value_view_t _make_const_value_view() {
+        return static_cast<const storage_t&>(_nodes) | std::views::transform(_value_const_ref_from_storage_value);
+    }
+
+    value_view_t _make_value_view() {
+        return static_cast<      storage_t&>(_nodes) | std::views::transform(_value_ref_from_storage_value);
     }
 
     using const_iterator = decltype(std::declval<const const_value_view_t&>().begin());
@@ -123,12 +132,12 @@ private:
         }
     }
 
-    void _move_fill_from_init(node_t* dest, std::vector<initializer>& child_initializers) {
+    void _move_fill_from_init(node_t* dest, std::vector<initializer>&& child_initializers) {
         for (auto& init : child_initializers) {
             auto new_node = emplace_node(dest, std::move(init.value));
 
             if (init.child_initializers.size() != 0) {
-                _move_fill_from_init(new_node, init.child_initializers);
+                _move_fill_from_init(new_node, std::move(init.child_initializers));
             }
         }
     }
@@ -136,10 +145,10 @@ private:
     /// @brief Transfer ownership of nodes of a subtree from this tree's storage
     /// to another storage
     ///
-    /// @param branch_root Root of the subtree whose nodes should be transferred
+    /// @param subtree_root Root of the subtree whose nodes should be transferred
     /// @param storage Storage where the nodes should be transferred to
     void _move_node_ptrs_recursive(node_t* subtree_root, storage_t& storage) {
-        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root), "unsafe_tree", critical, "cannot move nodes of null subtree", exception::parameter::null_parameter_error, "subtree_root", subtree_root);
+        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root), "unsafe_tree", critical, "cannot move nodes not part of tree", exception::parameter::invalid_value_error, "subtree_root", subtree_root);
 
         auto map_node = _nodes.extract(subtree_root);
         storage.insert(std::move(map_node));
@@ -249,14 +258,6 @@ private:
         return true;
     }
 
-    const_value_view_t _make_const_value_view() {
-        return static_cast<const storage_t&>(_nodes) | std::views::transform(_value_const_ref_from_storage_value);
-    }
-
-    value_view_t _make_value_view() {
-        return static_cast<storage_t&>(_nodes) | std::views::transform(_value_ref_from_storage_value);
-    }
-
     /// @brief Construct a tree from a detached subtree
     ///
     /// @param chopped_nodes Storage to steal nodes from
@@ -275,7 +276,7 @@ private:
         _root->propagate_parent_chain_update();
     }
 
-protected:
+public:
     unsafe_tree() :
         _nodes(),
         _root(nullptr),
@@ -340,7 +341,7 @@ protected:
         unsafe_tree()
     {
         auto emplaced_root = emplace_node(root(), std::move(init.value));
-        _move_fill_from_init(emplaced_root, init.child_initializers);
+        _move_fill_from_init(emplaced_root, std::move(init.child_initializers));
     }
 
     /// @param other Tree to copy-assign contents from
@@ -462,6 +463,7 @@ protected:
     ///
     /// @return Pointer to the newly adopted subtree
     node_t* adopt_subtree(node_t* destination, unsafe_tree&& other) {
+        CPPTOOLS_DEBUG_ASSERT(not_empty(other),                   "unsafe_tree", critical, "cannot adopt empty tree", exception::parameter::invalid_value_error, "destination", destination);
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, destination), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "destination", destination);
 
         bool updating_leftmost  = emplacing_there_would_change_leftmost(destination);
@@ -481,12 +483,46 @@ protected:
         return new_subtree;
     }
 
+    /// @brief Get a mutable handle to the root node of the tree
+    ///
+    /// @return A mutable handle to the root node of the tree
     node_t* root() {
         return _root;
     }
 
+    /// @brief Get a const handle to the root ndoe of the tree
+    ///
+    /// @return A const handle to the root ndoe of the tree
     const node_t* root() const {
         return _root;
+    }
+
+    /// @brief Get a mutable handle to the leftmost node of the tree
+    ///
+    /// @return A mutable handle to the leftmost node of the tree
+    node_t* leftmost() {
+        return _leftmost;
+    }
+
+    /// @brief Get a const handle to the leftmost node of the tree
+    ///
+    /// @return A const handle to the leftmost node of the tree
+    const node_t* leftmost() const {
+        return _leftmost;
+    }
+
+    /// @brief Get a mutable handle to the rightmost node of the tree
+    ///
+    /// @return A mutable handle to the rightmost node of the tree
+    node_t* rightmost() {
+        return _rightmost;
+    }
+
+    /// @brief Get a const handle to the rightmost node of the tree
+    ///
+    /// @return A const handle to the rightmost node of the tree
+    const node_t* rightmost() const {
+        return _rightmost;
     }
 
     /// @brief Move a subtree from somewhere in this tree to somewhere else in
@@ -495,10 +531,10 @@ protected:
     /// @param destination The node which the moved subtree should be 
     /// @param root The root node of the subtree to move
     void move_subtree(node_t* destination, node_t* subtree_root) {
-        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root),    "unsafe_tree", critical, "subtree root not in tree",          exception::parameter::invalid_value_error, "subtree_root", subtree_root);
-        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, destination),     "unsafe_tree", critical, "destination not in tree",           exception::parameter::invalid_value_error, "destination", destination);
-        CPPTOOLS_DEBUG_ASSERT(subtree_root != _root,                  "unsafe_tree", critical, "cannot move the root of the tree",  exception::parameter::invalid_value_error, "subtree_root", subtree_root);
-        CPPTOOLS_DEBUG_ASSERT(!destination->has_parent(subtree_root), "unsafe_tree", critical, "destination is part of moved tree", exception::parameter::invalid_value_error, "destination", destination);
+        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root),    "unsafe_tree", critical, "subtree root not in tree",             exception::parameter::invalid_value_error, "subtree_root", subtree_root);
+        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, destination),     "unsafe_tree", critical, "destination not in tree",              exception::parameter::invalid_value_error, "destination", destination);
+        CPPTOOLS_DEBUG_ASSERT(subtree_root != _root,                  "unsafe_tree", critical, "cannot move the root of the tree",     exception::parameter::invalid_value_error, "subtree_root", subtree_root);
+        CPPTOOLS_DEBUG_ASSERT(!destination->has_parent(subtree_root), "unsafe_tree", critical, "destination is part of moved subtree", exception::parameter::invalid_value_error, "destination", destination);
 
         bool dropping_leftmost  = (subtree_root == _leftmost)  || (_leftmost->has_parent(subtree_root));
         bool dropping_rightmost = (subtree_root == _rightmost) || (_rightmost->has_parent(subtree_root));
@@ -510,20 +546,32 @@ protected:
         parent->remove_child(subtree_root->sibling_index());
         destination->insert_child(subtree_root);
 
-        // It can be the case that (dropping_rightmost && update_rightmost) == true,
-        // when a subtree which includes the rightmost node_t is moved somewhere
-        // further up the rightmost branch. In this case, the rightmost node_t of
-        // the tree does not change.
-        // Due to the tree semantics as implemented at the time of writing this
-        // comment, this situation currently cannot happen for the leftmost node_t
-        // of the tree. Similar handling is still performed as a form of
-        // future-proofing.
+        // For each extremum node, there are four cases to consider:
+        //
+        //                    | not updating_*most | updating_*most |
+        // -------------------|--------------------|----------------|
+        // not dropping_*most |          1         |        2       |
+        // -------------------|--------------------|----------------|
+        //     dropping_*most |          3         |        4       |
 
-        if (dropping_leftmost  && !updating_leftmost)  { _leftmost  = parent; }
-        if (dropping_rightmost && !updating_rightmost) { _rightmost = parent; }
+        // Case 1: nothing to do
+        
+        // Case 2:
+        if (!dropping_leftmost  && updating_leftmost)  { _leftmost  = destination->leftmost_child_or_this(); }
+        if (!dropping_rightmost && updating_rightmost) { _rightmost = destination->rightmost_child_or_this(); }
 
-        if (updating_leftmost  && !dropping_leftmost)  { _leftmost  = destination->leftmost_child_or_this(); }
-        if (updating_rightmost && !dropping_rightmost) { _rightmost = destination->rightmost_child_or_this(); }
+        // Case 3:
+        if (dropping_leftmost  && !updating_leftmost)  { _leftmost  = parent->leftmost_child_or_this(); }
+        if (dropping_rightmost && !updating_rightmost) { _rightmost = parent->rightmost_child_or_this(); }
+
+        // Case 4: this situation only arises when a subtree which includes an
+        // extremum node is moved somewhere further up its parent branch. In 
+        // this case, the extremum node remains an extremum node: no special
+        // handling required.
+
+        // Note: due to how the tree is implemented as of writing this comment,
+        // case 4 can never happen for the leftmost node of the tree, only for
+        // the rightmost node.
     }
 
     /// @brief Erase an entire subtree and its values
@@ -561,14 +609,14 @@ protected:
     /// @param where Handle to the node which is to be the parent of the newly 
     /// emplaced node
     /// @param args Arguments to be forwarded to a constructor of the value to
-    /// emplace
+    /// construct in the newly emplaced node
     ///
     /// @return A pointer to the newly emplaced child node
     ///
-    /// @exception Any exception thrown in the resulting constructor call of
-    /// the value type will be let through to the caller
+    /// @exception Any exception thrown in the constructor of the emplaced value
+    /// will be forwarded to the caller
     template<typename ...ArgTypes>
-    node_t* emplace_node(node_t* where, ArgTypes&&... args) {
+    node_t* emplace_node(node_t* where, ArgTypes&&... args) noexcept (std::is_nothrow_constructible_v<value_type, ArgTypes...>) {
         CPPTOOLS_DEBUG_ASSERT(null(where) || in_range_keys(_nodes, where), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "where", where);
 
         node_t* child = make_node(std::forward<ArgTypes>(args)...);
@@ -596,34 +644,33 @@ protected:
         return child;
     }
 
-    /// @brief Merge this node into its parent node:
-    /// - the value of this node is merged into the value of the parent node
-    /// using the merging strategy provided as a template parameter
-    /// - the children of this node are all inserted in-between this node's
-    /// left and right siblings, their relative order is preserved, and
+    /// @brief Merge the provided node into its parent node:
+    /// - the value of the provided node is merged into the value of the parent
+    /// node using the merge strategy provided as a template parameter
+    /// - the children of the provided node are all inserted in-between this
+    /// node's left and right siblings, their relative order is preserved, and
     /// their new parent is this node's parent
-    /// - this node is deleted from the tree
+    /// - the provided node is deleted from the tree
     ///
-    /// @tparam merger_t A function-like type satisfying the
-    /// merging_strategy concept for this tree's value type. The default
-    /// merging strategy discards this node's value and keeps the parent
-    /// node's value.
-    template<merging_strategy<T> merge_t = merge::keep_original>
+    /// @tparam merge_t A function-like type satisfying the \c merge_strategy
+    /// concept for this tree's value type. The default merge strategy keeps the
+    /// parent node's value, discarding that of the provided node.
+    template<merge_strategy<T> merge_t = merge::keep>
     void merge_with_parent(node_t* n) {
-        CPPTOOLS_DEBUG_ASSERT(not_null(n),              "unsafe_tree", critical, "cannot merge node_t with parent using an iterator pointing at no node_t", exception::internal::precondition_failure_error);
-        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, n), "unsafe_tree", critical, "node_t not in tree",                                                    exception::parameter::invalid_value_error, "n", n);
+        CPPTOOLS_DEBUG_ASSERT(not_null(n),              "unsafe_tree", critical, "cannot merge null node with parent", exception::parameter::null_parameter_error, "n");
+        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, n), "unsafe_tree", critical, "node not in tree",                   exception::parameter::invalid_value_error,  "n", n);
 
         node_t* parent = n->parent();
 
-        CPPTOOLS_DEBUG_ASSERT(not_null(parent), "unsafe_tree", critical, "cannot merge node_t with null parent",                                          exception::internal::precondition_failure_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(parent),         "unsafe_tree", critical, "cannot merge node with null parent", exception::parameter::invalid_value_error,  "n", n);
 
         parent->template merge_child<merge_t>(n->sibling_index());
 
         _delete_node(n);
     }
 
-    /// @brief Check that this tree's structure and its ordered values are the
-    /// same as that of another tree
+    /// @brief Check that this tree's structure and values are the same as that
+    /// of another tree
     ///
     /// @param other Other tree to compare this tree to
     ///
@@ -636,35 +683,43 @@ protected:
         if (size() != other.size()) {
             return false;
         }
-
         // at this point, both trees have the same size
+
         if (empty() /* && other.empty()*/) {
             return true;
         }
-
         // at this point, both trees have equal size and are non-empty
+
         return _subtrees_equal(_root, other._root);
     }
 
-    friend void swap(unsafe_tree& lhs, unsafe_tree& rhs) {
+    /// @brief Swap around the contents of two trees
+    ///
+    /// @param lhs First tree
+    /// @param rhs Second tree
+    friend void swap(unsafe_tree& lhs, unsafe_tree& rhs) noexcept(NoExceptSwap) {
         std::swap(lhs._nodes, rhs._nodes);
         std::swap(lhs._root, rhs._root);
         std::swap(lhs._leftmost, rhs._leftmost);
         std::swap(lhs._rightmost, rhs._rightmost);
     }
 
+    /// @brief Get the size of the tree
     size_type size() const {
         return _nodes.size();
     }
 
+    /// @brief Get the maximum size the tree can have
     size_type max_size() const {
         return _nodes.max_size();
     }
 
+    /// @brief Get whether the tree is empty
     bool empty() const {
         return _nodes.empty();
     }
 
+    /// @brief Clear the tree
     void clear() {
         _nodes.clear();
         _root = nullptr;
@@ -672,27 +727,45 @@ protected:
         _rightmost = nullptr;
     }
 
+    /// @brief Get the begin iterator for a fast traversal of the tree (no order
+    /// guarantee)
+    ///
+    /// @return The begin iterator for a fast traversal of the tree
     iterator begin() {
         return values().begin();
     }
 
+    /// @brief Get the end iterator for a fast traversal of the tree (no order
+    /// guarantee)
+    ///
+    /// @return The end iterator for a fast traversal of the tree
     iterator end() {
         return values().end();
     }
 
-    const_iterator begin() const {
-        return const_values().begin();
-    }
-
-    const_iterator end() const {
-        return const_values().end();
-    }
-
+    /// @brief Get the begin iterator for a fast const traversal of the tree (no
+    /// order guarantee)
+    ///
+    /// @return The begin iterator for a fast const traversal of the tree
     const_iterator cbegin() const {
         return const_values().begin();
     }
 
+    /// @brief Get the end iterator for a fast const traversal of the tree (no
+    /// order guarantee)
+    ///
+    /// @return The end iterator for a fast const traversal of the tree
     const_iterator cend() const {
+        return const_values().end();
+    }
+
+    /// @copydoc unsafe_tree<T>::cbegin
+    const_iterator begin() const {
+        return const_values().begin();
+    }
+
+    /// @copydoc unsafe_tree<T>::cend
+    const_iterator end() const {
         return const_values().end();
     }
 };

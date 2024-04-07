@@ -142,12 +142,6 @@ public:
         return _node->sibling_index();
     }
 
-    size_t sibling_count() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-
-        return _node->sibling_count();
-    }
-
     const_reference operator*() const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
 
@@ -239,7 +233,6 @@ public:
     using base::child_count;
     using base::descendant_count;
     using base::sibling_index;
-    using base::sibling_count;
 
     node_handle child(size_type index) const {
         CPPTOOLS_DEBUG_ASSERT(not_null(this->_node),              "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);

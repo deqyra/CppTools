@@ -10,7 +10,7 @@
 #include <cpptools/exception/exception.hpp>
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
-#include <cpptools/utility/merging_strategy.hpp>
+#include <cpptools/utility/merge_strategy.hpp>
 
 #ifndef CPPTOOLS_DEBUG_NODE
 # define CPPTOOLS_DEBUG_NODE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
@@ -171,7 +171,7 @@ public:
     /// 
     /// @note The child node is NOT deleted from the tree as part of this
     /// operation.
-    template<merging_strategy<T> merge_t>
+    template<merge_strategy<T> merge_t>
     void merge_child(size_t index) {
         CPPTOOLS_DEBUG_ASSERT(index < _children.size(), "node", critical, "index out of bounds", exception::parameter::invalid_value_error);
 
@@ -283,12 +283,6 @@ public:
         CPPTOOLS_DEBUG_ASSERT(not_null(_parent), "node", critical, "node has no parent", exception::internal::precondition_failure_error);
 
         return _sibling_index;
-    }
-
-    size_t sibling_count() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_parent), "node", critical, "node has no parent", exception::internal::precondition_failure_error);
-
-        return _parent->child_count();
     }
 };
 

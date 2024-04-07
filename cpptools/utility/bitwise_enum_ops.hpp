@@ -1,87 +1,86 @@
 #ifndef CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
 #define CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
 
-#include <concepts>
 #include <type_traits>
+
+#include "concepts.hpp"
 
 namespace tools
 {
 
-template<typename T>
+/// @brief Controls whether operator overloads from namespace bitwise_enum_ops
+/// should participate in overload resolution for enum type E.
+///
+/// @note Support for bitwise operations on an enum type is opt-in: first
+/// specialize this trait and have it inherit from \c std::true_type for your
+/// own enum type, and then add a \c{using namespace bitwise_enum_ops;}
+/// declaration to use the bitwise operator overloads on enumerators.
+template<enumeration E>
 struct enable_bitwise_enum : public std::false_type { };
 
-template<typename T>
-static constexpr bool enable_bitwise_enum_v = enable_bitwise_enum<T>::value;
+template<enumeration E>
+static constexpr bool enable_bitwise_enum_v = enable_bitwise_enum<E>::value;
 
-template<typename T>
-concept bitwise_enabled_enum = std::is_enum_v<T> && enable_bitwise_enum_v<T>;
+template<typename E>
+concept bitwise_enabled_enum = enable_bitwise_enum_v<E>;
 
 namespace bitwise_enum_ops
 {
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T operator&(const T& left, const T& right)
-{
-    return static_cast<T>(
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E operator&(const E& left, const E& right) {
+    return static_cast<E>(
         static_cast<i>(left) & static_cast<i>(right)
     );
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T& operator&=(T& left, const T& right)
-{
-    return left = static_cast<T>(
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E& operator&=(E& left, const E& right) {
+    return left = static_cast<E>(
         static_cast<i>(left) & static_cast<i>(right)
     );
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T operator|(const T& left, const T& right)
-{
-    return static_cast<T>(
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E operator|(const E& left, const E& right) {
+    return static_cast<E>(
         static_cast<i>(left) | static_cast<i>(right)
     );
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T& operator|=(T& left, const T& right)
-{
-    return left = static_cast<T>(
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E& operator|=(E& left, const E& right) {
+    return left = static_cast<E>(
         static_cast<i>(left) | static_cast<i>(right)
     );
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T operator^(const T& left, const T& right)
-{
-    return static_cast<T>(
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E operator^(const E& left, const E& right) {
+    return static_cast<E>(
         static_cast<i>(left) ^ static_cast<i>(right)
     );
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T& operator^=(T& left, const T& right)
-{
-    return left = static_cast<T>(
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E& operator^=(E& left, const E& right) {
+    return left = static_cast<E>(
         static_cast<i>(left) ^ static_cast<i>(right)
     );
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-T operator~(const T& value)
-{
-    return static_cast<T>(~static_cast<i>(value));
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+E operator~(const E& value) {
+    return static_cast<E>(~static_cast<i>(value));
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-bool none(const T& value)
-{
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+bool none(const E& value) {
     return static_cast<i>(value) == static_cast<i>(0);
 }
 
-template<bitwise_enabled_enum T, typename i = std::underlying_type_t<T>>
-bool any(const T& value)
-{
+template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
+bool any(const E& value) {
     return !none(value);
 }
 

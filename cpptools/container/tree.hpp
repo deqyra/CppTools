@@ -7,8 +7,7 @@
 #include "tree/traversal.hpp"
 #include "tree/unsafe_tree.hpp"
 
-#include <cpptools/utility/merging_strategy.hpp>
-#include <cpptools/utility/type_utils.hpp>
+#include <cpptools/utility/merge_strategy.hpp>
 
 #ifndef CPPTOOLS_DEBUG_TREE
 # define CPPTOOLS_DEBUG_TREE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
@@ -66,33 +65,55 @@ private:
     }
 
 public:
+    /// @brief Default constructor
     tree() :
         base()
     {
     }
 
+    /// @brief Copy constructor
+    ///
     /// @param other Tree to copy-construct from
     tree(const tree& other) :
         base(other)
     {
     }
 
+    /// @brief Move constructor
+    ///
     /// @param other Tree to move-construct from
     tree(tree&& other) :
         base(std::move(other))
     {
     }
 
+    /// @brief Tree-like initializer list copy constructor
+    ///
+    /// @param init Initializer to copy-construct from
     tree(const initializer& init) :
         base(init)
     {
     }
 
+    /// @brief Tree-like initializer list move constructor
+    ///
+    /// @param init Initializer to move-construct from
+    tree(initializer&& init) :
+        base(std::move(init))
+    {
+    }
+
+    /// @brief Subtree copy constructor
+    ///
+    /// @param subtree_root Handle to the root node of the subtree from which
+    /// this tree should be copy-constructed
     explicit tree(const const_node_handle_t& subtree_root) :
         base(subtree_root.ptr())
     {
     }
 
+    /// @brief Copy assignment
+    ///
     /// @param other Tree to copy-assign contents from
     tree& operator=(const tree& other) {
         *this = tree(other);
@@ -100,6 +121,8 @@ public:
         return *this;
     }
 
+    /// @brief Move assignment
+    ///
     /// @param other Tree to move-assign contents from
     tree& operator=(tree&& other) {
         base::operator=(std::move(other));
@@ -107,7 +130,19 @@ public:
         return *this;
     }
 
-    /// @param init Tree-like initializer list
+    /// @brief Tree-like initializer list copy assignment
+    ///
+    /// @param init Tree-like initializer list to copy-assign contents from
+    tree& operator=(const initializer& init) {
+        tree temp(init);
+        *this = std::move(temp);
+
+        return *this;
+    }
+
+    /// @brief Tree-like initializer list move assignment
+    ///
+    /// @param init Tree-like initializer list to move-assign contents from
     tree& operator=(initializer&& init) {
         tree temp(std::move(init));
         *this = std::move(temp);
@@ -115,6 +150,8 @@ public:
         return *this;
     }
 
+    /// @brief Subtree copy assignment
+    ///
     /// @param subtree_root Root of the subtree to copy contents from
     tree& operator=(const const_node_handle_t& subtree_root)
     {
@@ -123,69 +160,61 @@ public:
         return *this;
     }
 
-    /// @brief Detach a subtree
-    ///
-    /// @param subtree_root Root of the subtree to be detached
-    ///
-    /// @return A new tree whose root is the detached subtree
+    /// @copydoc base::chop_subtree
     tree chop_subtree(const node_handle_t& subtree_root) {
         return tree(
             base::chop_subtree(subtree_root.ptr())
         );
     }
 
-    /// @brief Acquire the nodes of another tree, making it a subtree of this
-    /// tree.
-    ///
-    /// @param destination Node where that should be parent to the stolen nodes
-    /// @param other Tree to steal nodes from
-    ///
-    /// @return Handle to the newly adopted subtree
+    /// @copydoc base::adopt_subtree
     node_handle_t adopt_subtree(const node_handle_t& destination, tree&& other) {
         return {
             base::adopt_subtree(destination.ptr(), std::move(other))
         };
     }
 
+    /// @copydoc base::root
     node_handle_t root() {
         return { base::root() };
     }
 
+    /// @copydoc base::root
     const_node_handle_t root() const {
         return { base::root() };
     }
 
-    /// @brief Move a subtree from somewhere in this tree to somewhere else in
-    /// this tree
-    ///
-    /// @param destination The node which the moved subtree should be 
-    /// @param root The root node of the subtree to move
-    void move_subtree(const node_handle_t& destination, const node_handle_t& subtree_root) {
-        base::move_subtree(subtree_root.ptr(), destination.ptr());
+    /// @copydoc base::leftmost
+    node_handle_t leftmost() {
+        return { base::leftmost() };
     }
 
-    /// @brief Erase an entire subtree and its values
-    ///
-    /// @param to_erase The root node of the subtree to erase
+    /// @copydoc base::leftmost
+    const_node_handle_t leftmost() const {
+        return { base::leftmost() };
+    }
+
+    /// @copydoc base::rightmost
+    node_handle_t rightmost() {
+        return { base::rightmost() };
+    }
+
+    /// @copydoc base::rightmost
+    const_node_handle_t rightmost() const {
+        return { base::rightmost() };
+    }
+
+    /// @copydoc base::move_subtree
+    void move_subtree(const node_handle_t& destination, const node_handle_t& subtree_root) {
+        base::move_subtree(destination.ptr(), subtree_root.ptr());
+    }
+
+    /// @copydoc base::erase_subtree
     void erase_subtree(const node_handle_t& subtree_root) {
         base::erase_subtree(subtree_root.ptr());
     }
 
-    /// @brief Emplace a new value in the tree, as a new child node to the
-    /// provided node handle
-    ///
-    /// @tparam ArgTypes Types of the arguments to be forwarded to a
-    /// constructor of the value to emplace
-    ///
-    /// @param where Handle to the node which is to be the parent of the newly 
-    /// emplaced node
-    /// @param args Arguments to be forwarded to a constructor of the value to
-    /// emplace
-    ///
-    /// @return A pointer to the newly emplaced child node
-    ///
-    /// @exception Any exception thrown in the resulting constructor call of
-    /// the value type will be let through to the caller
+    /// @copydoc base::emplace_node
     template<typename ...ArgTypes>
     node_handle_t emplace_node(const node_handle_t& where, ArgTypes&&... args) {
         return {
@@ -193,55 +222,65 @@ public:
         };
     }
 
-    /// @brief Merge this node into its parent node:
-    /// - the value of this node is merged into the value of the parent node
-    /// using the merging strategy provided as a template parameter
-    /// - the children of this node are all inserted in-between this node's
-    /// left and right siblings, their relative order is preserved, and
-    /// their new parent is this node's parent
-    /// - this node is deleted from the tree, and this node handle immediately
-    /// becomes invalid as a result
-    ///
-    /// @tparam merger_t A function-like type satisfying the
-    /// merging_strategy concept for this tree's value type. The default
-    /// merging strategy discards this node's value and keeps the parent
-    /// node's value.
-    template<merging_strategy<T> merge_t = merge::keep_original>
+    /// @copydoc base::merge_with_parent
+    template<merge_strategy<T> merge_t = merge::keep>
     void merge_with_parent(const node_handle_t& n) {
         base::template merge_with_parent<T>(n.ptr());
     }
 
-    /// @brief Check that this tree's structure and its ordered values are the
-    /// same as that of another tree
-    ///
-    /// @param other Other tree to compare this tree to
-    ///
-    /// @return Whether this tree and other are equal
+    /// @copydoc base::operator==
     bool operator==(const tree& other) const {
         return base::operator==(other);
     }
 
+    /// @copydoc base::swap
     friend void swap(tree& lhs, tree& rhs) {
         swap(static_cast<base&>(lhs), static_cast<base&>(rhs));
     }
 
+    /// @copydoc base::size
     using base::size;
+    /// @copydoc base::max_size
     using base::max_size;
+    /// @copydoc base::empty
     using base::empty;
+    /// @copydoc base::clear
     using base::clear;
+    /// @copydoc base::begin
     using base::begin;
+    /// @copydoc base::end
     using base::end;
+    /// @copydoc base::cbegin
     using base::cbegin;
+    /// @copydoc base::cend
     using base::cend;
 
+    /// @brief Get a proxy range-like object which implements DFS const
+    /// traversal of the tree. To be used with range-based \c for loops.
     template<traversal::order O>
     friend detail::dfs_proxy<T, O, true> dfs(const tree<T>& t) {
-        return dfs(static_cast<const base&>(t));
+        return dfs<O>(static_cast<const base&>(t));
     }
 
+    /// @brief Get a proxy range-like object which implements DFS traversal of
+    /// the tree. To be used with range-based \c for loops.
     template<traversal::order O>
     friend detail::dfs_proxy<T, O, false> dfs(tree<T>& t) {
-        return dfs(static_cast<base&>(t));
+        return dfs<O>(static_cast<base&>(t));
+    }
+
+    /// @brief Get a proxy range-like object which implements reverse DFS const
+    /// traversal of the tree. To be used with range-based \c for loops.
+    template<traversal::order O>
+    friend detail::reverse_dfs_proxy<T, O, true> reverse_dfs(const tree<T>& t) {
+        return reverse_dfs<O>(static_cast<const base&>(t));
+    }
+
+    /// @brief Get a proxy range-like object which implements reverse DFS
+    /// traversal of the tree. To be used with range-based \c for loops.
+    template<traversal::order O>
+    friend detail::reverse_dfs_proxy<T, O, false> reverse_dfs(tree<T>& t) {
+        return reverse_dfs<O>(static_cast<base&>(t));
     }
 };
 
