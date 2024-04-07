@@ -1,7 +1,7 @@
 CppTools:
     (partially imported from RenderBoi on 20-11-25 09:28)
     ✔ Go over basically everything to see what needs improving @done(22-09-06 13:32)
-    ☐ Put documentation EVERYWHERE
+    ✔ Put documentation EVERYWHERE @done(24-04-07 23:16)
     Iterable Tools:
         ✘ In `stripElementFromIterable` the iterator may be invalidated @cancelled(22-09-06 13:32)
     Array2D:

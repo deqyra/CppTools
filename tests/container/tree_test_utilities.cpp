@@ -12,11 +12,17 @@ namespace tools::test
 
 tree<int>::initializer make_sample_tree_initializer()
 {
-    return  {
-        1,  {{  2,  {   {3},
-                        {4}}},
-             {  5,  {   {6},
-                        {7}}}}
+    return {
+        1, {
+            {2, {
+                {3},
+                {4}
+            }},
+            {5, {
+                {6},
+                {7}
+            }}
+        }
     };
 }
 

@@ -1,8 +1,9 @@
 #include <algorithm>
-#include <catch2/catch_all.hpp>
-
 #include <ranges>
 #include <utility>
+
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_range_equals.hpp>
 
 #define CPPTOOLS_DEBUG_ENABLED 1
 #define CPPTOOLS_DEBUG_POLICY CPPTOOLS_DEBUG_POLICY_LOG_AND_THROW
@@ -16,9 +17,10 @@
 #undef CPPTOOLS_DEBUG_POLICY
 #undef CPPTOOLS_DEBUG_TREE
 
-inline constexpr char TAGS[] = "[container][tree]";
-
+namespace stdv = std::views;
 using namespace Catch::Matchers;
+
+constexpr char TAGS[] = "[container][tree]";
 
 namespace tools::test
 {
@@ -173,7 +175,7 @@ TEMPLATE_TEST_CASE( "Tree nodes are aware of their parent, children and siblings
         REQUIRE( Node.parent()           == ParentMap[i] );
         REQUIRE( Node.child_count()      == ChildMap[i].size() );
         REQUIRE( Node.descendant_count() == DescendantCount );
-        REQUIRE( std::ranges::equal(Node.children(), ChildMap[i]) );
+        REQUIRE_THAT( Node.children(), RangeEquals(ChildMap[i]) );
 
         if (Node.parent() != nh::null_handle) {
             const bool HasLeftSibling  = (LeftSiblingMap[i].has_value());
@@ -200,8 +202,8 @@ TEMPLATE_TEST_CASE( "Tree nodes are aware of their parent, children and siblings
     }
 }
 
-TEST_CASE( "Handle to the tree root exposes the tree root", TAGS ) {
-    tree<int> t{{
+TEMPLATE_TEST_CASE( "Retrieving the tree's root node, leftmost node and rightmost node yields handles to the proper nodes", TAGS, tree<int>, const tree<int> ) {
+    TestType t{{
         9000,  {{69},
                 {42}}
     }};
@@ -209,8 +211,137 @@ TEST_CASE( "Handle to the tree root exposes the tree root", TAGS ) {
     auto root = t.root();
     REQUIRE( *root == 9000 );
 
-    *root = 42;
-    REQUIRE( t.root().value() == 42 );
+    auto leftmost = t.leftmost();
+    REQUIRE( *leftmost == 69 );
+
+    auto rightmost = t.rightmost();
+    REQUIRE( *rightmost == 42 );
+
+    if constexpr (!std::is_const_v<TestType>) {
+        *root = 1;
+        REQUIRE( t.root().value() == 1 );
+
+        *leftmost = 2;
+        REQUIRE( t.leftmost().value() == 2 );
+
+        *rightmost = 3;
+        REQUIRE( t.rightmost().value() == 3 );
+    }
+}
+
+TEST_CASE( "Tree keeps track of its extrema leaf nodes", TAGS ) {
+    tree<int> t{{
+        9000,  {{69},
+                {42}}
+    }};
+
+    tree<int> t1{{
+        1,  {{2},
+             {3}}
+    }};
+
+    tree<int> t2{{
+        4,  {{5},
+             {6}}
+    }};
+
+    auto n69 = t.leftmost();           //      9000       //
+    REQUIRE( *n69 == 69 );             //      /   \      //
+    auto n42 = t.rightmost();          //    69     42    //
+    REQUIRE( *n42 == 42 );
+
+    auto n2 = t.adopt_subtree(n69, std::move(t1)).child(0);
+
+    auto n1 = n2.parent();             //      9000       //
+    REQUIRE( t.leftmost() == n2 );     //      /   \      //
+    REQUIRE( *n2 == 2 );               //    69     42    //
+    REQUIRE( t.rightmost() == n42);    //     |           //
+    REQUIRE( *n42 == 42 );             //     1           //
+                                       //    / \          //
+                                       //   2   3         //
+
+    auto n6 = t.adopt_subtree(n42, std::move(t2)).child(1);
+
+    auto n5 = n6.left_sibling();       //      9000       //
+    auto n4 = n6.parent();             //      /   \      //
+    REQUIRE( t.leftmost() == n2 );     //    69     42    //
+    REQUIRE( *n2 == 2 );               //     |      |    //
+    REQUIRE( t.rightmost() == n6 );    //     1      4    //
+    REQUIRE( *n6 == 6 );               //    / \    / \   //
+                                       //   2   3  5   6  //
+
+    auto n10 = t.emplace_node(n2, 10); //      9000       //
+    REQUIRE( t.leftmost() == n10 );    //      /   \      //
+    REQUIRE( *n10 == 10 );             //    69     42    //
+    REQUIRE( t.rightmost() == n6 );    //     |      |    //
+    REQUIRE( *n6 == 6 );               //     1      4    //
+                                       //    / \    / \   //
+                                       //   2   3  5   6  //
+                                       //   |             //
+                                       //   10            //
+
+    auto n20 = t.emplace_node(n6, 20); //      9000       //
+    REQUIRE( t.leftmost() == n10 );    //      /   \      //
+    REQUIRE( *n10 == 10 );             //    69     42    //
+    REQUIRE( t.rightmost() == n20 );   //     |      |    //
+    REQUIRE( *n20 == 20 );             //     1      4    //
+                                       //    / \    / \   //
+                                       //   2   3  5   6  //
+                                       //   |          |  //
+                                       //   10        20  //
+
+    t.move_subtree(n6, n10);          //      9000        //
+    REQUIRE( t.leftmost() == n2 );    //      /   \       //
+    REQUIRE( *n2 == 2 );              //    69     42     //
+    REQUIRE( t.rightmost() == n10 );  //     |      |     //
+    REQUIRE( *n10 == 10 );            //     1      4     //
+                                      //    / \    / \    //
+                                      //   2   3  5   6   //
+                                      //             / \  //
+                                      //            20 10 //
+
+    t.move_subtree(n2, n6);           //      9000        //
+    REQUIRE( t.leftmost() == n20 );   //      /   \       //
+    REQUIRE( *n20 == 20 );            //    69     42     //
+    REQUIRE( t.rightmost() == n5 );   //     |      |     //
+    REQUIRE( *n5 == 5 );              //     1      4     //
+                                      //    / \     |     //
+                                      //   2   3    5     //
+                                      //   |              //
+                                      //   6              //
+                                      //  / \             //
+                                      // 20 10            //
+
+    auto chopped1 = t.chop_subtree(n6);     //      9000          6   //
+    REQUIRE( chopped1.leftmost() == n20 );  //      /   \        / \  //
+    REQUIRE( *n20 == 20 );                  //    69     42     20 10 //
+    REQUIRE( chopped1.rightmost() == n10 ); //     |      |           //
+    REQUIRE( *n10 == 10 );                  //     1      4           //
+    REQUIRE( t.leftmost() == n2 );          //    / \     |           //
+    REQUIRE( *n2 == 2 );                    //   2   3    5           //
+    REQUIRE( t.rightmost() == n5 );
+    REQUIRE( *n5 == 5 );
+
+    auto chopped2 = t.chop_subtree(n5);     //      9000          5   //
+    REQUIRE( chopped2.leftmost() == n5 );   //      /   \             //
+    REQUIRE( chopped2.rightmost() == n5 );  //    69     42           //
+    REQUIRE( *n5 == 5 );                    //     |      |           //
+    REQUIRE( t.leftmost() == n2 );          //     1      4           //
+    REQUIRE( *n2 == 2 );                    //    / \                 //
+    REQUIRE( t.rightmost() == n4 );         //   2   3                //
+    REQUIRE( *n4 == 4 );
+
+    t.erase_subtree(n1);                    //      9000              //
+    REQUIRE( t.leftmost() == n69 );         //      /   \             //
+    REQUIRE( *n69 == 69 );                  //    69     42           //
+    REQUIRE( t.rightmost() == n4 );         //            |           //
+    REQUIRE( *n4 == 4 );                    //            4           //
+
+    t.erase_subtree(n4);                    //      9000              //
+    REQUIRE( t.leftmost() == n69 );         //      /   \             //
+    REQUIRE( *n69 == 69 );                  //    69     42           //
+    REQUIRE( t.rightmost() == n42 );
+    REQUIRE( *n42 == 42 );
 }
 
 TEST_CASE( "Elements can be erased from a tree", TAGS ) {
@@ -354,12 +485,12 @@ TEST_CASE( "Subtrees can be moved within a tree", TAGS ) {
     auto n2 = root.child(0);
     auto n6 = root.child(1).child(0);
 
-    t.move_subtree(n2, n6);
+    t.move_subtree(n6, n2);
 
     tree<int> result = {{
-        1, {   {5, {   {6, {   {2,  {   {3},
+        1, {   {5, {    {6, {  {2,  {   {3},
                                         {4}}}}},
-                       {7}}}}
+                        {7}}}}
     }};
 
     REQUIRE( t == result );
@@ -379,9 +510,9 @@ TEST_CASE( "Subtrees can be moved across trees", TAGS ) {
     tree<int> result = {{
         1, {    {2, {   {3},
                         {4}}},
-                {5, {   {6, {   {2,  {   {3},
+                {5, {   {6, {   {2, {   {3},
                                         {4}}}}},
-                       {7}}}}
+                        {7}}}}
     }}; // ngl this syntax is nothing short of a mess
 
     REQUIRE( t2 == result );
@@ -390,20 +521,23 @@ TEST_CASE( "Subtrees can be moved across trees", TAGS ) {
 TEMPLATE_TEST_CASE( "DFS traversal yields correctly ordered values", TAGS, tree<int>, const tree<int> ) {
     TestType t = make_sample_tree();
 
+    constexpr auto PreorderTraversalValues  = std::array{ 1, 2, 3, 4, 5, 6, 7 };
+    constexpr auto PostorderTraversalValues = std::array{ 3, 4, 2, 6, 7, 5, 1 };
+
     SECTION( "Pre-order" ) {
-        REQUIRE( std::ranges::equal(dfs<traversal::pre_order>(t), std::vector{ 1, 2, 3, 4, 5, 6, 7 }) );
+        REQUIRE_THAT( dfs<traversal::pre_order>(t), RangeEquals(PreorderTraversalValues) );
     }
 
     SECTION( "Post-order" ) {
-        REQUIRE( std::ranges::equal(dfs<traversal::post_order>(t), std::vector{ 3, 4, 2, 6, 7, 5, 1 }) );
+        REQUIRE_THAT( dfs<traversal::post_order>(t), RangeEquals(PostorderTraversalValues) );
     }
 
     SECTION( "Reverse pre-order" ) {
-        REQUIRE( std::ranges::equal(reverse_dfs<traversal::pre_order>(t), std::vector{ 7, 6, 5, 4, 3, 2, 1 }) );
+        REQUIRE_THAT( reverse_dfs<traversal::pre_order>(t), RangeEquals(PreorderTraversalValues | stdv::reverse) );
     }
 
     SECTION( "Reverse post-order" ) {
-        REQUIRE( std::ranges::equal(reverse_dfs<traversal::post_order>(t), std::vector{ 1, 5, 7, 6, 2, 4, 3 }) );
+        REQUIRE_THAT( reverse_dfs<traversal::post_order>(t), RangeEquals(PostorderTraversalValues | stdv::reverse) );
     }
 }
 

@@ -100,7 +100,7 @@ add_library( cpptools ${STATIC_OR_SHARED}
     cpptools/utility/concepts.hpp
     cpptools/utility/hash_combine.hpp
     cpptools/utility/map.hpp
-    cpptools/utility/merging_strategy.hpp
+    cpptools/utility/merge_strategy.hpp
     cpptools/utility/predicate.hpp
     cpptools/utility/string.cpp
     cpptools/utility/string.hpp
