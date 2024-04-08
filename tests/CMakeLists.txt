@@ -38,6 +38,7 @@ add_executable( cpptools_tests
     cli/test_menu_command.cpp
     cli/test_shell.cpp
     cli/test_streams.cpp
+    container/stress_test_tree.cpp
     container/test_tree.cpp
     container/tree_test_utilities.cpp
     container/tree_test_utilities.hpp

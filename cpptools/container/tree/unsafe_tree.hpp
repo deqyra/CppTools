@@ -58,7 +58,7 @@ public:
     using allocator_type    = typename storage_t::allocator_type;
 
     static constexpr bool NoExceptErasure = noexcept(std::declval<storage_t>().erase(std::declval<key_type>()));
-    static constexpr bool NoExceptSwap    = noexcept(std::swap(std::declval<storage_t>(), std::declval<storage_t>()));
+    static constexpr bool NoExceptSwap    = noexcept(std::swap(std::declval<storage_t&>(), std::declval<storage_t&>()));
 
 private:
     static const_reference _value_const_ref_from_storage_value(const typename storage_t::value_type& pair) {
@@ -273,7 +273,6 @@ private:
         _values(_make_value_view())
     {
         _root->clear_parent_metadata();
-        _root->propagate_parent_chain_update();
     }
 
 public:
@@ -616,7 +615,7 @@ public:
     /// @exception Any exception thrown in the constructor of the emplaced value
     /// will be forwarded to the caller
     template<typename ...ArgTypes>
-    node_t* emplace_node(node_t* where, ArgTypes&&... args) noexcept (std::is_nothrow_constructible_v<value_type, ArgTypes...>) {
+    node_t* emplace_node(node_t* where, ArgTypes&&... args) CPPTOOLS_NOEXCEPT_RELEASE_AND((std::is_nothrow_constructible_v<value_type, ArgTypes...>)) {
         CPPTOOLS_DEBUG_ASSERT(null(where) || in_range_keys(_nodes, where), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "where", where);
 
         node_t* child = make_node(std::forward<ArgTypes>(args)...);
@@ -665,6 +664,13 @@ public:
         CPPTOOLS_DEBUG_ASSERT(not_null(parent),         "unsafe_tree", critical, "cannot merge node with null parent", exception::parameter::invalid_value_error,  "n", n);
 
         parent->template merge_child<merge_t>(n->sibling_index());
+
+        if (_leftmost == n) {
+            _leftmost = parent->leftmost_child_or_this();
+        }
+        if (_rightmost == n) {
+            _rightmost = parent->rightmost_child_or_this();
+        }
 
         _delete_node(n);
     }

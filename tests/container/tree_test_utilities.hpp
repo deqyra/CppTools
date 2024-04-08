@@ -9,8 +9,9 @@
 
 #include <cpptools/container/tree.hpp>
 
-namespace tools::test
-{
+namespace tools {
+
+namespace test {
 
 using addressed_elements = std::map<int, const int*>;
 
@@ -39,6 +40,24 @@ void assert_node_with_value_and_children_was_found(NodeHandle handle, const T& v
     REQUIRE(tree_enumerate_immediate_children<T, NodeHandle>(handle) == children);
 }
 
-} // namespace tools::test
+tree<unsigned char> make_very_large_tree(std::size_t depth, std::size_t breadth);
+
+} // namespace test
+
+namespace detail {
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const const_node_handle<T>& nh) {
+    return os << nh.value();
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const node_handle<T>& nh) {
+    return os << nh.value();
+}
+
+} // namespace detail
+
+} // namespace tools
 
 #endif//TESTS__CONTAINER__TREE_TEST_UTILITIES_HPP
