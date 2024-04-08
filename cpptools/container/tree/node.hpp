@@ -50,9 +50,6 @@ private:
     /// @brief Pointers to the children of this node
     storage_type _children;
 
-    /// @brief Pointers to successive parent nodes
-    storage_type _parent_chain;
-
 
 public:
     template<typename ...ArgTypes>
@@ -60,8 +57,8 @@ public:
         value{std::forward<ArgTypes&&>(args)...},
         _parent(nullptr),
         _sibling_index(),
-        _children(),
-        _parent_chain() {
+        _children()
+    {
 
     }
 
@@ -125,7 +122,6 @@ public:
         _children.push_back(child);
         child->_parent = this;
         child->_sibling_index = _children.size() - 1;
-        child->update_parent_chain_and_propagate();
     }
 
     /// @brief Remove a child from this node
@@ -170,22 +166,25 @@ public:
     /// children.
     /// 
     /// @note The child node is NOT deleted from the tree as part of this
-    /// operation.
+    /// operation. However since the child node is going to be deleted soon 
+    /// afterwards anyway, the value to be merged is passed by move to the merge
+    /// strategy.
     template<merge_strategy<T> merge_t>
-    void merge_child(size_t index) {
-        CPPTOOLS_DEBUG_ASSERT(index < _children.size(), "node", critical, "index out of bounds", exception::parameter::invalid_value_error);
+    void merge_child(std::size_t merge_index) {
+        CPPTOOLS_DEBUG_ASSERT(merge_index < _children.size(), "node", critical, "index out of bounds", exception::parameter::invalid_value_error, "index", merge_index);
 
-        node* to_merge = _children[index];
+        node* to_merge = _children[merge_index];
         std::vector<node*> to_adopt = to_merge->release_children();
+        std::size_t adopted_count = to_adopt.size();
 
-        if (!to_adopt.empty()) {
-            size_t child_count         = _children.size();
-            size_t right_sibling_count = child_count - 1 - to_merge->sibling_index();
-            size_t insert_count        = to_merge->_children.size() - 1; // -1: the node to merge will be overwritten and this does not count as an insertion
-            _children.resize(child_count + insert_count, nullptr);
+        if (adopted_count != 0) {
+            std::size_t child_count           = _children.size();
+            std::size_t right_sibling_count   = child_count - 1 - to_merge->sibling_index();
+            std::size_t additional_node_count = adopted_count - 1; // -1: the node to merge will be overwritten and this does not count as an insertion
+            _children.resize(child_count + additional_node_count, nullptr);
+            auto to_merge_it = _children.begin() + merge_index;
 
-            auto to_merge_it = _children.begin() + to_merge->sibling_index();
-            if (right_sibling_count > 0) {
+            if (right_sibling_count > 0 && adopted_count > 1) {
                 // move right siblings of the node to merge at the end of the resized children vector
                 auto it_right_sibling = to_merge_it + 1;
                 std::copy_backward(it_right_sibling, it_right_sibling + right_sibling_count, _children.end());
@@ -194,55 +193,55 @@ public:
             // adopt grand-children
             for (auto new_child : to_adopt) {
                 new_child->_parent = this;
-                new_child->update_parent_chain_and_propagate();
-
                 *(to_merge_it++) = new_child;
             }
+        } else {
+            auto to_merge_it = _children.begin() + merge_index;
+            _children.erase(to_merge_it);
+        }
+
+        // sibling indices of nodes that were moved around may need to be updated
+        // compute the range of such nodes
+
+        // start of the range: decide whether the adopted nodes need updating, or not (in which case they can be skipped)
+        std::size_t start_offset = (merge_index == 0)
+                ? adopted_count     // adopted nodes inserted as first children, sibling index remained up-to-date => skip them
+                : merge_index;      // adopted nodes inserted in the middle, sibling index needs update => include them
+
+        auto outdated_index_start = _children.begin() + start_offset;
+
+        // end of the range: decide whether the right sibling nodes need updating, or not (in which case they can be omitted)
+        auto outdated_index_end = (adopted_count == 1)
+            ? _children.begin() + (merge_index + adopted_count) // right siblings were not moved, sibling index remained up-to-date => omit them
+            : _children.end();                                  // right siblings were moved, sibling index needs update => include them
+
+        // update the sibling index of the nodes in the computed range
+        for (; outdated_index_start != outdated_index_end; ++outdated_index_start) {
+            (*outdated_index_start)->_sibling_index = start_offset++;
         }
 
         // merge the node value into this node's value
-        merge_t{}(value, to_merge->value);
+        merge_t{}(value, std::move(to_merge->value));
     }
 
-    bool has_parent(const node* parent) const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(parent), "node", pedantic, "node cannot have nullptr parent", exception::parameter::null_parameter_error, "parent", nullptr);
+    bool has_parent(const node* n) const CPPTOOLS_NOEXCEPT_RELEASE {
+        CPPTOOLS_DEBUG_ASSERT(not_null(n), "node", pedantic, "node cannot have nullptr parent", exception::parameter::null_parameter_error, "n", nullptr);
 
-        auto it = std::find(_parent_chain.begin(), _parent_chain.end(), parent);
+        auto parent = _parent;
+        while (parent != nullptr) {
+            if (parent == n) {
+                return true;
+            }
 
-        return it != _parent_chain.end();
-    }
-
-    void update_parent_chain() {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_parent), "node", critical, "node has no parent", exception::internal::precondition_failure_error);
-
-        _parent_chain.clear();
-
-        _parent_chain.reserve(_parent->_parent_chain.size() + 1);
-        _parent_chain.push_back(_parent);
-        std::copy(
-            _parent->_parent_chain.begin(),
-            _parent->_parent_chain.end(),
-            std::back_inserter(_parent_chain)
-        );
-    }
-
-    void propagate_parent_chain_update() {
-        for (auto child : _children) {
-            child->update_parent_chain_and_propagate();
+            parent = parent->_parent;
         }
-    }
 
-    void update_parent_chain_and_propagate() {
-        CPPTOOLS_DEBUG_ASSERT(_parent != nullptr, "node", critical, "node has no parent", exception::internal::precondition_failure_error);
-
-        update_parent_chain();
-        propagate_parent_chain_update();
+        return false;
     }
 
     void clear_parent_metadata() noexcept {
         _parent = nullptr;
         _sibling_index = 0;
-        _parent_chain.clear();
     }
 
     const std::vector<node*>& children() const noexcept {
@@ -264,12 +263,6 @@ public:
 
     node* parent() const noexcept {
         return _parent;
-    }
-
-    const std::vector<node*>& siblings() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_parent), "node", critical, "node has no parent", exception::internal::precondition_failure_error);
-
-        return _parent->_children;
     }
 
     [[nodiscard]] std::vector<node*> release_children() noexcept {

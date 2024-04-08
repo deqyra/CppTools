@@ -7,8 +7,7 @@
 
 #include <cpptools/container/tree.hpp>
 
-namespace tools::test
-{
+namespace tools::test {
 
 tree<int>::initializer make_sample_tree_initializer()
 {
@@ -26,13 +25,11 @@ tree<int>::initializer make_sample_tree_initializer()
     };
 }
 
-tree<int> make_sample_tree()
-{
+tree<int> make_sample_tree() {
     return { make_sample_tree_initializer() };
 }
 
-addressed_elements get_elements_and_addresses(const const_node_handle<int>& subtree_root)
-{
+addressed_elements get_elements_and_addresses(const const_node_handle<int>& subtree_root) {
     using cnh = const_node_handle<int>;
     addressed_elements result;
 
@@ -64,14 +61,12 @@ addressed_elements get_elements_and_addresses(const const_node_handle<int>& subt
     return result;
 }
 
-void assert_tree_is_empty(const tree<int>& t)
-{
+void assert_tree_is_empty(const tree<int>& t) {
     REQUIRE( t.empty() );
     REQUIRE( t.size() == 0 );
 }
 
-void assert_subtrees_were_copied(const const_node_handle<int>& original, const const_node_handle<int>& copy, const addressed_elements& original_elements)
-{
+void assert_subtrees_were_copied(const const_node_handle<int>& original, const const_node_handle<int>& copy, const addressed_elements& original_elements) {
     auto original_elements_after_copy = get_elements_and_addresses(original);
     auto copied_elements              = get_elements_and_addresses(copy);
 
@@ -101,8 +96,7 @@ void assert_trees_were_copied(const tree<int>& original, const tree<int>& copy, 
     assert_subtrees_were_copied(original.root(), copy.root(), original_elements);
 }
 
-void assert_trees_were_moved(const tree<int>& original, const tree<int>& moved, const addressed_elements& original_elements)
-{
+void assert_trees_were_moved(const tree<int>& original, const tree<int>& moved, const addressed_elements& original_elements) {
     assert_tree_is_empty(original);
 
     auto moved_elements = get_elements_and_addresses(moved.root());
@@ -110,8 +104,7 @@ void assert_trees_were_moved(const tree<int>& original, const tree<int>& moved, 
     REQUIRE( moved_elements == original_elements );
 }
 
-void assert_sample_tree_contents_and_structure_are_correct(const tree<int>& t)
-{
+void assert_sample_tree_contents_and_structure_are_correct(const tree<int>& t) {
     auto root_node = t.root();
     REQUIRE( *root_node == 1 );
 
@@ -125,4 +118,36 @@ void assert_sample_tree_contents_and_structure_are_correct(const tree<int>& t)
     REQUIRE(right_leaf_values == std::vector<int>{6, 7});
 }
 
+tree<unsigned char> make_very_large_tree(std::size_t depth, std::size_t breadth) {
+    tree<unsigned char> t;
+    t.emplace_node(t.root(), static_cast<unsigned char>(0));
+
+    unsigned char i = 0;
+
+    auto node = t.root();
+
+    std::stack<decltype(node)> node_stack;
+    
+    std::size_t d = 1;
+    bool done = false;
+    while (!done) {
+        if (node.child_count() != breadth) {
+            auto emplaced = t.emplace_node(node, static_cast<unsigned char>(++i));
+            if (d < depth - 1) {
+                node_stack.push(node);
+                node = emplaced;
+                ++d;
+            }
+        } else if (!node_stack.empty()) {
+            node = node_stack.top();
+            node_stack.pop();
+            --d;
+        } else {
+            done = true;
+        }
+    }
+
+    return t;
 }
+
+} // namespace tools::test

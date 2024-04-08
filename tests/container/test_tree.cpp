@@ -10,6 +10,7 @@
 #define CPPTOOLS_DEBUG_TREE 1
 
 #include <cpptools/container/tree.hpp>
+#include <cpptools/utility/merge_strategy.hpp>
 
 #include "tree_test_utilities.hpp"
 
@@ -22,8 +23,7 @@ using namespace Catch::Matchers;
 
 constexpr char TAGS[] = "[container][tree]";
 
-namespace tools::test
-{
+namespace tools::test {
 
 TEST_CASE( "Default constructed tree is empty", TAGS ) {
     tree<int> t;
@@ -245,103 +245,127 @@ TEST_CASE( "Tree keeps track of its extrema leaf nodes", TAGS ) {
              {6}}
     }};
 
-    auto n69 = t.leftmost();           //      9000       //
-    REQUIRE( *n69 == 69 );             //      /   \      //
-    auto n42 = t.rightmost();          //    69     42    //
+    auto n69 = t.leftmost();                //    9000     //
+    REQUIRE( *n69 == 69 );                  //    /   \    //
+    auto n42 = t.rightmost();               //  69     42  //
     REQUIRE( *n42 == 42 );
 
-    auto n2 = t.adopt_subtree(n69, std::move(t1)).child(0);
+    auto n2 = t.adopt_subtree(n69, t1).child(0);
 
-    auto n1 = n2.parent();             //      9000       //
-    REQUIRE( t.leftmost() == n2 );     //      /   \      //
-    REQUIRE( *n2 == 2 );               //    69     42    //
-    REQUIRE( t.rightmost() == n42);    //     |           //
-    REQUIRE( *n42 == 42 );             //     1           //
-                                       //    / \          //
-                                       //   2   3         //
+    auto n1 = n2.parent();                  //     9000     //
+    REQUIRE( t.leftmost() == n2 );          //     /   \    //
+    REQUIRE( *n2 == 2 );                    //   69     42  //
+    REQUIRE( t.rightmost() == n42);         //    |         //
+    REQUIRE( *n42 == 42 );                  //    1         //
+                                            //   / \        //
+                                            //  2   3       //
 
-    auto n6 = t.adopt_subtree(n42, std::move(t2)).child(1);
+    auto n6 = t.adopt_subtree(n42, t2).child(1);
 
-    auto n5 = n6.left_sibling();       //      9000       //
-    auto n4 = n6.parent();             //      /   \      //
-    REQUIRE( t.leftmost() == n2 );     //    69     42    //
-    REQUIRE( *n2 == 2 );               //     |      |    //
-    REQUIRE( t.rightmost() == n6 );    //     1      4    //
-    REQUIRE( *n6 == 6 );               //    / \    / \   //
-                                       //   2   3  5   6  //
+    auto n5 = n6.left_sibling();            //     9000       //
+    auto n4 = n6.parent();                  //     /   \      //
+    REQUIRE( t.leftmost() == n2 );          //   69     42    //
+    REQUIRE( *n2 == 2 );                    //    |      |    //
+    REQUIRE( t.rightmost() == n6 );         //    1      4    //
+    REQUIRE( *n6 == 6 );                    //   / \    / \   //
+                                            //  2   3  5   6  //
 
-    auto n10 = t.emplace_node(n2, 10); //      9000       //
-    REQUIRE( t.leftmost() == n10 );    //      /   \      //
-    REQUIRE( *n10 == 10 );             //    69     42    //
-    REQUIRE( t.rightmost() == n6 );    //     |      |    //
-    REQUIRE( *n6 == 6 );               //     1      4    //
-                                       //    / \    / \   //
-                                       //   2   3  5   6  //
-                                       //   |             //
-                                       //   10            //
+    auto n10 = t.emplace_node(n2, 10);      //     9000       //
+    REQUIRE( t.leftmost() == n10 );         //     /   \      //
+    REQUIRE( *n10 == 10 );                  //   69     42    //
+    REQUIRE( t.rightmost() == n6 );         //    |      |    //
+    REQUIRE( *n6 == 6 );                    //    1      4    //
+                                            //   / \    / \   //
+                                            //  2   3  5   6  //
+                                            //  |             //
+                                            //  10            //
 
-    auto n20 = t.emplace_node(n6, 20); //      9000       //
-    REQUIRE( t.leftmost() == n10 );    //      /   \      //
-    REQUIRE( *n10 == 10 );             //    69     42    //
-    REQUIRE( t.rightmost() == n20 );   //     |      |    //
-    REQUIRE( *n20 == 20 );             //     1      4    //
-                                       //    / \    / \   //
-                                       //   2   3  5   6  //
-                                       //   |          |  //
-                                       //   10        20  //
+    auto n20 = t.emplace_node(n6, 20);      //     9000       //
+    REQUIRE( t.leftmost() == n10 );         //     /   \      //
+    REQUIRE( *n10 == 10 );                  //   69     42    //
+    REQUIRE( t.rightmost() == n20 );        //    |      |    //
+    REQUIRE( *n20 == 20 );                  //    1      4    //
+                                            //   / \    / \   //
+                                            //  2   3  5   6  //
+                                            //  |          |  //
+                                            //  10        20  //
 
-    t.move_subtree(n6, n10);          //      9000        //
-    REQUIRE( t.leftmost() == n2 );    //      /   \       //
-    REQUIRE( *n2 == 2 );              //    69     42     //
-    REQUIRE( t.rightmost() == n10 );  //     |      |     //
-    REQUIRE( *n10 == 10 );            //     1      4     //
-                                      //    / \    / \    //
-                                      //   2   3  5   6   //
-                                      //             / \  //
-                                      //            20 10 //
+    t.move_subtree(n6, n10);                //     9000         //
+    REQUIRE( t.leftmost() == n2 );          //     /   \        //
+    REQUIRE( *n2 == 2 );                    //   69     42      //
+    REQUIRE( t.rightmost() == n10 );        //    |      |      //
+    REQUIRE( *n10 == 10 );                  //    1      4      //
+                                            //   / \    / \     //
+                                            //  2   3  5   6    //
+                                            //            / \   //
+                                            //           20 10  //
 
-    t.move_subtree(n2, n6);           //      9000        //
-    REQUIRE( t.leftmost() == n20 );   //      /   \       //
-    REQUIRE( *n20 == 20 );            //    69     42     //
-    REQUIRE( t.rightmost() == n5 );   //     |      |     //
-    REQUIRE( *n5 == 5 );              //     1      4     //
-                                      //    / \     |     //
-                                      //   2   3    5     //
-                                      //   |              //
-                                      //   6              //
-                                      //  / \             //
-                                      // 20 10            //
+    t.move_subtree(n2, n6);                 //       9000     //
+    REQUIRE( t.leftmost() == n20 );         //       /   \    //
+    REQUIRE( *n20 == 20 );                  //     69     42  //
+    REQUIRE( t.rightmost() == n5 );         //      |      |  //
+    REQUIRE( *n5 == 5 );                    //      1      4  //
+                                            //     / \     |  //
+                                            //    2   3    5  //
+                                            //    |           //
+                                            //    6           //
+                                            //   / \          //
+                                            //  20 10         //
 
-    auto chopped1 = t.chop_subtree(n6);     //      9000          6   //
-    REQUIRE( chopped1.leftmost() == n20 );  //      /   \        / \  //
-    REQUIRE( *n20 == 20 );                  //    69     42     20 10 //
-    REQUIRE( chopped1.rightmost() == n10 ); //     |      |           //
-    REQUIRE( *n10 == 10 );                  //     1      4           //
-    REQUIRE( t.leftmost() == n2 );          //    / \     |           //
-    REQUIRE( *n2 == 2 );                    //   2   3    5           //
+    auto chopped1 = t.chop_subtree(n6);     //      9000        6    //
+    REQUIRE( chopped1.leftmost() == n20 );  //      /   \      / \   //
+    REQUIRE( *n20 == 20 );                  //    69     42   20 10  //
+    REQUIRE( chopped1.rightmost() == n10 ); //     |      |          //
+    REQUIRE( *n10 == 10 );                  //     1      4          //
+    REQUIRE( t.leftmost() == n2 );          //    / \     |          //
+    REQUIRE( *n2 == 2 );                    //   2   3    5          //
     REQUIRE( t.rightmost() == n5 );
     REQUIRE( *n5 == 5 );
 
-    auto chopped2 = t.chop_subtree(n5);     //      9000          5   //
-    REQUIRE( chopped2.leftmost() == n5 );   //      /   \             //
-    REQUIRE( chopped2.rightmost() == n5 );  //    69     42           //
-    REQUIRE( *n5 == 5 );                    //     |      |           //
-    REQUIRE( t.leftmost() == n2 );          //     1      4           //
-    REQUIRE( *n2 == 2 );                    //    / \                 //
-    REQUIRE( t.rightmost() == n4 );         //   2   3                //
+    auto chopped2 = t.chop_subtree(n5);     //     9000       5  //
+    REQUIRE( chopped2.leftmost() == n5 );   //     /   \         //
+    REQUIRE( chopped2.rightmost() == n5 );  //   69     42       //
+    REQUIRE( *n5 == 5 );                    //    |      |       //
+    REQUIRE( t.leftmost() == n2 );          //    1      4       //
+    REQUIRE( *n2 == 2 );                    //   / \             //
+    REQUIRE( t.rightmost() == n4 );         //  2   3            //
     REQUIRE( *n4 == 4 );
 
-    t.erase_subtree(n1);                    //      9000              //
-    REQUIRE( t.leftmost() == n69 );         //      /   \             //
-    REQUIRE( *n69 == 69 );                  //    69     42           //
-    REQUIRE( t.rightmost() == n4 );         //            |           //
-    REQUIRE( *n4 == 4 );                    //            4           //
+    t.erase_subtree(n1);                    //    9000     //
+    REQUIRE( t.leftmost() == n69 );         //    /   \    //
+    REQUIRE( *n69 == 69 );                  //  69     42  //
+    REQUIRE( t.rightmost() == n4 );         //          |  //
+    REQUIRE( *n4 == 4 );                    //          4  //
 
-    t.erase_subtree(n4);                    //      9000              //
-    REQUIRE( t.leftmost() == n69 );         //      /   \             //
-    REQUIRE( *n69 == 69 );                  //    69     42           //
+    t.erase_subtree(n4);                    //    9000     //
+    REQUIRE( t.leftmost() == n69 );         //    /   \    //
+    REQUIRE( *n69 == 69 );                  //  69     42  //
     REQUIRE( t.rightmost() == n42 );
     REQUIRE( *n42 == 42 );
+
+    n1 = t.adopt_subtree(n69, t1);          //    9000     //
+    n4 = t.adopt_subtree(n42, t2);          //    /   \    //
+    n2 = n1.child(0);                       //  69     42  //
+    auto n3 = n1.child(1);                  //   |     |   //
+    n5 = n4.child(0);                       //   1     4   //
+    n6 = n4.child(1);                       //  / \   / \  //
+                                            // 2   3 5   6 //
+
+    t.merge_with_parent<merge::add>(n2);        //    9000     //
+    REQUIRE( *n1 == 3 );                        //    /   \    //
+    REQUIRE( t.leftmost() == n3 );              //  69     42  //
+    REQUIRE( *n3 == 3 );                        //   |     |   //
+    REQUIRE( t.rightmost() == n6);              //   3     4   //
+    REQUIRE( *n6 == 6 );                        //   |    / \  //
+                                                //   3   5   6 //
+                                            
+    t.merge_with_parent<merge::multiply>(n6);   //    9000     //
+    REQUIRE( *n4 == 24 );                       //    /   \    //
+    REQUIRE( t.leftmost() == n3 );              //  69     42  //
+    REQUIRE( *n3 == 3 );                        //   |     |   //
+    REQUIRE( t.rightmost() == n5);              //   1     24  //
+    REQUIRE( *n5 == 5 );                        //   |     |   //
+                                                //   3     5   //
 }
 
 TEST_CASE( "Elements can be erased from a tree", TAGS ) {
@@ -516,6 +540,68 @@ TEST_CASE( "Subtrees can be moved across trees", TAGS ) {
     }}; // ngl this syntax is nothing short of a mess
 
     REQUIRE( t2 == result );
+}
+
+struct merge_mock {
+    void operator()(const int& original, const int& other) {
+        ++call_count;
+    }
+
+    static int get_call_count() {
+        return call_count;
+    }
+
+private:
+    static int call_count;
+};
+
+int merge_mock::call_count = 0;
+
+TEST_CASE( "Node can be merged with its parent", TAGS ) {
+    auto t = make_sample_tree();
+
+    SECTION( "Merging process calls the merge function" ) {
+        int merge_count = merge_mock::get_call_count();
+
+        auto n2 = t.root().child(0);
+        auto n3 = n2.child(0);
+        auto n4 = n2.child(1);
+        t.merge_with_parent<merge_mock>(n3);
+
+        REQUIRE( merge_mock::get_call_count() == merge_count + 1 );
+        REQUIRE( n2.child_count() == 1 );
+        REQUIRE( n2.child(0) == n4 );
+        REQUIRE( *n4 == 4 );
+    }
+
+    SECTION( "Child nodes are adopted at the proper position by their new parent" ) {
+        auto n2 = t.root().child(0);
+        auto n5 = t.root().child(1);
+
+        // merging a "left" node
+        t.merge_with_parent<merge::keep>(n2);
+
+        tree<int> result = {{
+            1, {    {3},
+                    {4},
+                    {5, {   {6},
+                            {7}}}}
+        }};
+
+        REQUIRE( t == result );
+
+        // merging a "right" node
+        t.merge_with_parent<merge::replace>(n5);
+
+        result = {{
+            5, {    {3},
+                    {4},
+                    {6},
+                    {7}}
+        }};
+
+        REQUIRE( t == result );
+    }
 }
 
 TEMPLATE_TEST_CASE( "DFS traversal yields correctly ordered values", TAGS, tree<int>, const tree<int> ) {

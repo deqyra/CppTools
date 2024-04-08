@@ -168,7 +168,7 @@ public:
     }
 
     /// @copydoc base::adopt_subtree
-    node_handle_t adopt_subtree(const node_handle_t& destination, tree&& other) {
+    node_handle_t adopt_subtree(const node_handle_t& destination, tree other) {
         return {
             base::adopt_subtree(destination.ptr(), std::move(other))
         };
@@ -225,7 +225,7 @@ public:
     /// @copydoc base::merge_with_parent
     template<merge_strategy<T> merge_t = merge::keep>
     void merge_with_parent(const node_handle_t& n) {
-        base::template merge_with_parent<T>(n.ptr());
+        base::template merge_with_parent<merge_t>(n.ptr());
     }
 
     /// @copydoc base::operator==

@@ -106,8 +106,6 @@ add_library( cpptools ${STATIC_OR_SHARED}
     cpptools/utility/string.hpp
     cpptools/utility/to_string.cpp
     cpptools/utility/to_string.hpp
-    cpptools/utility/type_utils.hpp
-    cpptools/utility/type_utils_impl/type_list.hpp
 )
 
 if( NOT ${BUILD_RELEASE} )
