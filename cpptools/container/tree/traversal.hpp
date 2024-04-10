@@ -13,11 +13,7 @@
 #include "node_handle.hpp"
 
 #ifndef CPPTOOLS_DEBUG_TRAVERSAL
-# if CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH != 0
-#   define CPPTOOLS_DEBUG_TRAVERSAL 1
-# else
-#   define CPPTOOLS_DEBUG_TRAVERSAL 0
-# endif
+# define CPPTOOLS_DEBUG_TRAVERSAL CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
 #endif
 
 #define CPPTOOLS_I_HAVE_INCLUDED_UNDEF_DEBUG_MACROS_LATER_ON_IN_THIS_FILE
@@ -544,8 +540,8 @@ namespace traversal {
 
 using order = detail::order_t;
 
-constexpr order pre_order  = order::pre;
-constexpr order post_order = order::post;
+inline constexpr order pre_order  = order::pre;
+inline constexpr order post_order = order::post;
 
 } // namespace traversal
 
