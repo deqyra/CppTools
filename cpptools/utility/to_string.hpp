@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__TO_STRING_HPP
-#define CPPTOOLS__UTILITY__TO_STRING_HPP
+#ifndef CPPTOOLS_UTILITY_TO_STRING_HPP
+#define CPPTOOLS_UTILITY_TO_STRING_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -50,4 +50,4 @@ inline constexpr auto to_string = detail::to_string::to_string_cpo{};
 
 } // namespace tools
 
-#endif//CPPTOOLS__UTILITY__TO_STRING_HPP
+#endif//CPPTOOLS_UTILITY_TO_STRING_HPP

@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
-#define CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
+#ifndef CPPTOOLS_OO_INTERFACES_EVENT_RECEIVER_HPP
+#define CPPTOOLS_OO_INTERFACES_EVENT_RECEIVER_HPP
 
 #include <memory>
 
@@ -25,4 +25,4 @@ using event_receiver_ptr = std::unique_ptr<event_receiver<E>>;
 } // namespace tools::oo
 
 
-#endif//CPPTOOLS__OO__INTERFACES__EVENT_RECEIVER_HPP
+#endif//CPPTOOLS_OO_INTERFACES_EVENT_RECEIVER_HPP

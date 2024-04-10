@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CONTAINER__TREE__UNSAFE_TREE_HPP
-#define CPPTOOLS__CONTAINER__TREE__UNSAFE_TREE_HPP
+#ifndef CPPTOOLS_CONTAINER_TREE_UNSAFE_TREE_HPP
+#define CPPTOOLS_CONTAINER_TREE_UNSAFE_TREE_HPP
 
 #include <algorithm>
 #include <memory>
@@ -776,7 +776,7 @@ public:
 
 #include <cpptools/_internal/undef_debug_macros.hpp>
 
-#endif//CPPTOOLS__CONTAINER__TREE__UNSAFE_TREE_HPP
+#endif//CPPTOOLS_CONTAINER_TREE_UNSAFE_TREE_HPP
 
 //////////
 // TODO //

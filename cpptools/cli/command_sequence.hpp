@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
-#define CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
+#ifndef CPPTOOLS_CLI_COMMAND_SEQUENCE_HPP
+#define CPPTOOLS_CLI_COMMAND_SEQUENCE_HPP
 
 #include <memory>
 #include <string>
@@ -75,4 +75,4 @@ public:
 
 } // namespace tools::cli
 
-#endif//CPPTOOLS__CLI__COMMAND_SEQUENCE_HPP
+#endif//CPPTOOLS_CLI_COMMAND_SEQUENCE_HPP

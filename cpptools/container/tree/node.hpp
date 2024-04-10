@@ -1,8 +1,7 @@
-#ifndef CPPTOOLS__CONTAINER__TREE__NODE_HPP
-#define CPPTOOLS__CONTAINER__TREE__NODE_HPP
+#ifndef CPPTOOLS_CONTAINER_TREE_NODE_HPP
+#define CPPTOOLS_CONTAINER_TREE_NODE_HPP
 
 #include <algorithm>
-#include <iterator>
 #include <numeric>
 #include <type_traits>
 #include <vector>
@@ -283,4 +282,4 @@ public:
 
 #include <cpptools/_internal/undef_debug_macros.hpp>
 
-#endif//CPPTOOLS__CONTAINER__TREE__NODE_HPP
+#endif//CPPTOOLS_CONTAINER_TREE_NODE_HPP

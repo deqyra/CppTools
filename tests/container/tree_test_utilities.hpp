@@ -1,5 +1,5 @@
-#ifndef TESTS__CONTAINER__TREE_TEST_UTILITIES_HPP
-#define TESTS__CONTAINER__TREE_TEST_UTILITIES_HPP
+#ifndef TESTS_CONTAINER_TREE_TEST_UTILITIES_HPP
+#define TESTS_CONTAINER_TREE_TEST_UTILITIES_HPP
 
 #include <ranges>
 #include <map>
@@ -60,4 +60,4 @@ std::ostream& operator<<(std::ostream& os, const node_handle<T>& nh) {
 
 } // namespace tools
 
-#endif//TESTS__CONTAINER__TREE_TEST_UTILITIES_HPP
+#endif//TESTS_CONTAINER_TREE_TEST_UTILITIES_HPP

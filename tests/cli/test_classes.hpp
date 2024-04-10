@@ -1,5 +1,5 @@
-#ifndef TESTS__CLI__TEST_CLASSES_HPP
-#define TESTS__CLI__TEST_CLASSES_HPP
+#ifndef TESTS_CLI_TEST_CLASSES_HPP
+#define TESTS_CLI_TEST_CLASSES_HPP
 
 #include <memory>
 
@@ -88,4 +88,4 @@ class test_shell_exit_command : public test_shell_command
 
 } // namespace tools::cli
 
-#endif//TESTS__CLI__TEST_CLASSES_HPP
+#endif//TESTS_CLI_TEST_CLASSES_HPP

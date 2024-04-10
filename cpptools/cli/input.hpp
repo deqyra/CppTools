@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__INPUT
-#define CPPTOOLS__CLI__INPUT
+#ifndef CPPTOOLS_CLI_INPUT
+#define CPPTOOLS_CLI_INPUT
 
 #include <iostream>
 #include <string>
@@ -117,4 +117,4 @@ namespace cli::input {
 
 } // namespace tools
 
-#endif//CPPTOOLS__CLI__INPUT
+#endif//CPPTOOLS_CLI_INPUT

@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS___INTERNAL__DEBUG_LOG_HPP
-#define CPPTOOLS___INTERNAL__DEBUG_LOG_HPP
+#ifndef CPPTOOLS_INTERNAL_DEBUG_LOG_HPP
+#define CPPTOOLS_INTERNAL_DEBUG_LOG_HPP
 
 #include <map>
 #include <string_view>
@@ -22,4 +22,4 @@ void log(level lv, std::string_view channel, std::string_view message);
 } // namespace tools::internal::debug_log
 
 
-#endif//CPPTOOLS___INTERNAL__DEBUG_LOG_HPP
+#endif//CPPTOOLS_INTERNAL_DEBUG_LOG_HPP

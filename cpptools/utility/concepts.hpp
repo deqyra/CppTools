@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__CONCEPTS_HPP
-#define CPPTOOLS__UTILITY__CONCEPTS_HPP
+#ifndef CPPTOOLS_UTILITY_CONCEPTS_HPP
+#define CPPTOOLS_UTILITY_CONCEPTS_HPP
 
 #include <type_traits>
 
@@ -25,4 +25,4 @@ concept enumeration = std::is_enum_v<E>;
 
 } // namespace tools
 
-#endif//CPPTOOLS__UTILITY__CONCEPTS_HPP
+#endif//CPPTOOLS_UTILITY_CONCEPTS_HPP

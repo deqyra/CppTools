@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__EXCEPTION__IO_EXCEPTION_HPP
-#define CPPTOOLS__EXCEPTION__IO_EXCEPTION_HPP
+#ifndef CPPTOOLS_EXCEPTION_IO_EXCEPTION_HPP
+#define CPPTOOLS_EXCEPTION_IO_EXCEPTION_HPP
 
 #include <filesystem>
 #include <string_view>
@@ -85,4 +85,4 @@ namespace io
 
 } // namespace tools::exception
 
-#endif//CPPTOOLS__EXCEPTION__IO_EXCEPTION_HPP
+#endif//CPPTOOLS_EXCEPTION_IO_EXCEPTION_HPP

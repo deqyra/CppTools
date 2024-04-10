@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
-#define CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
+#ifndef CPPTOOLS_UTILITY_BITWISE_ENUM_HPP
+#define CPPTOOLS_UTILITY_BITWISE_ENUM_HPP
 
 #include <type_traits>
 
@@ -88,4 +88,4 @@ bool any(const E& value) {
 
 } // namespace tools
 
-#endif//CPPTOOLS__UTILITY__BITWISE_ENUM_HPP
+#endif//CPPTOOLS_UTILITY_BITWISE_ENUM_HPP

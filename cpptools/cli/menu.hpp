@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__MENU_HPP
-#define CPPTOOLS__CLI__MENU_HPP
+#ifndef CPPTOOLS_CLI_MENU_HPP
+#define CPPTOOLS_CLI_MENU_HPP
 
 #include <array>
 #include <string>
@@ -127,4 +127,4 @@ private:
 
 } // namespace tools
 
-#endif//CPPTOOLS__CLI__MENU_HPP
+#endif//CPPTOOLS_CLI_MENU_HPP
