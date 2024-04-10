@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__THREAD__WORKER_HPP
-#define CPPTOOLS__THREAD__WORKER_HPP
+#ifndef CPPTOOLS_THREAD_WORKER_HPP
+#define CPPTOOLS_THREAD_WORKER_HPP
 
 #include <condition_variable>
 #include <functional>
@@ -146,4 +146,4 @@ using worker_ptr = std::unique_ptr<worker>;
 
 } // namespace tools::thread
 
-#endif//CPPTOOLS__THREAD__WORKER_HPP
+#endif//CPPTOOLS_THREAD_WORKER_HPP

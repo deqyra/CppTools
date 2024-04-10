@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__MERGE_STRATEGY_HPP
-#define CPPTOOLS__UTILITY__MERGE_STRATEGY_HPP
+#ifndef CPPTOOLS_UTILITY_MERGE_STRATEGY_HPP
+#define CPPTOOLS_UTILITY_MERGE_STRATEGY_HPP
 
 #include <concepts>
 #include <type_traits>
@@ -101,4 +101,4 @@ struct divide {
 
 } // namespace tools
 
-#endif//CPPTOOLS__UTILITY__MERGE_STRATEGY_HPP
+#endif//CPPTOOLS_UTILITY_MERGE_STRATEGY_HPP

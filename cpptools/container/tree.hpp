@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CONTAINER__TREE_HPP
-#define CPPTOOLS__CONTAINER__TREE_HPP
+#ifndef CPPTOOLS_CONTAINER_TREE_HPP
+#define CPPTOOLS_CONTAINER_TREE_HPP
 
 #include <algorithm>
 #include <utility>
@@ -298,4 +298,4 @@ public:
 
 // TODO: Ctrl+F TODO
 
-#endif//CPPTOOLS__CONTAINER__TREE_HPP
+#endif//CPPTOOLS_CONTAINER_TREE_HPP

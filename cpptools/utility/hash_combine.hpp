@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__HASH_COMBINE_HPP
-#define CPPTOOLS__UTILITY__HASH_COMBINE_HPP
+#ifndef CPPTOOLS_UTILITY_HASH_COMBINE_HPP
+#define CPPTOOLS_UTILITY_HASH_COMBINE_HPP
 
 #include <utility>
 
@@ -34,4 +34,4 @@ inline void hash_combine(std::size_t& s, const T& v)
 
 } // namespace tools
 
-#endif//CPPTOOLS__UTILITY__HASH_COMBINE_HPP
+#endif//CPPTOOLS_UTILITY_HASH_COMBINE_HPP

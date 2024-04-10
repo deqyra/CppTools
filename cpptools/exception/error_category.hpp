@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__EXCEPTION__EXCEPTION_CATEGORY_HPP
-#define CPPTOOLS__EXCEPTION__EXCEPTION_CATEGORY_HPP
+#ifndef CPPTOOLS_EXCEPTION_EXCEPTION_CATEGORY_HPP
+#define CPPTOOLS_EXCEPTION_EXCEPTION_CATEGORY_HPP
 
 #include <string_view>
 
@@ -20,4 +20,4 @@ std::string_view error_category_name(error_category cat);
 
 } // namespace tools::exception
 
-#endif//CPPTOOLS__EXCEPTION__EXCEPTION_CATEGORY_HPP
+#endif//CPPTOOLS_EXCEPTION_EXCEPTION_CATEGORY_HPP

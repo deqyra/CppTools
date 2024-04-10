@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CONTAINER__TREE__NODE_HANDLE_HPP
-#define CPPTOOLS__CONTAINER__TREE__NODE_HANDLE_HPP
+#ifndef CPPTOOLS_CONTAINER_TREE_NODE_HANDLE_HPP
+#define CPPTOOLS_CONTAINER_TREE_NODE_HANDLE_HPP
 
 #include <cpptools/exception/internal_exception.hpp>
 
@@ -275,4 +275,4 @@ using node_handle = detail::node_handle<T>;
 
 #include <cpptools/_internal/undef_debug_macros.hpp>
 
-#endif//CPPTOOLS__CONTAINER__TREE__NODE_HANDLE_HPP
+#endif//CPPTOOLS_CONTAINER_TREE_NODE_HANDLE_HPP

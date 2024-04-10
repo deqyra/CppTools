@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CONTAINER__TREE__TRAVERSAL_HPP
-#define CPPTOOLS__CONTAINER__TREE__TRAVERSAL_HPP
+#ifndef CPPTOOLS_CONTAINER_TREE_TRAVERSAL_HPP
+#define CPPTOOLS_CONTAINER_TREE_TRAVERSAL_HPP
 
 #include <iterator>
 #include <ranges>
@@ -549,4 +549,4 @@ inline constexpr order post_order = order::post;
 
 #include <cpptools/_internal/undef_debug_macros.hpp>
 
-#endif//CPPTOOLS__CONTAINER__TREE__TRAVERSAL_HPP
+#endif//CPPTOOLS_CONTAINER_TREE_TRAVERSAL_HPP

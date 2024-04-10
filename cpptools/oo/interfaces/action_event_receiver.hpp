@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
-#define CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
+#ifndef CPPTOOLS_OO_INTERFACES_ACTION_EVENT_RECEIVER
+#define CPPTOOLS_OO_INTERFACES_ACTION_EVENT_RECEIVER
 
 #include <memory>
 
@@ -34,4 +34,4 @@ using action_event_receiver_ptr = std::unique_ptr<action_event_receiver<T>>;
 
 } // namespace tools::oo
 
-#endif//CPPTOOLS__OO__INTERFACES__ACTION_EVENT_RECEIVER
+#endif//CPPTOOLS_OO_INTERFACES_ACTION_EVENT_RECEIVER

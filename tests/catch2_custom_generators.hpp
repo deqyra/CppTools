@@ -1,5 +1,5 @@
-#ifndef TESTS__CATCH2_CUSTOM_GENERATORS_HPP
-#define TESTS__CATCH2_CUSTOM_GENERATORS_HPP
+#ifndef TESTS_CATCH2_CUSTOM_GENERATORS_HPP
+#define TESTS_CATCH2_CUSTOM_GENERATORS_HPP
 
 #include <catch2/catch_all.hpp>
 
@@ -114,4 +114,4 @@ Catch::Generators::GeneratorWrapper<T> std_array(const std::array<T, N> array)
     return Catch::Generators::GeneratorWrapper<T>(std::make_unique<Catch::Generators::std_array_generator<T, N>>(array));
 }
 
-#endif//TESTS__CATCH2_CUSTOM_GENERATORS_HPP
+#endif//TESTS_CATCH2_CUSTOM_GENERATORS_HPP

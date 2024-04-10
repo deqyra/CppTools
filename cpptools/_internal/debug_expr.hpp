@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS___INTERNAL__DEBUG_EXPR_HPP
-#define CPPTOOLS___INTERNAL__DEBUG_EXPR_HPP
+#ifndef CPPTOOLS_INTERNAL_DEBUG_EXPR_HPP
+#define CPPTOOLS_INTERNAL_DEBUG_EXPR_HPP
 
 #include <ranges>
 
@@ -78,4 +78,4 @@ bool not_empty(const Range& r) {
 
 } // namespace tools::internal::debug_expr
 
-#endif//CPPTOOLS___INTERNAL__DEBUG_EXPR_HPP
+#endif//CPPTOOLS_INTERNAL_DEBUG_EXPR_HPP

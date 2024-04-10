@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__STRING_HPP
-#define CPPTOOLS__UTILITY__STRING_HPP
+#ifndef CPPTOOLS_UTILITY_STRING_HPP
+#define CPPTOOLS_UTILITY_STRING_HPP
 
 #include <algorithm>
 #include <filesystem>
@@ -304,4 +304,4 @@ std::string from_range(
 
 } // namespace tools::string
 
-#endif//CPPTOOLS__UTILITY__STRING_HPP
+#endif//CPPTOOLS_UTILITY_STRING_HPP

@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__MENU_COMMAND_HPP
-#define CPPTOOLS__CLI__MENU_COMMAND_HPP
+#ifndef CPPTOOLS_CLI_MENU_COMMAND_HPP
+#define CPPTOOLS_CLI_MENU_COMMAND_HPP
 
 #include <string_view>
 
@@ -43,4 +43,4 @@ public:
 
 } // namespace tools::cli
 
-#endif//CPPTOOLS__CLI__MENU_COMMAND_HPP
+#endif//CPPTOOLS_CLI_MENU_COMMAND_HPP

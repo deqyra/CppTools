@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__EXCEPTION__EXCEPTION_HPP
-#define CPPTOOLS__EXCEPTION__EXCEPTION_HPP
+#ifndef CPPTOOLS_EXCEPTION_EXCEPTION_HPP
+#define CPPTOOLS_EXCEPTION_EXCEPTION_HPP
 
 #include <ostream>
 #include <source_location>
@@ -140,4 +140,4 @@ using unknown_error = exception<unknown_exception, unknown_exception::ecode::unk
 
 #define CPPTOOLS_THROW(exception_type, ...) throw exception_type(std::source_location::current(),  ##__VA_ARGS__ )
 
-#endif//CPPTOOLS__EXCEPTION__EXCEPTION_HPP
+#endif//CPPTOOLS_EXCEPTION_EXCEPTION_HPP

@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__MATH__SINE_GENERATOR_HPP
-#define CPPTOOLS__MATH__SINE_GENERATOR_HPP
+#ifndef CPPTOOLS_MATH_SINE_GENERATOR_HPP
+#define CPPTOOLS_MATH_SINE_GENERATOR_HPP
 
 #include <chrono>
 #include <cmath>
@@ -87,4 +87,4 @@ public:
 
 } // namespace tools::math
 
-#endif//CPPTOOLS__MATH__SINE_GENERATOR_HPP
+#endif//CPPTOOLS_MATH_SINE_GENERATOR_HPP

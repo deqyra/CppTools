@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__UTILITY__PREDICATE_HPP
-#define CPPTOOLS__UTILITY__PREDICATE_HPP
+#ifndef CPPTOOLS_UTILITY_PREDICATE_HPP
+#define CPPTOOLS_UTILITY_PREDICATE_HPP
 
 #include <functional>
 
@@ -92,4 +92,4 @@ pred_t<T> outside(const T& low, const T& high)
 
 } // namespace tools::predicate
 
-#endif//CPPTOOLS__UTILITY__PREDICATE_HPP
+#endif//CPPTOOLS_UTILITY_PREDICATE_HPP

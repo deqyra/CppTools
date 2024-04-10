@@ -1,5 +1,5 @@
-#ifndef CPPTOOLS__CLI__STREAMS_HPP
-#define CPPTOOLS__CLI__STREAMS_HPP
+#ifndef CPPTOOLS_CLI_STREAMS_HPP
+#define CPPTOOLS_CLI_STREAMS_HPP
 
 #include <iostream>
 
@@ -38,4 +38,4 @@ public:
 
 } // namespace tools::cli
 
-#endif//CPPTOOLS__CLI__STREAMS_HPP
+#endif//CPPTOOLS_CLI_STREAMS_HPP
