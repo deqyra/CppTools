@@ -19,11 +19,7 @@
 #include "node.hpp"
 
 #ifndef CPPTOOLS_DEBUG_UNSAFE_TREE
-# if CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH != 0
-#   define CPPTOOLS_DEBUG_UNSAFE_TREE 1
-# else
-#   define CPPTOOLS_DEBUG_UNSAFE_TREE 0
-# endif
+# define CPPTOOLS_DEBUG_UNSAFE_TREE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
 #endif
 
 #define CPPTOOLS_I_HAVE_INCLUDED_UNDEF_DEBUG_MACROS_LATER_ON_IN_THIS_FILE
@@ -228,10 +224,14 @@ private:
 
         do {
             // compare structure
-            if (this_node->child_count() != other_node->child_count()) return false;
+            if (this_node->child_count() != other_node->child_count()) {
+                return false;
+            }
 
             // compare value
-            if (this_node->value != other_node->value) return false;
+            if (this_node->value != other_node->value) {
+                return false;
+            }
 
             // find next node
             if (this_node->child_count() != 0) {
@@ -444,12 +444,8 @@ public:
 
         parent->remove_child(subtree_root->sibling_index());
 
-        if (dropping_leftmost) {
-            _leftmost = parent;
-        }
-        if (dropping_rightmost) {
-            _rightmost = parent;
-        }
+        if (dropping_leftmost)  { _leftmost  = parent; }
+        if (dropping_rightmost) { _rightmost = parent; }
 
         return unsafe_tree(std::move(intermediate_storage), subtree_root, chopped_leftmost, chopped_rightmost);
     }
@@ -474,7 +470,7 @@ public:
         // attach subtree
         destination->insert_child(new_subtree);
 
-        if (updating_leftmost)  { _leftmost  = other._leftmost; }
+        if (updating_leftmost)  { _leftmost  = other._leftmost;  }
         if (updating_rightmost) { _rightmost = other._rightmost; }
 
         other.clear();

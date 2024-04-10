@@ -6,29 +6,6 @@
 namespace tools::internal::debug_expr
 {
 
-namespace detail
-{
-    template<typename T, typename... Us>
-    bool all_null(T ptr, Us... ptrs) {
-        return ptr == nullptr && all_null(ptrs...);
-    }
-
-    template<typename T>
-    bool all_null(T ptr) {
-        return ptr == nullptr;
-    }
-
-    template<typename T, typename... Us>
-    bool all_not_null(T ptr, Us... ptrs) {
-        return ptr != nullptr && all_not_null(ptrs...);
-    }
-
-    template<typename T>
-    bool all_not_null(T ptr) {
-        return ptr != nullptr;
-    }
-}
-
 template<typename T>
 bool null(T* ptr) {
     return ptr == nullptr;
@@ -40,8 +17,8 @@ bool both_null(T* left, U* right) {
 }
 
 template<typename... Ts>
-bool all_null(Ts*... ptrs) {
-    return detail::all_null(ptrs...);
+bool all_null(Ts... ptrs) {
+    return (... && (ptrs == nullptr));
 }
 
 template<typename T>
@@ -55,8 +32,8 @@ bool both_not_null(T* left, U* right) {
 }
 
 template<typename... Ts>
-bool all_not_null(Ts*... ptrs) {
-    return detail::all_not_null(ptrs...);
+bool all_not_null(Ts... ptrs) {
+    return (... && (ptrs != nullptr));
 }
 
 template<typename Range, typename T>

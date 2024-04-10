@@ -81,7 +81,7 @@ public:
     }
 
     node* left_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
-        CPPTOOLS_DEBUG_ASSERT(not_null(_parent),      "node", critical, "node has no parent",                    exception::internal::precondition_failure_error);
+        CPPTOOLS_DEBUG_ASSERT(not_null(_parent),      "node", critical, "node has no parent",                   exception::internal::precondition_failure_error);
         CPPTOOLS_DEBUG_ASSERT(!is_leftmost_sibling(), "node", critical, "leftmost sibling has no left sibling", exception::internal::precondition_failure_error);
 
         return _parent->_children[_sibling_index - 1];
@@ -208,7 +208,7 @@ public:
                 ? adopted_count     // adopted nodes inserted as first children, sibling index remained up-to-date => skip them
                 : merge_index;      // adopted nodes inserted in the middle, sibling index needs update => include them
 
-        auto outdated_index_start = _children.begin() + start_offset;
+        auto outdated_it = _children.begin() + start_offset;
 
         // end of the range: decide whether the right sibling nodes need updating, or not (in which case they can be omitted)
         auto outdated_index_end = (adopted_count == 1)
@@ -216,8 +216,8 @@ public:
             : _children.end();                                  // right siblings were moved, sibling index needs update => include them
 
         // update the sibling index of the nodes in the computed range
-        for (; outdated_index_start != outdated_index_end; ++outdated_index_start) {
-            (*outdated_index_start)->_sibling_index = start_offset++;
+        for (; outdated_it != outdated_index_end; ++outdated_it) {
+            (*outdated_it)->_sibling_index = start_offset++;
         }
 
         // merge the node value into this node's value
