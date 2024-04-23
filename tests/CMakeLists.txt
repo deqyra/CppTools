@@ -52,6 +52,6 @@ target_link_libraries( cpptools_tests
     cpptools Catch2::Catch2WithMain
 )
 
-catch_discover_tests(cpptools_tests
+catch_discover_tests( cpptools_tests
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests"
 )

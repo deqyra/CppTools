@@ -4,7 +4,7 @@
 #include <functional>
 #include <unordered_map>
 
-namespace tools::oo
+namespace tools
 {
 
 template <typename ...ArgTypes>
@@ -45,6 +45,6 @@ public:
     }
 };
 
-} // namespace tools::oo
+} // namespace tools
 
 #endif //CPPTOOLS__NOTIFIER_HPP

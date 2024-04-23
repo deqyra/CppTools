@@ -3,10 +3,9 @@
 
 #include <chrono>
 #include <cmath>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <numbers>
 
-namespace tools::math
+namespace tools
 {
 
 template<typename prec = float>
@@ -20,7 +19,9 @@ private:
 
     void _constrain_phase()
     {
-        while (_running_cycle > M_PI) _running_cycle -= (prec)(2.0) * (prec)M_PI;
+        while (_running_cycle > std::numbers::pi_v<prec>) {
+            _running_cycle -= static_cast<prec>(2.0) * std::numbers::pi_v<prec>;
+        }
     }
 
 public:
@@ -85,6 +86,6 @@ public:
     }
 };
 
-} // namespace tools::math
+} // namespace tools
 
 #endif//CPPTOOLS_MATH_SINE_GENERATOR_HPP

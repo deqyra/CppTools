@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace tools::oo
+namespace tools
 {
 
 /// @brief Interface for a class able to receive events and queue them.
@@ -22,7 +22,7 @@ public:
 template<typename E>
 using event_receiver_ptr = std::unique_ptr<event_receiver<E>>;
 
-} // namespace tools::oo
+} // namespace tools
 
 
 #endif//CPPTOOLS_OO_INTERFACES_EVENT_RECEIVER_HPP
