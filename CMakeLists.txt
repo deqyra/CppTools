@@ -12,24 +12,9 @@ cmake_minimum_required(VERSION 3.11)
 #                                                                              #
 ################################################################################
 
-option( BUILD_STATIC_LIBS "Whether to build library as static or shared library" ON )
-option( BUILD_RELEASE "Whether to build for a debug or release profile" OFF )
 option( CPPTOOLS_SKIP_TESTS "Whether or not to skip tests" OFF )
 
-if( ${BUILD_RELEASE} )
-    set( CMAKE_BUILD_TYPE "Release" )
-else( )
-    set( CMAKE_BUILD_TYPE "Debug" )
-endif( )
-
-if( ${BUILD_STATIC_LIBS} )
-    set( STATIC_OR_SHARED "STATIC" )
-else( )
-    set( STATIC_OR_SHARED "SHARED" )
-    set( BUILD_SHARED_LIBS TRUE )
-endif( )
-
-if( WIN32 AND ( STATIC_OR_SHARED STREQUAL "SHARED" ) )
+if( WIN32 AND BUILD_SHARED_LIBS )
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 endif( )
 
@@ -59,7 +44,7 @@ set( CMAKE_CXX_STANDARD 20 )
 ################################################################################
 
 # Build target
-add_library( cpptools ${STATIC_OR_SHARED}
+add_library( cpptools
     cpptools/_internal/debug_log.cpp
     cpptools/_internal/debug_log.hpp
     cpptools/_internal/debug_macros.hpp
@@ -116,7 +101,7 @@ endif( )
 
 target_include_directories(
     cpptools PUBLIC
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 ################################################################################
@@ -137,10 +122,21 @@ install(
 )
 
 install(
-    DIRECTORY "${CMAKE_SOURCE_DIR}/tools"
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tools"
     DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
     FILES_MATCHING 
     PATTERN "*.h"
     PATTERN "*.hpp"
     PATTERN "*.hxx"
+)
+
+################################################################################
+#                                                                              #
+#                                 Unit tests                                   #
+#                                                                              #
+################################################################################
+
+add_custom_target(
+    format
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run_clang_format.cmake
 )
