@@ -114,7 +114,7 @@ bool contains(std::string_view str, char sub, std::size_t n, bool exact)
     if (!exact && n == 0) return true;
 
     // n° of found occurrences
-    int i = 0;
+    std::size_t i = 0;
     // cursor
     std::size_t found = -1;
 
