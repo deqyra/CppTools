@@ -21,7 +21,6 @@ class tree;
 namespace detail {
 
 /// @brief Safe wrapper for node<T>, to be used with tools::tree<T>.
-///
 /// @note Enable debug assertions with #define CPPTOOLS_DEBUG_NODE_HANDLE 1
 template<typename T>
 class const_node_handle {

@@ -41,7 +41,6 @@ using order_tag = std::conditional_t<
 
 /// @brief Get a pointer to the next node from this one, as in a
 /// pre-order traversal of the tree
-///
 /// @return A pointer as described above
 template<typename T, any_cvref<node<T>> Node>
 Node* dfs_next(Node* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
@@ -79,9 +78,7 @@ Node* dfs_next(Node* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
 
 /// @brief Get a pointer to the previous node from this one, as in a
 /// pre-order traversal of the tree
-///
 /// @return A pointer as described above
-///
 /// @pre \c this node must not be orphaned.
 template<typename T, any_cvref<node<T>> Node>
 Node* dfs_previous(Node* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
@@ -101,9 +98,7 @@ Node* dfs_previous(Node* n, pre_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
 
 /// @brief Get a pointer to the next node from this one, as in a post-
 /// order traversal of the tree
-///
 /// @return A pointer as described above
-///
 /// @pre \c this node must not be orphaned.
 template<typename T, any_cvref<node<T>> Node>
 Node* dfs_next(Node* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
@@ -123,9 +118,7 @@ Node* dfs_next(Node* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
 
 /// @brief Get a pointer to the previous node from this one, as in a
 /// post-order traversal of the tree
-///
 /// @return A pointer as described above
-///
 /// @pre \c this node must not be orphaned.
 template<typename T, any_cvref<node<T>> Node>
 Node* dfs_previous(Node* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
@@ -163,10 +156,8 @@ Node* dfs_previous(Node* n, post_order_tag) CPPTOOLS_NOEXCEPT_RELEASE {
 
 /// @brief Generic iterator to an element in a tree. Allows bidirectional
 /// DFS traversal of the tree.
-/// 
 /// @tparam C Type of container to be DFS-traversed by the iterator
 /// @tparam O Order of traversal to be implemented by the iterator
-///
 /// @note Iterators are invalidated only when the node they point to is no
 /// longer part of the tree which it originally belonged to when the 
 /// iterator was first instantiated.
@@ -192,7 +183,7 @@ public:
     using iterator_category   = std::bidirectional_iterator_tag;
 
 protected:
-    using node_t              = const typename container_t::node_t;
+    using node_t              = const typename container_t::_node_t;
     using order_tag_t         = order_tag<O>;
     using const_node_handle_t = const_node_handle<value_type>;
 
@@ -200,7 +191,6 @@ protected:
     const container_t* _tree;
 
     /// @brief Pointer to the tree node currently being iterated over
-    ///
     /// @note If _node is nullptr, then this iterator is a past-the-end iterator.
     node_t* _node;
 
@@ -308,10 +298,8 @@ public:
 
 /// @brief Generic iterator to an element in a tree. Allows bidirectional
 /// DFS traversal of the tree.
-/// 
 /// @tparam T Type of value to be iterated upon by the iterator
 /// @tparam O Order of traversal to be implemented by the iterator
-///
 /// @note Iterators are invalidated only when the node they point to is no
 /// longer part of the tree which it originally belonged to when the 
 /// iterator was first instantiated.
