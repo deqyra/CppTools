@@ -14,16 +14,17 @@ range_exception::range_exception(std::pair<size_t, size_t> expected_range, size_
 
 }
 
-std::string range_exception::to_string() const
+std::string_view range_exception::to_string() const
 {
-    std::stringstream result;
-    result << "Category: " << error_category_name(category())
-           << ", error: (" << base_exception::error_code() << ") " << ecode_to_string() << '\n';
-    result << "Function <" << function() << ">, line: " << line() << '\n';
-    result << "Expected range: { " << _expected_range.first << " ; " << _expected_range.first << " }, value: " << _value << '\n';
-    result << "Message: " << message() << '\n';
+    std::string range =
+        "{ " + std::to_string(_expected_range.first) +
+        " ; " + std::to_string(_expected_range.first) +
+        " }";
 
-    return result.str();
+    _str = std::string(base_exception::to_string()) + '\n' +
+        "Expected range: " + std::move(range) + ", value: " + std::to_string(_value) + '\n';
+
+    return _str;
 }
 
 }

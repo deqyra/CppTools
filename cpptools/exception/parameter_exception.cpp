@@ -24,11 +24,10 @@ std::string_view parameter_exception::parameter_value() const
 
 std::string_view parameter_exception::to_string() const
 {
-    static const std::string result =
-        std::string(base_exception::to_string()) + '\n' +
+    _str = std::string(base_exception::to_string()) + '\n' +
         "Parameter: " + _parameter_name + ", value: " + _parameter_value;
 
-    return result;
+    return _str;
 }
 
 }
