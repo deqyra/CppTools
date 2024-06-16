@@ -2,6 +2,7 @@
 #define CPPTOOLS_CONTAINER_TREE_NODE_HPP
 
 #include <algorithm>
+#include <memory>
 #include <numeric>
 #include <type_traits>
 #include <vector>
@@ -9,6 +10,7 @@
 #include <cpptools/exception/exception.hpp>
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
+#include <cpptools/utility/allocator.hpp>
 #include <cpptools/utility/merge_strategy.hpp>
 
 #ifndef CPPTOOLS_DEBUG_NODE
@@ -22,13 +24,19 @@
 namespace tools::detail {
 
 /// @brief A node in an arbitrary tree, to be used with unsafe_tree<T>.
-///
 /// @note Enable debug assertions with #define CPPTOOLS_DEBUG_NODE 1
-template<typename T>
+template<typename T, typename A = std::allocator<T>>
 class node {
 public:
     using value_type = T;
-    using storage_type = std::vector<node*>;
+    using allocator_type = A;
+
+private:
+    using _al_type   = rebind_alloc_t<A, T>;
+    using _al_traits = std::allocator_traits<allocator_type>;
+
+public:
+    using storage_type = std::vector<node*, rebind_alloc_t<_al_type, node*>>;
     using size_type = typename storage_type::size_type;
 
     /// @brief Value attached to this node
@@ -107,12 +115,9 @@ public:
 
     /// @brief Append a new child node to this node, updating the \c _parent
     /// pointer and \c _sibling_index in the child node
-    ///
     /// @param child Pointer to the node to insert as a new child
-    ///
     /// @pre \c child must not be null.
     /// @pre \c child must point to an orphaned node.
-    ///
     /// @post The parent metadata of \c child was updated and has become
     /// valid again, as well as that of all of its own children.
     void insert_child(node* child) {
@@ -124,17 +129,13 @@ public:
     }
 
     /// @brief Remove a child from this node
-    ///
     /// @param index Index of the child node to be removed
-    ///
     /// @pre \c child must not be a valid index in this node's vector of
     /// children nodes.
-    ///
     /// @note The parent metadata of \c child is left untouched and thus
     /// becomes invalid, as well as that of all of its children nodes.The parent
     /// metadata may become valid again upon insertion of the node as a child to
     /// another node.
-    ///
     /// @see template<typename T> tree::node::insert_child(node* child)
     node* remove_child(size_type index) CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(index < _children.size(), "node", critical, "index out of bounds", exception::parameter::null_parameter_error, "child", nullptr);
@@ -155,15 +156,10 @@ public:
     /// merged with this node's value according to the provided merging
     /// strategy, and its children are adopted in its place. The child node
     /// is then dropped.
-    /// 
     /// @tparam merge_t Default-constructible, invocable type which merges
     /// its second argument into the first.
-    /// 
     /// @param index The index of the child to merge with this node.
-    /// 
-    /// @pre \c index must be a valid index into this node's vector of
-    /// children.
-    /// 
+    /// @pre \c index must be a valid index into this node's vector of children.
     /// @note The child node is NOT deleted from the tree as part of this
     /// operation. However since the child node is going to be deleted soon 
     /// afterwards anyway, the value to be merged is passed by move to the merge
@@ -247,6 +243,10 @@ public:
         return _children;
     }
 
+    node* child(size_t index) const noexcept {
+        return _children[index];
+    }
+
     size_type child_count() const noexcept {
         return _children.size();
     }
@@ -275,6 +275,10 @@ public:
         CPPTOOLS_DEBUG_ASSERT(not_null(_parent), "node", critical, "node has no parent", exception::internal::precondition_failure_error);
 
         return _sibling_index;
+    }
+
+    void reserve(size_t capacity) {
+        _children.reserve(capacity);
     }
 };
 

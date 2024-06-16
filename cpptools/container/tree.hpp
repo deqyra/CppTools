@@ -20,12 +20,11 @@
 namespace tools {
 
 /// @brief An arbitrary tree. STL-compatible.
-///
 /// @tparam T Type of values to be stored
 template<typename T>
 class tree : private detail::unsafe_tree<T> {
     using base                = detail::unsafe_tree<T>;
-    using node_t              = base::node_t;
+    using node_t              = base::_node_t;
 
     static constexpr bool NoExceptErasure = base::NoExceptErasure;
 
@@ -72,7 +71,6 @@ public:
     }
 
     /// @brief Copy constructor
-    ///
     /// @param other Tree to copy-construct from
     tree(const tree& other) :
         base(other)
@@ -80,7 +78,6 @@ public:
     }
 
     /// @brief Move constructor
-    ///
     /// @param other Tree to move-construct from
     tree(tree&& other) :
         base(std::move(other))
@@ -88,7 +85,6 @@ public:
     }
 
     /// @brief Tree-like initializer list copy constructor
-    ///
     /// @param init Initializer to copy-construct from
     tree(const initializer& init) :
         base(init)
@@ -96,7 +92,6 @@ public:
     }
 
     /// @brief Tree-like initializer list move constructor
-    ///
     /// @param init Initializer to move-construct from
     tree(initializer&& init) :
         base(std::move(init))
@@ -104,7 +99,6 @@ public:
     }
 
     /// @brief Subtree copy constructor
-    ///
     /// @param subtree_root Handle to the root node of the subtree from which
     /// this tree should be copy-constructed
     explicit tree(const const_node_handle_t& subtree_root) :
@@ -113,7 +107,6 @@ public:
     }
 
     /// @brief Copy assignment
-    ///
     /// @param other Tree to copy-assign contents from
     tree& operator=(const tree& other) {
         *this = tree(other);
@@ -122,7 +115,6 @@ public:
     }
 
     /// @brief Move assignment
-    ///
     /// @param other Tree to move-assign contents from
     tree& operator=(tree&& other) {
         base::operator=(std::move(other));
@@ -131,7 +123,6 @@ public:
     }
 
     /// @brief Tree-like initializer list copy assignment
-    ///
     /// @param init Tree-like initializer list to copy-assign contents from
     tree& operator=(const initializer& init) {
         tree temp(init);
@@ -141,7 +132,6 @@ public:
     }
 
     /// @brief Tree-like initializer list move assignment
-    ///
     /// @param init Tree-like initializer list to move-assign contents from
     tree& operator=(initializer&& init) {
         tree temp(std::move(init));
@@ -151,7 +141,6 @@ public:
     }
 
     /// @brief Subtree copy assignment
-    ///
     /// @param subtree_root Root of the subtree to copy contents from
     tree& operator=(const const_node_handle_t& subtree_root)
     {
