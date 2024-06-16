@@ -33,10 +33,10 @@ namespace tools::exception
 class base_exception;
 
 template<typename E>
-std::string_view default_error_message(const E& code) = delete;
+consteval std::string_view default_error_message(const E& code) = delete;
 
 template<typename E>
-std::string_view to_string(const E& code) = delete;
+consteval std::string_view to_string(const E& code) = delete;
 
 template<typename T>
 concept concrete_exception = requires
@@ -100,6 +100,7 @@ public:
 class base_exception : public std::exception
 {
 public:
+    base_exception() = default;
     virtual ~base_exception() = default;
 
     virtual error_category   category()        const = 0;
@@ -110,9 +111,12 @@ public:
     virtual       std::string_view      message()         const = 0;
     virtual       std::string&          message()               = 0;
 
-    [[nodiscard]] virtual const char* what() const override;
+    virtual const char* what() const override;
 
     virtual std::string_view to_string() const;
+
+protected:
+    mutable std::string _str;
 };
 
 std::ostream& operator<<(std::ostream& out, const base_exception& e);
@@ -129,10 +133,26 @@ public:
 };
 
 template<>
-constexpr std::string_view default_error_message<unknown_exception::ecode>(const unknown_exception::ecode& code);
+consteval std::string_view default_error_message<unknown_exception::ecode>(const unknown_exception::ecode &code) {
+    switch (code) {
+    case unknown_exception::ecode::unknown:
+        return "An unknown error occurred";
+
+    default:
+        return "???";
+    }
+}
 
 template<>
-constexpr std::string_view to_string<unknown_exception::ecode>(const unknown_exception::ecode& code);
+consteval std::string_view to_string<unknown_exception::ecode>(const unknown_exception::ecode &code) {
+    switch (code) {
+    case unknown_exception::ecode::unknown:
+        return "unknown";
+
+    default:
+        return "???";
+    }
+}
 
 using unknown_error = exception<unknown_exception, unknown_exception::ecode::unknown>;
 

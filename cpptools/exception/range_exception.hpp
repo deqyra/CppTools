@@ -21,7 +21,7 @@ public:
 
     range_exception(std::pair<size_t, size_t> expected_range, size_t value);
 
-    std::string to_string() const override;
+    std::string_view to_string() const override;
 
 private:
     std::pair<size_t, size_t> _expected_range;
