@@ -4,7 +4,8 @@ CppTools:
     ✔ Put documentation EVERYWHERE @done(24-04-07 23:16)
     Iterable Tools:
         ✘ In `stripElementFromIterable` the iterator may be invalidated @cancelled(22-09-06 13:32)
-    Array2D:
+        ✔ useless now lol, remove @done(24-06-28 14:03)
+        Array2D:
         ☐ Import it from PicrossEngine and clean it up
     Tree:
         ✔ Iterator semantics @done(22-09-06 13:32)

@@ -52,6 +52,16 @@ namespace cli::input {
     inline streams default_streams;
 
     template<typename T>
+    T read_input(cli::streams& streams) {
+        std::string input;
+
+        std::getline(streams.in, input);
+        string::pop_cr(input);
+
+        return detail::parse_as<T>(input);
+    }
+
+    template<typename T>
     T prompt(std::string_view title, streams& streams) {
         while (true) {
             try {
@@ -101,16 +111,6 @@ namespace cli::input {
 
             streams.out << "Please enter a value between " << min << " and " << max << "." << std::endl;
         }
-    }
-
-    template<typename T>
-    T read_input(cli::streams& streams) {
-        std::string input;
-
-        std::getline(streams.in, input);
-        string::pop_cr(input);
-
-        return detail::parse_as<T>(input);
     }
 
 } // namespace cli::input
