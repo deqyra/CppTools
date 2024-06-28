@@ -24,7 +24,7 @@ namespace tools {
 template<typename T>
 class tree : private detail::unsafe_tree<T> {
     using base                = detail::unsafe_tree<T>;
-    using node_t              = base::_node_t;
+    using node_t              = base::node_t;
 
     static constexpr bool NoExceptErasure = base::NoExceptErasure;
 
@@ -36,7 +36,6 @@ public:
     using pointer             = typename base::pointer;
     using const_pointer       = typename base::const_pointer;
     using difference_type     = typename base::difference_type;
-    using key_equal           = typename base::key_equal;
     using allocator_type      = typename base::allocator_type;
 
     using const_node_handle_t = const_node_handle<T>;

@@ -183,7 +183,7 @@ public:
     using iterator_category   = std::bidirectional_iterator_tag;
 
 protected:
-    using node_t              = const typename container_t::_node_t;
+    using node_t              = const typename container_t::node_t;
     using order_tag_t         = order_tag<O>;
     using const_node_handle_t = const_node_handle<value_type>;
 
