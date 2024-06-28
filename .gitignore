@@ -3,3 +3,5 @@
 .vscode
 build
 compile_commands.json
+cpptools/_internal/debug_macros.hpp
+cpptools/_internal/undef_debug_macros.hpp
