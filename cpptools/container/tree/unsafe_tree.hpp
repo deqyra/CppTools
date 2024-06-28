@@ -33,15 +33,6 @@
 namespace tools::detail
 {
 
-template<typename A, typename D>
-auto make_deleter(A& alloc) {
-    return [&alloc](D* d) {
-        using traits = std::allocator_traits<A>;
-        traits::destroy(alloc, d);
-        traits::deallocate(alloc, d, 1);
-    };
-}
-
 /// @brief Unsafe arbitrary tree.
 /// @tparam T Type of values to be stored
 /// @note Enable debug assertions with #define CPPTOOLS_DEBUG_TREE 1
@@ -52,25 +43,43 @@ public:
     using reference         = value_type&;
     using const_reference   = const value_type&;
     using allocator_type    = A;
+    using node_t            = node<value_type, allocator_type>;
 
 private:
-    using _node_t           = node<value_type, allocator_type>;
-    using _key_type         = _node_t*;
-    using _al_type          = rebind_alloc_t<A, T>;
-    using _al_traits        = std::allocator_traits<_al_type>;
-    using _deleter_t        = decltype(make_deleter<_al_type, _node_t>(std::declval<_al_type>()));
-    using _node_ptr         = std::unique_ptr<_node_t, _deleter_t>;
+    using _key_type         = node_t*;
+    using _al_node          = rebind_alloc_t<A, node_t>;
+    using _al_traits        = std::allocator_traits<_al_node>;
 
-    static constexpr bool _pocca = _al_traits::propage_on_container_copy_assignment::value;
-    static constexpr bool _pocma = _al_traits::propage_on_container_move_assignment::value;
-    static constexpr bool _pocs  = _al_traits::propage_on_container_swap::value;
+    struct _deleter_t {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-attributes"
+        /// @brief Allocator
+        [[no_unique_address]] [[msvc::no_unique_address]]
+        mutable _al_node _alloc;
+#pragma clang diagnostic pop
 
-public:
+        void operator()(node_t* node) const {
+            _al_traits::destroy(_alloc, node);
+            _al_traits::deallocate(_alloc, node, 1);
+        }
+
+        _deleter_t() = default;
+        _deleter_t(const _deleter_t &) = default;
+        _deleter_t(_deleter_t &&) = default;
+    };
+
+    using _node_ptr         = std::unique_ptr<node_t, _deleter_t&>;
+
+    static constexpr bool _pocca = _al_traits::propagate_on_container_copy_assignment::value;
+    static constexpr bool _pocma = _al_traits::propagate_on_container_move_assignment::value;
+    static constexpr bool _pocs  = _al_traits::propagate_on_container_swap::value;
+
+public: 
     using storage_t = std::unordered_set<
         _node_ptr,
         unique_ptr_transparent_hash_t<_node_ptr>,
         unique_ptr_transparent_equality_t<_node_ptr>,
-        rebind_alloc_t<_al_type, _node_ptr>
+        rebind_alloc_t<_al_node, _node_ptr>
     >;
 
     using size_type         = typename _al_traits::size_type;
@@ -82,15 +91,15 @@ private:
     static constexpr bool NoExceptErasure = noexcept(std::declval<storage_t>().erase(std::declval<_key_type>()));
     static constexpr bool NoExceptSwap    = noexcept(std::swap(std::declval<storage_t&>(), std::declval<storage_t&>()));
 
-    static const_reference _value_const_ref_from_storage_value(const typename storage_t::value_type& pair) {
-        return (pair.second)->value;
+    static const_reference _value_const_ref_from_storage_value(const typename storage_t::value_type& ptr) {
+        return ptr->value;
     }
 
-    static reference _value_ref_from_storage_value(typename storage_t::value_type& pair) {
-        return (pair.second)->value;
+    static reference _value_ref_from_storage_value(const typename storage_t::value_type& ptr) {
+        return ptr->value;
     }
 
-public:
+ public:
     using const_value_view_t = decltype(std::declval<const storage_t&>() | std::views::transform(_value_const_ref_from_storage_value));
     using       value_view_t = decltype(std::declval<      storage_t&>() | std::views::transform(_value_ref_from_storage_value));
 
@@ -129,13 +138,13 @@ private:
     storage_t _nodes;
 
     /// @brief Pointer to the root node of the tree
-    _node_t* _root;
+    node_t* _root;
 
     /// @brief Pointer to the leftmost node of the tree
-    _node_t* _leftmost;
+    node_t* _leftmost;
 
     /// @brief Pointer to the rightmost node of the tree
-    _node_t* _rightmost;
+    node_t* _rightmost;
 
     /// @brief View over the values of the nodes
     const_value_view_t _const_values;
@@ -145,15 +154,15 @@ private:
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-attributes"
-    /// @brief Allocator
+    /// @brief Allocator for nodes
     [[no_unique_address]] [[msvc::no_unique_address]]
-    _al_type _alloc;
+    _al_node _alloc;
 #pragma clang diagnostic pop
 
     /// @brief Deleter
     _deleter_t _deleter;
 
-    void _copy_fill_from_init(_node_t* dest, const std::vector<initializer>& child_initializers) {
+    void _copy_fill_from_init(node_t* dest, const std::vector<initializer>& child_initializers) {
         for (const auto& init : child_initializers) {
             auto new_node = emplace_node(dest, init.value);
 
@@ -163,7 +172,7 @@ private:
         }
     }
 
-    void _move_fill_from_init(_node_t* dest, std::vector<initializer>&& child_initializers) {
+    void _move_fill_from_init(node_t* dest, std::vector<initializer>&& child_initializers) {
         for (auto& init : child_initializers) {
             auto new_node = emplace_node(dest, std::move(init.value));
 
@@ -177,7 +186,7 @@ private:
     /// to another storage
     /// @param subtree_root Root of the subtree whose nodes should be transferred
     /// @param storage Storage where the nodes should be transferred to
-    void _move_node_ptrs_recursive(_node_t* subtree_root, storage_t& storage) {
+    void _move_node_ptrs_recursive(node_t* subtree_root, storage_t& storage) {
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root), "unsafe_tree", critical, "cannot move nodes not part of tree", exception::parameter::invalid_value_error, "subtree_root", subtree_root);
 
         auto map_node = _nodes.extract(subtree_root);
@@ -192,13 +201,13 @@ private:
     /// copy all source children nodes as children of the destination node
     /// @param from Node whose chidlren should be copied
     /// @param to Node which should adopt the copied nodes
-    void _copy_children_recursive(const _node_t* from, _node_t* to) {
+    void _copy_children_recursive(const node_t* from, node_t* to) {
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, to), "unsafe_tree", critical, "destination not in tree",               exception::parameter::invalid_value_error, "to", to);
         CPPTOOLS_DEBUG_ASSERT(!to->has_parent(from),     "unsafe_tree", critical, "destination is part of copied subtree", exception::parameter::invalid_value_error, "to", to);
 
         for (auto child : from->children()) {
-            // make new child node_t holding a copy of the source value
-            _node_t* copied = make_node(child->value);
+            // make new child node holding a copy of the source value
+            node_t* copied = make_node(child->value);
 
             // insert copied child into destination
             to->insert_child(copied);
@@ -212,7 +221,7 @@ private:
 
     /// @brief Given another tree, use its nodes to copy-construct this tree's
     /// nodes, replicating its structure
-    void _copy_assign_contents(_node_t *copy_from) {
+    void _copy_assign_contents(const node_t *copy_from) {
         clear();
 
         if (copy_from != nullptr) {
@@ -233,11 +242,11 @@ private:
     /// nodes. This is useful when the tree being moved-from uses a different
     /// allocator.
     void _move_assign_contents(unsafe_tree &&other) {
-        using node_pair = std::pair<_node_t *, _node_t *>;
+        using node_pair = std::pair<node_t *, node_t *>;
 
         // move-construct reallocated root node
-        _node_t* this_node = make_node(std::move(other._root->value));
-        _node_t* other_node = other._root;
+        node_t* this_node = make_node(std::move(other._root->value));
+        node_t* other_node = other._root;
 
         _root = this_node;
 
@@ -257,7 +266,7 @@ private:
         std::stack<node_pair, std::vector<node_pair>> node_stack;
         node_stack.push({this_node, other_node});
 
-        _node_t* parent_node = this_node;
+        node_t* parent_node = this_node;
         other_node = other_node->child(0);
         do {
             // move-construct node
@@ -299,7 +308,7 @@ private:
     /// @brief Delete an entire subtree from the node storage, including the
     /// values held by its nodes.
     /// @param branch_root Root of the subtree whose nodes must be deleted
-    void _delete_subtree_nodes(_node_t* subtree_root) CPPTOOLS_NOEXCEPT_RELEASE_AND(NoExceptErasure) {
+    void _delete_subtree_nodes(node_t* subtree_root) CPPTOOLS_NOEXCEPT_RELEASE_AND(NoExceptErasure) {
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root), "unsafe_tree", critical, "subtree root not in tree", exception::parameter::invalid_value_error, "subtree_root", subtree_root);
 
         for (auto child : subtree_root->release_children()) {
@@ -311,9 +320,9 @@ private:
 
     /// @brief Delete a node and the value it holds
     /// @param n Node to be deleted
-    void _delete_node(_node_t* n) CPPTOOLS_NOEXCEPT_RELEASE_AND(NoExceptErasure) {
-        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, n), "unsafe_tree", critical, "node_t not in tree",                           exception::parameter::invalid_value_error,"n", n);
-        CPPTOOLS_DEBUG_ASSERT(n->children().empty(),    "unsafe_tree", critical, "node_t to be deleted shall not have children", exception::parameter::invalid_value_error,"n", n);
+    void _delete_node(node_t* n) CPPTOOLS_NOEXCEPT_RELEASE_AND(NoExceptErasure) {
+        CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, n), "unsafe_tree", critical, "node not in tree",                           exception::parameter::invalid_value_error,"n", n);
+        CPPTOOLS_DEBUG_ASSERT(n->children().empty(),    "unsafe_tree", critical, "node to be deleted shall not have children", exception::parameter::invalid_value_error,"n", n);
 
         _nodes.erase(n);
     }
@@ -322,12 +331,12 @@ private:
     /// @param left First subtree to compare
     /// @param right Second subtree to compare
     /// @return Whether the two subtrees are equal both in structure and value
-    static bool _subtrees_equal(_node_t* left, _node_t* right) {
+    static bool _subtrees_equal(node_t* left, node_t* right) {
         CPPTOOLS_DEBUG_ASSERT(both_not_null(left, right), "unsafe_tree", critical, "cannot compare null subtrees",                    exception::parameter::null_parameter_error, "left or right");
         CPPTOOLS_DEBUG_ASSERT(!left->has_parent(right),   "unsafe_tree", critical, "compared subtrees shall not contain one another", exception::parameter::invalid_value_error,  "left", left);
         CPPTOOLS_DEBUG_ASSERT(!right->has_parent(left),   "unsafe_tree", critical, "compared subtrees shall not contain one another", exception::parameter::invalid_value_error,  "right", right);
 
-        using node_pair = std::pair<_node_t*, _node_t*>;
+        using node_pair = std::pair<node_t*, node_t*>;
 
         // This function performs a pre-order DFS traversal of both trees and
         // compares both structure and value along the way
@@ -378,7 +387,7 @@ private:
     /// @param chopped_root Root node of this tree
     /// @param chopped_leftmost Leftmost node of this tree
     /// @param chopped_rightmost Rightmost node of this tree
-    unsafe_tree(storage_t&& chopped_nodes, _node_t* chopped_root, _node_t* chopped_leftmost, _node_t* chopped_rightmost) :
+    unsafe_tree(storage_t&& chopped_nodes, node_t* chopped_root, node_t* chopped_leftmost, node_t* chopped_rightmost) :
         _nodes(std::move(chopped_nodes)),
         _root(chopped_root),
         _leftmost(chopped_leftmost),
@@ -386,7 +395,7 @@ private:
         _const_values(_make_const_value_view()),
         _values(_make_value_view()),
         _alloc(),
-        _deleter(make_deleter<_al_type, _node_t>(_alloc))
+        _deleter()
     {
         _root->clear_parent_metadata();
     }
@@ -400,7 +409,7 @@ public:
         _const_values(_make_const_value_view()),
         _values(_make_value_view()),
         _alloc(std::move(alloc)),
-        _deleter(make_deleter<_al_type, _node_t>(_alloc))
+        _deleter()
     {
 
     }
@@ -409,7 +418,7 @@ public:
     /// from
     /// @exception Any exception thrown in a constructor of the value type
     /// will be forwarded to the caller
-    unsafe_tree(const _node_t* copy_from, allocator_type alloc = {}) :
+    unsafe_tree(const node_t* copy_from, allocator_type alloc = {}) :
         unsafe_tree(alloc)
     {
         _copy_assign_contents(copy_from);
@@ -432,7 +441,7 @@ public:
         _const_values(_make_const_value_view()),
         _values(_make_value_view()),
         _alloc(std::move(other._alloc)),
-        _deleter(make_deleter<_al_type, _node_t>(_alloc))
+        _deleter()
     {
         other._root = nullptr;
         other._leftmost = nullptr;
@@ -448,7 +457,7 @@ public:
         _const_values(_make_const_value_view()),
         _values(_make_value_view()),
         _alloc(std::move(alloc)),
-        _deleter(make_deleter<_al_type, _node_t>(_alloc))
+        _deleter()
     {
         if (other._alloc != alloc) {
             if (!other.empty()) {
@@ -534,8 +543,8 @@ public:
     /// of the new value
     /// @return A pointer to the newly created node
     template<typename... ArgTypes>
-    [[nodiscard]] _node_t* make_node(ArgTypes&&... args) {
-        _node_t *raw_ptr = _al_traits::allocate(_alloc, 1);
+    [[nodiscard]] node_t* make_node(ArgTypes&&... args) {
+        node_t *raw_ptr = _al_traits::allocate(_alloc, 1);
         _al_traits::construct(_alloc, raw_ptr, std::forward<ArgTypes>(args)...);
 
         _nodes.insert(_node_ptr(raw_ptr, _deleter));
@@ -548,7 +557,7 @@ public:
     /// would take place; can be null to indicate root emplacement
     /// @return Whether emplacing a node as a new child to \c dest_node would 
     /// change the leftmost node of the tree
-    bool emplacing_there_would_change_leftmost(_node_t* where) const CPPTOOLS_NOEXCEPT_RELEASE {
+    bool emplacing_there_would_change_leftmost(node_t* where) const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(both_null(where, _root) || in_range_keys(_nodes, where), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "where", where);
 
         return where == _leftmost;
@@ -560,7 +569,7 @@ public:
     /// would take place
     /// @return Whether emplacing a node as a new child to \c dest_node would 
     /// change the rightmost node of the tree
-    bool emplacing_there_would_change_rightmost(_node_t* where) const CPPTOOLS_NOEXCEPT_RELEASE {
+    bool emplacing_there_would_change_rightmost(node_t* where) const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(both_null(where, _root) || in_range_keys(_nodes, where), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "where", where);
 
         return where == _rightmost
@@ -570,7 +579,7 @@ public:
     /// @brief Detach a subtree
     /// @param subtree_root Root of the subtree to be detached
     /// @return A new tree whose root is the detached subtree
-    unsafe_tree chop_subtree(_node_t* subtree_root) {
+    unsafe_tree chop_subtree(node_t* subtree_root) {
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root), "unsafe_tree", critical, "subtree root not in tree", exception::parameter::invalid_value_error, "subtree_root", subtree_root);
 
         if (subtree_root == _root) {
@@ -580,17 +589,17 @@ public:
         const bool dropping_leftmost  = (subtree_root == _leftmost)  || (_leftmost->has_parent(subtree_root));
         const bool dropping_rightmost = (subtree_root == _rightmost) || (_rightmost->has_parent(subtree_root));
 
-        _node_t* chopped_leftmost = dropping_leftmost
+        node_t* chopped_leftmost = dropping_leftmost
             ? _leftmost
             : subtree_root->leftmost_child_or_this();
 
-        _node_t* chopped_rightmost = dropping_rightmost
+        node_t* chopped_rightmost = dropping_rightmost
             ? _rightmost
             : subtree_root->rightmost_child_or_this();
 
         storage_t intermediate_storage;
 
-        _node_t* parent = subtree_root->parent(); // not null since root case was taken care of already
+        node_t* parent = subtree_root->parent(); // not null since root case was taken care of already
         _move_node_ptrs_recursive(subtree_root, intermediate_storage);
 
         parent->remove_child(subtree_root->sibling_index());
@@ -606,14 +615,14 @@ public:
     /// @param destination Node where that should be parent to the stolen nodes
     /// @param other Tree to steal nodes from
     /// @return Pointer to the newly adopted subtree
-    _node_t* adopt_subtree(_node_t* destination, unsafe_tree&& other) {
+    node_t* adopt_subtree(node_t* destination, unsafe_tree&& other) {
         CPPTOOLS_DEBUG_ASSERT(not_empty(other),                   "unsafe_tree", critical, "cannot adopt empty tree", exception::parameter::invalid_value_error, "destination", destination);
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, destination), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "destination", destination);
 
         bool updating_leftmost  = emplacing_there_would_change_leftmost(destination);
         bool updating_rightmost = emplacing_there_would_change_rightmost(destination);
 
-        _node_t* new_subtree = other._root;
+        node_t* new_subtree = other._root;
         // steal node ownership
         other._move_node_ptrs_recursive(new_subtree, _nodes);
         // attach subtree
@@ -629,37 +638,37 @@ public:
 
     /// @brief Get a mutable handle to the root node of the tree
     /// @return A mutable handle to the root node of the tree
-    _node_t* root() {
+    node_t* root() {
         return _root;
     }
 
     /// @brief Get a const handle to the root ndoe of the tree
     /// @return A const handle to the root ndoe of the tree
-    const _node_t* root() const {
+    const node_t* root() const {
         return _root;
     }
 
     /// @brief Get a mutable handle to the leftmost node of the tree
     /// @return A mutable handle to the leftmost node of the tree
-    _node_t* leftmost() {
+    node_t* leftmost() {
         return _leftmost;
     }
 
     /// @brief Get a const handle to the leftmost node of the tree
     /// @return A const handle to the leftmost node of the tree
-    const _node_t* leftmost() const {
+    const node_t* leftmost() const {
         return _leftmost;
     }
 
     /// @brief Get a mutable handle to the rightmost node of the tree
     /// @return A mutable handle to the rightmost node of the tree
-    _node_t* rightmost() {
+    node_t* rightmost() {
         return _rightmost;
     }
 
     /// @brief Get a const handle to the rightmost node of the tree
     /// @return A const handle to the rightmost node of the tree
-    const _node_t* rightmost() const {
+    const node_t* rightmost() const {
         return _rightmost;
     }
 
@@ -667,7 +676,7 @@ public:
     /// this tree
     /// @param destination The node which the moved subtree should be 
     /// @param root The root node of the subtree to move
-    void move_subtree(_node_t* destination, _node_t* subtree_root) {
+    void move_subtree(node_t* destination, node_t* subtree_root) {
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root),    "unsafe_tree", critical, "subtree root not in tree",             exception::parameter::invalid_value_error, "subtree_root", subtree_root);
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, destination),     "unsafe_tree", critical, "destination not in tree",              exception::parameter::invalid_value_error, "destination", destination);
         CPPTOOLS_DEBUG_ASSERT(subtree_root != _root,                  "unsafe_tree", critical, "cannot move the root of the tree",     exception::parameter::invalid_value_error, "subtree_root", subtree_root);
@@ -679,7 +688,7 @@ public:
         bool updating_leftmost  = emplacing_there_would_change_leftmost(destination);
         bool updating_rightmost = emplacing_there_would_change_rightmost(destination);
 
-        _node_t* parent = subtree_root->parent();
+        node_t* parent = subtree_root->parent();
         parent->remove_child(subtree_root->sibling_index());
         destination->insert_child(subtree_root);
 
@@ -713,7 +722,7 @@ public:
 
     /// @brief Erase an entire subtree and its values
     /// @param to_erase The root node of the subtree to erase
-    void erase_subtree(_node_t* subtree_root) {
+    void erase_subtree(node_t* subtree_root) {
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, subtree_root), "unsafe_tree", critical, "subtree root not in tree", exception::parameter::invalid_value_error, "subtree_root", subtree_root);
 
         if (subtree_root == _root) {
@@ -724,8 +733,8 @@ public:
         bool dropping_leftmost  = (subtree_root == _leftmost)  || (_leftmost->has_parent(subtree_root));
         bool dropping_rightmost = (subtree_root == _rightmost) || (_rightmost->has_parent(subtree_root));
 
-        // the actual node_t can be deleted afterwards
-        _node_t* parent = subtree_root->parent();
+        // the actual node can be deleted afterwards
+        node_t* parent = subtree_root->parent();
         if (parent) {
             parent->remove_child(subtree_root->sibling_index());
         } 
@@ -748,14 +757,14 @@ public:
     /// @exception Any exception thrown in the constructor of the emplaced value
     /// will be forwarded to the caller
     template<typename ...ArgTypes>
-    _node_t* emplace_node(_node_t* where, ArgTypes&&... args) CPPTOOLS_NOEXCEPT_RELEASE_AND((std::is_nothrow_constructible_v<value_type, ArgTypes...>)) {
+    node_t* emplace_node(node_t* where, ArgTypes&&... args) CPPTOOLS_NOEXCEPT_RELEASE_AND((std::is_nothrow_constructible_v<value_type, ArgTypes...>)) {
         CPPTOOLS_DEBUG_ASSERT(null(where) || in_range_keys(_nodes, where), "unsafe_tree", critical, "destination not in tree", exception::parameter::invalid_value_error, "where", where);
 
-        _node_t* child = make_node(std::forward<ArgTypes>(args)...);
+        node_t* child = make_node(std::forward<ArgTypes>(args)...);
 
         if (where == nullptr) [[unlikely]] {
             // insert tree root
-            _node_t* old_root = _root;
+            node_t* old_root = _root;
             _root = child;
             if (old_root != nullptr) {
                 child->insert_child(old_root);
@@ -787,11 +796,11 @@ public:
     /// concept for this tree's value type. The default merge strategy keeps the
     /// parent node's value, discarding that of the provided node.
     template<merge_strategy<T> merge_t = merge::keep>
-    void merge_with_parent(_node_t* n) {
+    void merge_with_parent(node_t* n) {
         CPPTOOLS_DEBUG_ASSERT(not_null(n),              "unsafe_tree", critical, "cannot merge null node with parent", exception::parameter::null_parameter_error, "n");
         CPPTOOLS_DEBUG_ASSERT(in_range_keys(_nodes, n), "unsafe_tree", critical, "node not in tree",                   exception::parameter::invalid_value_error,  "n", n);
 
-        _node_t* parent = n->parent();
+        node_t* parent = n->parent();
 
         CPPTOOLS_DEBUG_ASSERT(not_null(parent),         "unsafe_tree", critical, "cannot merge node with null parent", exception::parameter::invalid_value_error,  "n", n);
 
@@ -918,4 +927,5 @@ public:
  - _copy_assign_contents should be iterative (reuse _move_assign_contents)
  - reverberate allocator awareness in tree.hpp
  - swap
+ - investigate reusing nodes instead of clearing and then copying during copy-assignment
  */
