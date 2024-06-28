@@ -4,11 +4,9 @@
 #include <map>
 #include <string_view>
 
-namespace tools::internal::debug_log
-{
+namespace tools::internal::debug_log {
 
-enum level : unsigned char
-{
+enum level : unsigned char {
     none        = 0,
     critical    = 1,
     pedantic    = 2,

@@ -3,8 +3,7 @@
 
 #include <ranges>
 
-namespace tools::internal::debug_expr
-{
+namespace tools::internal::debug_expr {
 
 template<typename T>
 bool null(T* ptr) {
@@ -73,7 +72,7 @@ bool empty(const Range& r) {
 
 template<typename Range>
 bool not_empty(const Range& r) {
-    return !empty(r);
+    return !debug_expr::empty(r); // avoid ambiguity with std::empty which can be found through ADL
 }
 
 } // namespace tools::internal::debug_expr

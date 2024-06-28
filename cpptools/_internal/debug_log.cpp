@@ -3,11 +3,9 @@
 #include <iostream>
 #include <ostream>
 
-namespace tools::internal::debug_log
-{
+namespace tools::internal::debug_log {
 
-namespace
-{
+namespace {
     std::ostream& _out = std::cerr;
     const char* _level_names[] = {
         "none",
@@ -19,8 +17,7 @@ namespace
 
 std::map<std::string_view, level> channel_levels = {};
 
-void log(level lv, std::string_view channel, std::string_view message)
-{
+void log(level lv, std::string_view channel, std::string_view message) {
     auto it = channel_levels.find(channel);
     if (it != channel_levels.end() && (lv <= it->second))
     {
@@ -28,4 +25,4 @@ void log(level lv, std::string_view channel, std::string_view message)
     }
 }
 
-}
+} // namespace tools::internal::debug_log
