@@ -3,9 +3,7 @@
 
 #include <memory>
 
-#include <cpptools/utility/type_utils.hpp>
-
-namespace tools::oo
+namespace tools
 {
 
 /// @brief Interface for an object able to receive and process events related to

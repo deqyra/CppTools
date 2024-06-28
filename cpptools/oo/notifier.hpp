@@ -1,45 +1,37 @@
 #ifndef CPPTOOLS_OO_NOTIFIER_HPP
 #define CPPTOOLS_OO_NOTIFIER_HPP
 
-#include <functional>
 #include <unordered_map>
 
-namespace tools::oo
-{
+namespace tools {
 
-template <typename ...ArgTypes>
-class notifier
-{
+template<typename F>
+class notifier {
 public:
-    using listener_fun = void (*)(ArgTypes&&...);
+    using listener_fun = F;
 
 private:
     std::unordered_map<unsigned int, listener_fun> _listeners;
+
     unsigned int _count;
 
 public:
-    notifier() :
-        _listeners(),
-        _count(0)
-    {
+    notifier()
+        : _listeners()
+        , _count(0) {}
 
-    }
-
-    unsigned int add_subscriber(listener_fun callback)
-    {
+    unsigned int add_subscriber(listener_fun callback) {
         _listeners[_count] = callback;
         return _count++;
     }
 
-    void delete_subscriber(unsigned int id)
-    {
+    void delete_subscriber(unsigned int id) {
         _listeners.erase(id);
     }
 
-    void notify(ArgTypes&&... args) const
-    {
-        for (auto it = _listeners.begin(); it != _listeners.end(); it++)
-        {
+    template<typename... ArgTypes>
+    void notify(ArgTypes&&... args) const {
+        for (auto it = _listeners.begin(); it != _listeners.end(); it++) {
             it->second(std::forward<ArgTypes&&>(args)...);
         }
     }
@@ -47,4 +39,4 @@ public:
 
 } // namespace tools::oo
 
-#endif //CPPTOOLS__NOTIFIER_HPP
+#endif // CPPTOOLS__NOTIFIER_HPP
