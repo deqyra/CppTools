@@ -278,21 +278,17 @@ std::string from_range(
     std::string s{prefix};
     using std::ranges::cbegin;
     using std::ranges::cend;
+    using std::to_string;
 
     auto last = cend(range);
-    for (auto it = cbegin(range); it != last; it++)
-    {
-        if constexpr (std::is_same_v<std::remove_cvref_t<decltype(*it)>, std::string>)
-        {
+    for (auto it = cbegin(range); it != last; it++) {
+        if constexpr (std::is_same_v<std::remove_cvref_t<decltype(*it)>, std::string>) {
             s += elt_prefix + *it + elt_suffix;
-        }
-        else
-        {
+        } else {
             s += elt_prefix + to_string(*it) + elt_suffix;
         }
 
-        if (it != last - 1)
-        {
+        if (it != last - 1) {
             s += delimiter;
         }
     }
