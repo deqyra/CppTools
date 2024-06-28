@@ -60,8 +60,8 @@ private:
 
 public:
     template<typename ...ArgTypes>
-    node(ArgTypes&&... args) noexcept(std::is_nothrow_constructible_v<T, ArgTypes&&...>):
-        value{std::forward<ArgTypes&&>(args)...},
+    node(ArgTypes&&... args) noexcept(std::is_nothrow_constructible_v<T, ArgTypes...>):
+        value{std::forward<ArgTypes>(args)...},
         _parent(nullptr),
         _sibling_index(),
         _children()

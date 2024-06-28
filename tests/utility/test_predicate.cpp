@@ -2,19 +2,18 @@
 
 #include <vector>
 #include <algorithm>
-#include <functional>
 
 #include <cpptools/utility/predicate.hpp>
 
 #define TAGS "[predicate]"
 
-namespace tools::predicate
+namespace tools::pred
 {
     std::vector<int> values = {15, 3, 21, 14, 5, 9, 0};
     std::vector<bool> result = std::vector<bool>(values.size());
 
-    template<typename T>
-    void test_lambda(pred_t<T> pred)
+    template<predicate<int> P>
+    void test_lambda(P&& pred)
     {
         std::transform(values.begin(), values.end(), result.begin(), pred);
     }
@@ -60,4 +59,4 @@ namespace tools::predicate
         test_lambda(strictly_between(9, 14));
         REQUIRE(result == expected);
     }
-} // namespace tools::predicate
+} // namespace tools::pred
