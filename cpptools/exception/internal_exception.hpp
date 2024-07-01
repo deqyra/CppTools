@@ -6,15 +6,12 @@
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace tools::exception
-{
+namespace tools::exception {
 
-class internal_exception : public base_exception
-{
+class internal_exception : public base_exception {
 public:
     static constexpr error_category error_category = error_category::internal;
-    enum class ecode
-    {
+    enum class ecode     {
         out_of_memory           = 0,
         not_implemented         = 1,
         invalid_state           = 2,
@@ -25,12 +22,10 @@ public:
 };
 
 template<>
-constexpr std::string_view default_error_message(const internal_exception::ecode& code)
-{
+constexpr std::string_view default_error_message(const internal_exception::ecode& code) {
     using e = internal_exception::ecode;
 
-    switch (code)
-    {
+    switch (code) {
     case e::out_of_memory:
         return "Out of memory";
     case e::not_implemented:
@@ -50,12 +45,10 @@ constexpr std::string_view default_error_message(const internal_exception::ecode
 }
 
 template<>
-constexpr std::string_view to_string(const internal_exception::ecode& code)
-{
+constexpr std::string_view to_string(const internal_exception::ecode& code) {
     using e = internal_exception::ecode;
 
-    switch (code)
-    {
+    switch (code) {
     case e::out_of_memory:
         return "out_of_memory";
     case e::not_implemented:
@@ -74,8 +67,7 @@ constexpr std::string_view to_string(const internal_exception::ecode& code)
     }
 }
 
-namespace internal
-{
+namespace internal {
     using e = internal_exception::ecode;
 
     using out_of_memory_error         = exception<internal_exception, e::out_of_memory>;

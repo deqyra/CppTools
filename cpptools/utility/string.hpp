@@ -4,12 +4,13 @@
 #include <algorithm>
 #include <filesystem>
 #include <limits>
+#include <ranges>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
-#include "concepts.hpp"
+#include <cpptools/api.hpp>
 
 namespace tools::string
 {
@@ -18,39 +19,39 @@ namespace tools::string
 ///
 /// @param str String to process
 /// @param c Char to pop off the string
-void pop_char(std::string& str, char c);
+CPPTOOLS_API void pop_char(std::string& str, char c);
 
 /// @brief Remove any given trailing substring at the end of a string
 ///
 /// @param str String to process
 /// @param sub String to pop off str
-void pop_string(std::string& str, std::string_view sub);
+CPPTOOLS_API void pop_string(std::string& str, std::string_view sub);
 
 /// @brief Remove any single trailing '\r' at the end of a string
 ///
 /// @param str String to process
-void pop_cr(std::string& str);
+CPPTOOLS_API void pop_cr(std::string& str);
 
 /// @brief Remove any single trailing '\n' at the end of a string
 ///
 /// @param str String to process
-void pop_lf(std::string& str);
+CPPTOOLS_API void pop_lf(std::string& str);
 
 /// @brief Remove any trailing '\r\n' at the end of a string
 ///
 /// @param str String to process
-void pop_crlf(std::string& str);
+CPPTOOLS_API void pop_crlf(std::string& str);
 
 /// @brief Remove all carriage return characters in the provided string
 ///
 /// @param str String to process
-void strip_cr(std::string& str);
+CPPTOOLS_API void strip_cr(std::string& str);
 
 /// @brief Remove all the content that would be considered C / C++ comments in 
 /// the provided string
 ///
 /// @param str String to process
-void strip_c_comments(std::string& str);
+CPPTOOLS_API void strip_c_comments(std::string& str);
 
 /// @brief Check whether a string contains a certain character a certain amount
 /// of times
@@ -64,7 +65,7 @@ void strip_c_comments(std::string& str);
 ///
 /// @note When exact is false, the function checks whether c occurs at least n
 /// times in str.
-bool contains(
+CPPTOOLS_API bool contains(
     std::string_view str,
     char c,
     std::size_t n = 1,
@@ -75,17 +76,17 @@ bool contains(
 ///
 /// @param str String to process
 /// @param accept_minus Whether or not to accept a single hyphen as a minus sign
-bool is_integer(std::string_view str, bool accept_minus = true);
+CPPTOOLS_API bool is_integer(std::string_view str, bool accept_minus = true);
 
 /// @brief Check whether a string is only made of whitespaces
 ///
 /// @param str String to process
-bool is_whitespace(std::string_view str);
+CPPTOOLS_API bool is_whitespace(std::string_view str);
 
 /// @brief Remove whitespace characters from both ends of the string
 ///
 /// @param str String to process
-void trim(std::string& str);
+CPPTOOLS_API void trim(std::string& str);
 
 /// @brief Split a string into substrings based on a given delimiter
 ///
@@ -94,7 +95,7 @@ void trim(std::string& str);
 /// @param discard_empty Whether or not to discard empty tokens
 ///
 /// @return A vector filled with the found tokens
-std::vector<std::string> tokenize(
+CPPTOOLS_API std::vector<std::string> tokenize(
     std::string_view str,
     char delimiter,
     bool discard_empty = false
@@ -120,7 +121,7 @@ enum class non_integer_action
 /// token which does not represent an integer
 ///
 /// @return A vector filled with the found integers
-std::vector<std::size_t> parse_integer_sequence(
+CPPTOOLS_API std::vector<std::size_t> parse_integer_sequence(
     std::string_view str,
     char delimiter,
     non_integer_action action = non_integer_action::exception
@@ -134,7 +135,7 @@ std::vector<std::size_t> parse_integer_sequence(
 /// read input
 ///
 /// @return A string filled with the content of the read file
-std::string from_file(const std::filesystem::path& path, bool strip_cr = true);
+CPPTOOLS_API std::string from_file(const std::filesystem::path& path, bool strip_cr = true);
 
 /// @brief Take in two strings contain one or more new line characters, and
 /// concatenate them line by line
@@ -143,7 +144,7 @@ std::string from_file(const std::filesystem::path& path, bool strip_cr = true);
 /// @param second Second multi-line string
 ///
 /// @return A single string containing the result of the concatenation
-std::string multiline_concatenate(
+CPPTOOLS_API std::string multiline_concatenate(
     std::string_view first,
     std::string_view second
 );

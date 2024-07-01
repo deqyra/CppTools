@@ -62,8 +62,7 @@ public:
     // Print the menu and handle input.
     void show(Context& state, cli::streams& streams = cli::input::default_streams) {
         // While user did not ask to exit...
-        while (true)
-        {
+        while (true) {
             // Print menu header and options.
             streams.out << '\n';
             streams.out << tooltip() << ":" << std::endl;
@@ -74,10 +73,8 @@ public:
             int input = cli::input::prompt_bounded<int>("Please make a choice: ", 0, n_options, streams);
 
             // Handle exit if required.
-            if (input == 0)
-            {
-                if (_exit_command)
-                {
+            if (input == 0) {
+                if (_exit_command) {
                     _exit_command->run(state, streams);
                 }
                 break;
@@ -87,12 +84,9 @@ public:
             streams.out << '\n';
             streams.out << _commands[input - 1]->tooltip() << ":" << std::endl;
 
-            try
-            {
+            try {
                 _commands[input - 1]->run(state, streams);
-            }
-            catch (const std::exception& e)
-            {
+            } catch (const std::exception& e) {
                 // Informative error logging.
                 streams.err << "Exception thrown by command \"" << _commands[input - 1]->tooltip() << "\":\n";
                 streams.err << e.what() << '\n';
@@ -104,16 +98,14 @@ public:
 private:
     // Generate display string for a given tooltip.
     std::string _option_string(int n, std::string_view tooltip) {
-        std::string s = std::to_string(n) + ". " + std::string(tooltip) + "\n";
-        return s;
+        return std::to_string(n) + ". " + std::string(tooltip) + "\n";
     }
 
     // Generate display strings for all options.
     std::string_view _all_option_strings() {
         static std::string s = [this](){
             std::string result;
-            for (int i = 0; i < _commands.size(); i++)
-            {
+            for (int i = 0; i < _commands.size(); i++) {
                 result += _option_string(i + 1, _commands[i]->tooltip());
             }
             result += _option_string(0, _exit_name);

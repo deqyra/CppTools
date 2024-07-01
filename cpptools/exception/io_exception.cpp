@@ -18,8 +18,7 @@ io_exception::io_exception(std::filesystem::path stream_path) :
 
 }
 
-std::string_view io_exception::to_string() const
-{
+std::string_view io_exception::to_string() const {
     static const std::string result =
         std::string(base_exception::to_string()) + '\n' +
         "Stream name: " + _stream_name;

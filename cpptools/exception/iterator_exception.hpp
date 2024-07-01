@@ -1,24 +1,17 @@
 #ifndef CPPTOOLS_EXCEPTION_ITERATOR_EXCEPTION_HPP
 #define CPPTOOLS_EXCEPTION_ITERATOR_EXCEPTION_HPP
 
-#include <string>
 #include <string_view>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 #include "exception.hpp"
 #include "error_category.hpp"
 
-namespace tools::exception
-{
+namespace tools::exception {
 
-class iterator_exception : public base_exception
-{
+class iterator_exception : public base_exception {
 public:
     static constexpr enum error_category error_category = error_category::iterator;
-    enum class ecode
-    {
+    enum class ecode {
         incremented_past_end    = 0,
         decremented_past_begin  = 1,
         illegal_dereference     = 2,
@@ -47,10 +40,8 @@ private:
 */
 
 template<>
-constexpr std::string_view default_error_message<iterator_exception::ecode>(const iterator_exception::ecode& code)
-{
-    switch (code)
-    {
+constexpr std::string_view default_error_message<iterator_exception::ecode>(const iterator_exception::ecode& code) {
+    switch (code) {
     case iterator_exception::ecode::incremented_past_end:
         return "Iterator was incremented past end of container";
     case iterator_exception::ecode::decremented_past_begin:
@@ -64,10 +55,8 @@ constexpr std::string_view default_error_message<iterator_exception::ecode>(cons
 }
 
 template<>
-constexpr std::string_view to_string<iterator_exception::ecode>(const iterator_exception::ecode& code)
-{
-    switch (code)
-    {
+constexpr std::string_view to_string<iterator_exception::ecode>(const iterator_exception::ecode& code) {
+    switch (code) {
     case iterator_exception::ecode::incremented_past_end:
         return "incremented_past_end";
     case iterator_exception::ecode::decremented_past_begin:
@@ -80,8 +69,7 @@ constexpr std::string_view to_string<iterator_exception::ecode>(const iterator_e
     }
 }
 
-namespace iterator
-{
+namespace iterator {
     using e = iterator_exception::ecode;
 
     using incremented_past_end_error = exception<iterator_exception, e::incremented_past_end>;

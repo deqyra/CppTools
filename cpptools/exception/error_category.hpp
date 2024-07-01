@@ -3,11 +3,11 @@
 
 #include <string_view>
 
-namespace tools::exception
-{
+#include <cpptools/api.hpp>
 
-enum class error_category
-{
+namespace tools::exception {
+
+enum class error_category {
     unknown     = 0,
     internal    = 1,
     parameter   = 2,
@@ -16,7 +16,7 @@ enum class error_category
     io          = 5
 };
 
-std::string_view error_category_name(error_category cat);
+CPPTOOLS_API std::string_view error_category_name(error_category cat);
 
 } // namespace tools::exception
 

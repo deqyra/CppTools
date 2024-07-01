@@ -3,11 +3,9 @@
 
 #include <iostream>
 
-namespace tools::cli
-{
+namespace tools::cli {
 
-class streams
-{
+class streams {
 private:
     streams(const streams&) = delete;
     streams(streams&&) = delete;
@@ -19,13 +17,7 @@ public:
     std::ostream& out = std::cout;
     std::ostream& err = std::cerr;
 
-    streams() :
-        in(std::cin),
-        out(std::cout),
-        err(std::cerr)
-    {
-
-    }
+    streams() = default;
 
     streams(std::istream& in, std::ostream& out, std::ostream& err) :
         in(in),

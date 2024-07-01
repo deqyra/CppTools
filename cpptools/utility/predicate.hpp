@@ -3,16 +3,14 @@
 
 #include <concepts>
 
-namespace tools
-{
+namespace tools {
 
 template<typename F, typename T>
 concept predicate = requires(F& f, const T& v) {
     { f(v) } -> std::same_as<bool>;
 };
 
-namespace pred
-{
+namespace pred {
 
 template<typename T, predicate<T> P>
 decltype(auto) logical_not(P&& pred) {

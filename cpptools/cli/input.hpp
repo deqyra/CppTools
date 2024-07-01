@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include <cpptools/api.hpp>
 #include <cpptools/utility/string.hpp>
 
 #include "streams.hpp"
@@ -23,26 +24,26 @@ namespace detail {
     //
 
     template<>
-    std::string parse_as(std::string_view input);
+    CPPTOOLS_API std::string parse_as(std::string_view input);
 
     template<>
-    int parse_as(std::string_view input);
+    CPPTOOLS_API int parse_as(std::string_view input);
 
     template<>
-    bool parse_as(std::string_view input);
+    CPPTOOLS_API bool parse_as(std::string_view input);
 
     //
     // Specializations of type_name
     //
 
     template <>
-    std::string_view type_name<std::string>();
+    CPPTOOLS_API std::string_view type_name<std::string>();
 
     template <>
-    std::string_view type_name<int>();
+    CPPTOOLS_API std::string_view type_name<int>();
 
     template <>
-    std::string_view type_name<bool>();
+    CPPTOOLS_API std::string_view type_name<bool>();
 
 } // namespace detail
 

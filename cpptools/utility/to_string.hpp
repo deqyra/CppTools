@@ -1,20 +1,21 @@
 #ifndef CPPTOOLS_UTILITY_TO_STRING_HPP
 #define CPPTOOLS_UTILITY_TO_STRING_HPP
 
-#include <cstddef>
+#include <concepts>
 #include <cstdint>
 #include <iomanip>
 #include <source_location>
 #include <sstream>
 #include <string>
-#include <type_traits>
+
+#include <cpptools/api.hpp>
 
 namespace tools
 {
 
 namespace detail::to_string
 {
-    std::string to_string(const std::source_location& location);
+    CPPTOOLS_API std::string to_string(const std::source_location& location);
 
     template<typename T>
     std::string to_string(T* ptr)
@@ -40,7 +41,7 @@ namespace detail::to_string
             return to_string(t);
         }
 
-        const std::string& operator()(const std::string& t) const {
+        CPPTOOLS_API const std::string& operator()(const std::string& t) const {
             return t;
         }
     };

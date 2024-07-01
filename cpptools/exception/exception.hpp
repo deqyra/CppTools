@@ -8,6 +8,8 @@
 #include <type_traits>
 #include <utility>
 
+#include <cpptools/api.hpp>
+
 #include "error_category.hpp"
 
 namespace tools::exception
@@ -39,8 +41,7 @@ template<typename E>
 consteval std::string_view to_string(const E& code) = delete;
 
 template<typename T>
-concept concrete_exception = requires
-{
+concept concrete_exception = requires {
     std::is_base_of_v<base_exception, T>;
     std::is_enum_v<typename T::ecode>;
     std::is_same_v<decltype(T::error_category), error_category>;
@@ -56,8 +57,7 @@ concept concrete_exception = requires
 /// @tparam T Parent exception class. Must satisfy concrete_exception.
 /// @tparam code Error code related to T's handled error category.
 template<concrete_exception T, typename T::ecode code>
-class exception : public T
-{
+class exception : public T {
 private:
     std::source_location _source_location;
     std::string _message;
@@ -89,16 +89,14 @@ public:
     /// @brief Set a new message for this exception
     ///
     /// @param message The new message
-    exception& with_message(std::string_view message)
-    {
+    exception& with_message(std::string_view message) {
         _message = message;
         return *this;
     }
 };
 
 /// @brief Base class which has to be inherited by all new exception classes
-class base_exception : public std::exception
-{
+class base_exception : public std::exception {
 public:
     base_exception() = default;
     virtual ~base_exception() = default;
@@ -111,23 +109,21 @@ public:
     virtual       std::string_view      message()         const = 0;
     virtual       std::string&          message()               = 0;
 
-    virtual const char* what() const override;
+    CPPTOOLS_API virtual const char* what() const override;
 
-    virtual std::string_view to_string() const;
+    CPPTOOLS_API virtual std::string_view to_string() const;
 
 protected:
     mutable std::string _str;
 };
 
-std::ostream& operator<<(std::ostream& out, const base_exception& e);
+CPPTOOLS_API std::ostream& operator<<(std::ostream& out, const base_exception& e);
 
-class unknown_exception : public base_exception
-{
+class unknown_exception : public base_exception {
 public:
     static constexpr error_category error_category = error_category::unknown;
 
-    enum class ecode
-    {
+    enum class ecode {
         unknown = 0
     };
 };
