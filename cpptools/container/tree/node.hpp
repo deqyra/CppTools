@@ -1,7 +1,6 @@
 #ifndef CPPTOOLS_CONTAINER_TREE_NODE_HPP
 #define CPPTOOLS_CONTAINER_TREE_NODE_HPP
 
-#include <algorithm>
 #include <memory>
 #include <numeric>
 #include <type_traits>

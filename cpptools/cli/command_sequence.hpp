@@ -43,15 +43,11 @@ public:
     // Run the command sequence.
     virtual code run(Context& state, streams& streams = input::default_streams) override {
         // Run all commands in order.
-        for (auto& command : _commands)
-        {
+        for (auto& command : _commands) {
             code status;
-            try
-            {
+            try {
                 status = command->run(state, streams);
-            }
-            catch (const std::exception& e)
-            {
+            } catch (const std::exception& e) {
                 // Informative error logging.
                 streams.err << "Exception thrown:\n";
                 streams.err << e.what() << '\n';
@@ -60,8 +56,7 @@ public:
             }
 
             // If the command failed (but didn't throw)...
-            if (status != code::success)
-            {
+            if (status != code::success) {
                 // Log error and return prematurely.
                 streams.out << "Command \"" << command->tooltip() << "\" returned with value " << to_string(status) << "\n";
                 streams.out << "Command sequence \"" << _tooltip << "\" aborted." << std::endl;

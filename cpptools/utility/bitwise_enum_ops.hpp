@@ -5,8 +5,7 @@
 
 #include "concepts.hpp"
 
-namespace tools
-{
+namespace tools {
 
 /// @brief Controls whether operator overloads from namespace bitwise_enum_ops
 /// should participate in overload resolution for enum type E.
@@ -24,8 +23,7 @@ static constexpr bool enable_bitwise_enum_v = enable_bitwise_enum<E>::value;
 template<typename E>
 concept bitwise_enabled_enum = enable_bitwise_enum_v<E>;
 
-namespace bitwise_enum_ops
-{
+namespace bitwise_enum_ops {
 
 template<bitwise_enabled_enum E, typename i = std::underlying_type_t<E>>
 E operator&(const E& left, const E& right) {

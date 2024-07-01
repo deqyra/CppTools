@@ -1,12 +1,9 @@
 #include "shell.hpp"
 
-namespace tools::cli
-{
+namespace tools::cli {
 
-std::string to_string(shell_command_code c)
-{
-    switch (c)
-    {
+std::string to_string(shell_command_code c) {
+    switch (c) {
         case shell_command_code::exit:
             return "exit";
         case shell_command_code::success:

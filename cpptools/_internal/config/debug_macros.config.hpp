@@ -1,6 +1,3 @@
-#include <stdexcept>
-#include <cstring>
-
 #include <cpptools/exception/exception.hpp>
 
 #include <cpptools/_internal/assume.hpp>
@@ -134,10 +131,13 @@
 #   define @CONFIGURE_DEBUG_PROJECT_MACRO@_NOEXCEPT_RELEASE           noexcept(@CONFIGURE_DEBUG_PROJECT_MACRO@_LOCAL_DEBUG_MACRO == 0)
 #   define @CONFIGURE_DEBUG_PROJECT_MACRO@_NOEXCEPT_RELEASE_AND(cond) noexcept(@CONFIGURE_DEBUG_PROJECT_MACRO@_LOCAL_DEBUG_MACRO == 0 && (cond))
 # endif
+#else
+# define @CONFIGURE_DEBUG_PROJECT_MACRO@_NOEXCEPT_RELEASE           noexcept
+# define @CONFIGURE_DEBUG_PROJECT_MACRO@_NOEXCEPT_RELEASE_AND(cond) noexcept(cond)
 #endif
 
 #if @CONFIGURE_DEBUG_PROJECT_MACRO@_LOCAL_DEBUG_MACRO != 0
 # if @CONFIGURE_DEBUG_PROJECT_MACRO@_DEBUG_ENABLED == 0
 #   warning @CONFIGURE_DEBUG_PROJECT_MACRO@_LOCAL_DEBUG_MACRO is defined and non-zero but @CONFIGURE_DEBUG_PROJECT_MACRO@_DEBUG_ENABLED is not, debug assertions will NOT run
-# endif
+# endif 
 #endif

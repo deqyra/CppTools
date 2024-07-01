@@ -3,11 +3,9 @@
 
 #include <utility>
 
-namespace tools
-{
+namespace tools {
 
-struct hash_combine_params
-{
+struct hash_combine_params {
     size_t initial_value;
     size_t left_shift;
     size_t right_shift;
@@ -23,8 +21,7 @@ template <
     class T,
     hash_combine_params params = default_hash_combine_params
 >
-inline void hash_combine(std::size_t& s, const T& v)
-{
+inline void hash_combine(std::size_t& s, const T& v) {
     std::hash<T> h;
     s  ^= h(v)
         + params.initial_value

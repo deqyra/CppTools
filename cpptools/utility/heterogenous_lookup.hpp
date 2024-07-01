@@ -3,8 +3,7 @@
 
 #include <memory>
 
-namespace tools
-{
+namespace tools {
 
 template<typename T, typename D>
 struct unique_ptr_transparent_equality {

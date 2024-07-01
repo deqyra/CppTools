@@ -1,8 +1,6 @@
 #include "range_exception.hpp"
 #include "exception.hpp"
 
-#include <sstream>
-
 namespace tools::exception
 {
 

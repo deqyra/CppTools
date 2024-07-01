@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace tools::thread
+namespace tools
 {
 
 /// @brief Interface for a class implementing an interruptible process.
@@ -58,6 +58,6 @@ public:
 
 using interruptible_ptr = std::unique_ptr<interruptible>;
 
-} // namespace tools::thread
+} // namespace tools
 
 #endif//CPPTOOLS_THREAD_INTERFACES_INTERRUPTIBLE_HPP
