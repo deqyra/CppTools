@@ -4,8 +4,7 @@
 #include <concepts>
 #include <type_traits>
 
-namespace tools
-{
+namespace tools {
 
 /// @brief Satisfied by any type on which a \c to_string function can be called.
 /// Such a function must be visible (possibly through ADL) at the point of usage

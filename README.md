@@ -18,13 +18,12 @@ Non-exhaustive summary of the cool stuff in there:
 See [**`list.todo`**][todo] for a quick overview of what is likely to be worked
 on at present.
 
+[tree]:             https://github.com/deqyra/CppTools/blob/master/cpptools/container
+[ex]:               https://github.com/deqyra/CppTools/blob/master/cpptools/exception/exception.hpp
 [cli]:              https://github.com/deqyra/CppTools/tree/master/cpptools/cli
 [picross_cli]:      https://github.com/deqyra/PicrossEngine/blob/master/main.cpp#L48
 [shell]:            https://github.com/deqyra/CppTools/tree/master/cpptools/cli/shell.hpp
 [picross_shell]:    https://github.com/deqyra/PicrossEngine/blob/master/picross_cli/cli_modify_grid_command.cpp#L41
-[tree]:             https://github.com/deqyra/CppTools/blob/master/cpptools/container
-[ex]:               https://github.com/deqyra/CppTools/blob/master/cpptools/exception/exception.hpp
-[sine]:             https://github.com/deqyra/CppTools/blob/master/cpptools/math/sine_generator.hpp
 [interruptible]:    https://github.com/deqyra/CppTools/blob/master/cpptools/thread/interfaces/interruptible.hpp
 [worker]:           https://github.com/deqyra/CppTools/blob/master/cpptools/thread/worker.hpp
 [bitwise_enum_ops]: https://github.com/deqyra/CppTools/blob/master/cpptools/utility/bitwise_enum_ops.hpp

@@ -1,8 +1,11 @@
 #ifndef CPPTOOLS_INTERNAL_DEBUG_LOG_HPP
 #define CPPTOOLS_INTERNAL_DEBUG_LOG_HPP
 
-#include <map>
+#include <array>
+#include <iostream>
 #include <string_view>
+
+#include <cpptools/api.hpp>
 
 namespace tools::internal::debug_log {
 
@@ -13,9 +16,16 @@ enum level : unsigned char {
     extra       = 3
 };
 
-extern std::map<std::string_view, level> channel_levels;
+inline constexpr std::array<std::string_view, 4> _level_names = {
+    "none",
+    "critical",
+    "pedantic",
+    "extra"
+};
 
-void log(level lv, std::string_view channel, std::string_view message);
+inline void log(level lv, std::string_view channel, std::string_view message) {
+    std::cerr << '[' << _level_names[lv] << "][" << channel << "] " << message << std::endl;
+}
 
 } // namespace tools::internal::debug_log
 

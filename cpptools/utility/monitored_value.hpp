@@ -2,6 +2,7 @@
 #define CPPTOOLS_UTILITY_MONITORED_VALUE_HPP
 
 #include <utility>
+#include <functional>
 
 namespace tools {
 

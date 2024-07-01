@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 
+#include <cpptools/api.hpp>
 #include <cpptools/cli/streams.hpp>
 #include <cpptools/cli/input.hpp>
 #include <cpptools/utility/string.hpp>
@@ -21,7 +22,7 @@ enum class shell_command_code {
     not_found = 3,
 };
 
-std::string to_string(shell_command_code c);
+CPPTOOLS_API std::string to_string(shell_command_code c);
 
 struct shell_command_keywords {
     static constexpr std::string_view help = "help";
