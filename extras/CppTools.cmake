@@ -1,6 +1,6 @@
 #[[
 
-This CMake module defines function cpptools_configure_debug_macros, which can be
+This CMake script defines function cpptools_configure_debug_macros, which can be
 used to tailor and import CppTools' debug macros in another project.
 
 #]]

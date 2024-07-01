@@ -2,7 +2,8 @@
 #define CPPTOOLS_UTILITY_CLAMPED_RANGE_HPP
 
 #include <algorithm>
-#include "concepts.hpp"
+
+#include <cpptools/utility/concepts.hpp>
 
 namespace tools {
 

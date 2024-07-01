@@ -4,6 +4,8 @@
 #include <string>
 #include <string_view>
 
+#include <cpptools/api.hpp>
+
 #include "streams.hpp"
 #include "input.hpp"
 
@@ -14,7 +16,7 @@ enum class command_code {
     failure = -1
 };
 
-std::string to_string(command_code c);
+CPPTOOLS_API std::string to_string(command_code c);
 
 template<typename Context>
 class command {

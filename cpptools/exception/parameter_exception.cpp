@@ -1,7 +1,5 @@
 #include "parameter_exception.hpp"
 
-#include <sstream>
-
 namespace tools::exception
 {
 
@@ -12,18 +10,15 @@ parameter_exception::parameter_exception(std::string_view parameter_name, std::s
 {
 }
 
-std::string_view parameter_exception::parameter_name() const
-{
+std::string_view parameter_exception::parameter_name() const {
     return _parameter_name;
 }
 
-std::string_view parameter_exception::parameter_value() const
-{
+std::string_view parameter_exception::parameter_value() const {
     return _parameter_value;
 }
 
-std::string_view parameter_exception::to_string() const
-{
+std::string_view parameter_exception::to_string() const {
     _str = std::string(base_exception::to_string()) + '\n' +
         "Parameter: " + _parameter_name + ", value: " + _parameter_value;
 
