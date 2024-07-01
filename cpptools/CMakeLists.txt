@@ -1,7 +1,6 @@
-# Build target
-add_library( cpptools
+# Compile library
+add_library( cpptools_objects OBJECT
     _internal/assume.hpp
-    _internal/debug_log.cpp
     _internal/debug_log.hpp
     _internal/debug_macros.hpp
     _internal/undef_debug_macros.hpp
@@ -50,15 +49,104 @@ add_library( cpptools
     utility/to_string.hpp
 )
 
-if( ${CMAKE_BUILD_TYPE} STREQUAL Debug )
-    target_compile_definitions( cpptools PUBLIC
-        CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH=1
+set( CPPTOOLS_ENABLE_DEBUG $<CONFIG:Debug,RelWithDebInfo> )
+
+target_include_directories( cpptools_objects
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..> # usage from source tree
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>  # usage from install site
+)
+
+target_compile_definitions( cpptools_objects
+    PUBLIC  CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH=${CPPTOOLS_ENABLE_DEBUG}
+    PRIVATE CPPTOOLS_DLL_EXPORT=1
+)
+
+if( MSVC )
+    target_compile_options( cpptools_objects
+        PRIVATE "/wd4068;"
     )
 endif( )
 
-target_include_directories(
-    cpptools PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
+
+# Usage interface
+add_library( cpptools_interface INTERFACE )
+
+target_include_directories( cpptools_interface
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..> # usage from source tree
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>  # usage from install site
 )
 
-export( TARGETS cpptools )
+target_compile_definitions( cpptools_interface
+    INTERFACE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH=${CPPTOOLS_ENABLE_DEBUG}
+)
+
+if( MSVC )
+    target_compile_options( cpptools_interface
+        INTERFACE "/wd4068;"
+    )
+endif( )
+
+# Static library
+add_library( cpptools_static STATIC
+    $<TARGET_OBJECTS:cpptools_objects>
+)
+target_link_libraries( cpptools_static
+    PUBLIC cpptools_interface
+)
+
+# Shared library
+add_library( cpptools_shared SHARED
+    $<TARGET_OBJECTS:cpptools_objects>
+)
+target_link_libraries( cpptools_shared
+    PUBLIC cpptools_interface
+)
+target_compile_definitions( cpptools_shared
+    INTERFACE CPPTOOLS_DLL_IMPORT=1
+)
+
+# Install
+include( GNUInstallDirs )
+
+install( TARGETS cpptools_static cpptools_shared cpptools_interface
+    EXPORT cpptools-config 
+    LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}/$<CONFIG>"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/$<CONFIG>"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/$<CONFIG>"
+)
+
+install( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.hpp"
+    PATTERN "*.config.hpp" EXCLUDE
+    PATTERN "_internal/config/" EXCLUDE
+)
+
+set( INSTALL_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cpptools/cmake ) # this supports side-by-side multilib (x86 vs x64) setups for free so why not
+
+set( CPPTOOLS_STATIC_OR_SHARED static )
+if ( ${BUILD_SHARED_LIBS} )
+    set( CPPTOOLS_STATIC_OR_SHARED shared )
+endif( )
+
+set( CPPTOOLS_TEMPLATE_CONFIG ${CMAKE_CURRENT_LIST_DIR}/../cmake/cpptools-config.config.cmake )
+
+include( CMakePackageConfigHelpers )
+configure_package_config_file(${CPPTOOLS_TEMPLATE_CONFIG} cpptools-config.cmake INSTALL_DESTINATION ${INSTALL_CMAKE_DIR})
+
+install( EXPORT cpptools-config
+    NAMESPACE cpptools::
+    DESTINATION ${INSTALL_CMAKE_DIR}
+)
+
+# Versioning support
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/cpptools-config-version.cmake
+    COMPATIBILITY ExactVersion
+)
+
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/cpptools-config-version.cmake
+    DESTINATION ${INSTALL_CMAKE_DIR}
+)

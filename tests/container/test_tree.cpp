@@ -5,18 +5,12 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 
-#define CPPTOOLS_DEBUG_ENABLED 1
-#define CPPTOOLS_DEBUG_POLICY CPPTOOLS_DEBUG_POLICY_LOG_AND_THROW
-#define CPPTOOLS_DEBUG_TREE 1
+//#include <cpptools/_internal/force_enable_debug.hpp>
 
 #include <cpptools/container/tree.hpp>
 #include <cpptools/utility/merge_strategy.hpp>
 
 #include "tree_test_utilities.hpp"
-
-#undef CPPTOOLS_DEBUG_ENABLED
-#undef CPPTOOLS_DEBUG_POLICY
-#undef CPPTOOLS_DEBUG_TREE
 
 namespace stdv = std::views;
 using namespace Catch::Matchers;

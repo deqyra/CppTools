@@ -49,7 +49,7 @@ target_include_directories( cpptools_tests PUBLIC
     ${CMAKE_SOURCE_DIR}
 )
 target_link_libraries( cpptools_tests
-    cpptools Catch2::Catch2WithMain
+    cpptools_static Catch2::Catch2WithMain
 )
 
 catch_discover_tests(cpptools_tests

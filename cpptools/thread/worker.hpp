@@ -2,19 +2,16 @@
 #define CPPTOOLS_THREAD_WORKER_HPP
 
 #include <condition_variable>
-#include <functional>
 #include <future>
 #include <memory>
 #include <mutex>
-#include <thread>
 
-#include "interfaces/interruptible.hpp"
+#include <cpptools/api.hpp>
+#include <cpptools/thread/interfaces/interruptible.hpp>
 
-namespace tools::thread
-{
+namespace tools::thread {
 
-class worker : public interruptible
-{
+class worker : public interruptible {
 public:
     using task_fun = void (*)(void);
 private:
@@ -104,7 +101,7 @@ public:
     /// @param on_finalize Function to execute once the task is done running.
     /// @param on_resume Function to execute upon resuming after the task paused.
     /// @param on_pause Function to execute upon pause the task.
-    worker(
+    CPPTOOLS_API worker(
         task_fun task,
         bool start_now = true,
         task_fun on_start = [](){},
@@ -112,7 +109,7 @@ public:
         task_fun on_resume = [](){},
         task_fun on_pause = [](){}
     );
-    ~worker();
+    CPPTOOLS_API ~worker();
 
     // Moving is unsafe. If moving is needed, use unique_ptr<worker>.
     worker(worker&&) = delete;
@@ -123,23 +120,23 @@ public:
     ///                                       ///
     /////////////////////////////////////////////
 
-    virtual void finalize();
+    CPPTOOLS_API virtual void finalize();
 
-    virtual bool finalized();
+    CPPTOOLS_API virtual bool finalized();
 
-    virtual void wait_until_finalized(bool finalize_now = true);
+    CPPTOOLS_API virtual void wait_until_finalized(bool finalize_now = true);
 
-    virtual void pause();
+    CPPTOOLS_API virtual void pause();
 
-    virtual bool paused();
+    CPPTOOLS_API virtual bool paused();
 
-    virtual void wait_until_paused(bool pause_now = true);
+    CPPTOOLS_API virtual void wait_until_paused(bool pause_now = true);
 
-    virtual void run();
+    CPPTOOLS_API virtual void run();
 
-    virtual bool running();
+    CPPTOOLS_API virtual bool running();
 
-    virtual void wait_until_running(bool run_now = true);
+    CPPTOOLS_API virtual void wait_until_running(bool run_now = true);
 };
 
 using worker_ptr = std::unique_ptr<worker>;

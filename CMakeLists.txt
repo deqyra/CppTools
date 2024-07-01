@@ -4,7 +4,9 @@
 #                                                                              #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.24)
+
+
 
 ################################################################################
 #                                                                              #
@@ -13,10 +15,6 @@ cmake_minimum_required(VERSION 3.11)
 ################################################################################
 
 option( CPPTOOLS_SKIP_TESTS "Whether or not to skip tests" OFF )
-
-if( WIN32 AND BUILD_SHARED_LIBS )
-    set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-endif( )
 
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
@@ -31,7 +29,12 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 project( cpptools
     DESCRIPTION "C++ tools developed for use in other projects"
     LANGUAGES CXX
+    VERSION 0.1.4
 )
+
+message( VERBOSE "         cpptools v${CMAKE_PROJECT_VERSION}" )
+message( VERBOSE "----------------------------------" )
+message( VERBOSE "https://github.com/deqyra/CppTools" )
 
 set( CMAKE_CXX_STANDARD 23 )
 
@@ -48,6 +51,8 @@ cpptools_configure_debug_macros( CPPTOOLS ${CMAKE_CURRENT_SOURCE_DIR}/cpptools/_
 
 add_subdirectory( cpptools )
 
+
+
 ################################################################################
 #                                                                              #
 #                                 Unit tests                                   #
@@ -59,24 +64,11 @@ if( NOT CPPTOOLS_SKIP_TESTS )
     add_subdirectory( tests )
 endif(  )
 
-# Install targets
-install(
-    TARGETS cpptools
-    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
-)
 
-install(
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tools"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
-    FILES_MATCHING 
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-    PATTERN "*.hxx"
-)
 
 ################################################################################
 #                                                                              #
-#                                 Unit tests                                   #
+#                                Clang format                                  #
 #                                                                              #
 ################################################################################
 

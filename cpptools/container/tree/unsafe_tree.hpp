@@ -2,7 +2,6 @@
 #define CPPTOOLS_CONTAINER_TREE_UNSAFE_TREE_HPP
 
 #include <algorithm>
-#include <functional>
 #include <memory>
 #include <ranges>
 #include <stack>
@@ -87,10 +86,11 @@ public:
     using const_pointer     = typename _al_traits::const_pointer;
     using difference_type   = typename _al_traits::difference_type;
 
-private:
+protected:
     static constexpr bool NoExceptErasure = noexcept(std::declval<storage_t>().erase(std::declval<_key_type>()));
     static constexpr bool NoExceptSwap    = noexcept(std::swap(std::declval<storage_t&>(), std::declval<storage_t&>()));
 
+private:
     static const_reference _value_const_ref_from_storage_value(const typename storage_t::value_type& ptr) {
         return ptr->value;
     }
