@@ -12,59 +12,46 @@
 
 #include <cpptools/api.hpp>
 
-namespace tools::string
-{
+namespace tools {
 
 /// @brief Remove any given single trailing character at the end of a string
-///
 /// @param str String to process
 /// @param c Char to pop off the string
 CPPTOOLS_API void pop_char(std::string& str, char c);
 
 /// @brief Remove any given trailing substring at the end of a string
-///
 /// @param str String to process
 /// @param sub String to pop off str
 CPPTOOLS_API void pop_string(std::string& str, std::string_view sub);
 
 /// @brief Remove any single trailing '\r' at the end of a string
-///
 /// @param str String to process
 CPPTOOLS_API void pop_cr(std::string& str);
 
 /// @brief Remove any single trailing '\n' at the end of a string
-///
 /// @param str String to process
 CPPTOOLS_API void pop_lf(std::string& str);
 
 /// @brief Remove any trailing '\r\n' at the end of a string
-///
 /// @param str String to process
 CPPTOOLS_API void pop_crlf(std::string& str);
 
 /// @brief Remove all carriage return characters in the provided string
-///
 /// @param str String to process
 CPPTOOLS_API void strip_cr(std::string& str);
 
 /// @brief Remove all the content that would be considered C / C++ comments in 
 /// the provided string
-///
 /// @param str String to process
 CPPTOOLS_API void strip_c_comments(std::string& str);
 
-/// @brief Check whether a string contains a certain character a certain amount
-/// of times
-///
+/// @brief Check whether a string contains a certain character a certain amount of times
 /// @param str String to process
 /// @param c Char to search for
 /// @param n Minimal number of occurrences of c
 /// @param exact Whether c must occur exactly n times in str
-///
 /// @return Whether str contains c as many times as described by n and exact
-///
-/// @note When exact is false, the function checks whether c occurs at least n
-/// times in str.
+/// @note When exact is false, the function checks whether c occurs at least n times in str.
 CPPTOOLS_API bool contains(
     std::string_view str,
     char c,
@@ -73,27 +60,22 @@ CPPTOOLS_API bool contains(
 );
 
 /// @brief Check whether a string is only made of digits
-///
 /// @param str String to process
 /// @param accept_minus Whether or not to accept a single hyphen as a minus sign
 CPPTOOLS_API bool is_integer(std::string_view str, bool accept_minus = true);
 
 /// @brief Check whether a string is only made of whitespaces
-///
 /// @param str String to process
 CPPTOOLS_API bool is_whitespace(std::string_view str);
 
 /// @brief Remove whitespace characters from both ends of the string
-///
 /// @param str String to process
 CPPTOOLS_API void trim(std::string& str);
 
 /// @brief Split a string into substrings based on a given delimiter
-///
 /// @param str String to process
 /// @param delimiter Char between substrings
 /// @param discard_empty Whether or not to discard empty tokens
-///
 /// @return A vector filled with the found tokens
 CPPTOOLS_API std::vector<std::string> tokenize(
     std::string_view str,
@@ -101,10 +83,9 @@ CPPTOOLS_API std::vector<std::string> tokenize(
     bool discard_empty = false
 );
 
-/// @brief Collection of literals describing available behaviours for function
-/// parse_integer_sequence upon encountering a non-integer token
-enum class non_integer_action
-{
+/// @brief Available behaviours for function parse_integer_sequence upon
+/// encountering a non-integer token
+enum class non_integer_action {
     /// @brief Drop non-integer tokens
     drop,
     /// @brief Consider non-integer tokens as 0-valued
@@ -114,12 +95,10 @@ enum class non_integer_action
 };
 
 /// @brief Parse an integer sequence from a string
-///
 /// @param str String to process
 /// @param delimiter Char between integers
 /// @param action Literal describing the action to take upon encountering a
 /// token which does not represent an integer
-///
 /// @return A vector filled with the found integers
 CPPTOOLS_API std::vector<std::size_t> parse_integer_sequence(
     std::string_view str,
@@ -127,53 +106,49 @@ CPPTOOLS_API std::vector<std::size_t> parse_integer_sequence(
     non_integer_action action = non_integer_action::exception
 );
 
-/// @brief Open the file located at the provided path and read its contents into
-/// a string
-///
+/// @brief Open the file located at the provided path and read its contents into a string
 /// @param path The path to the file
-/// @param strip_cr Whether or not to strip carriage return characters from the
-/// read input
-///
+/// @param strip_cr Whether or not to strip carriage return characters from the read input
 /// @return A string filled with the content of the read file
 CPPTOOLS_API std::string from_file(const std::filesystem::path& path, bool strip_cr = true);
 
 /// @brief Take in two strings contain one or more new line characters, and
 /// concatenate them line by line
-///
 /// @param first First multi-line string
 /// @param second Second multi-line string
-///
 /// @return A single string containing the result of the concatenation
 CPPTOOLS_API std::string multiline_concatenate(
     std::string_view first,
     std::string_view second
 );
 
+/// @brief Convert a wide string into a narrow string
+/// @param wstr The wide string to convert
+/// @return A narrow string
+CPPTOOLS_API std::string narrow(std::wstring_view wstr);
+
+/// @brief Convert a narrow string into a wide string
+/// @param wstr The narrow string to convert
+/// @return A wide string
+CPPTOOLS_API std::wstring widen(std::string_view str);
+
 /// @brief Parse two integers forming the boundaries of an interval
-///
 /// @tparam int_t Type of integral values to parse.
-///
 /// @param str The string to process
 /// @param delimiter The character separating the integers
-///
 /// @return A pair with the two parsed boundaries.
-///
 /// @exception If the function cannot parse an integral value as the result of
 /// its processing at any point, it will throw an std::invalid_argument error.
-///
 /// @note The function does not care about ordering of the interval boundaries
 /// in the input string. The returned pair's first member will always receive
 /// the lower boundary of the read interval, and its second member will always 
 /// the higher boundary.
-///
 /// @note If a boundary is omitted in the input string, it will be assigned
 /// std::numeric_limits<int_t>::min() or max() depending on which boundary is
 /// missing. Two omitted boundaries will effectively turn into the range 
 /// [std::numeric_limits<int_t>::min() ; max()].
-/// 
 /// @note If a boundary falls outside the range of values that can be held int_t
 /// when parsed, it will be clamped to the accepted range of int_t.
-///
 /// @note If the delimiter cannot be found in the input string, the function 
 /// will attempt to parse it as a single integral value and return the interval
 /// [value ; value].
@@ -267,7 +242,6 @@ std::pair<int_t, int_t> parse_int_range(std::string_view str, char delimiter)
 }
 
 /// @brief Return a string representation of the contents of a range
-///
 /// @param str String to process
 template<std::ranges::range R>
 std::string from_range(
@@ -299,6 +273,6 @@ std::string from_range(
     return s;
 }
 
-} // namespace tools::string
+} // namespace tools
 
 #endif//CPPTOOLS_UTILITY_STRING_HPP
