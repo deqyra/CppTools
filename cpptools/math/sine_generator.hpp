@@ -2,89 +2,71 @@
 #define CPPTOOLS_MATH_SINE_GENERATOR_HPP
 
 #include <chrono>
-#include <cmath>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <numbers>
 
-namespace tools::math
-{
+namespace tools {
 
 template<typename prec = float>
-class sine_generator
-{
+class sine_generator {
 private:
-    prec _frequency;
-    prec _running_cycle;
-    std::chrono::system_clock::time_point _last_time;
-    bool _running;
+    using Clock = std::chrono::steady_clock;
+    static constexpr prec pi = static_cast<prec>(std::numbers::pi);
 
-    void _constrain_phase()
-    {
-        while (_running_cycle > M_PI) _running_cycle -= (prec)(2.0) * (prec)M_PI;
-    }
+    prec _frequency;
+    prec _phase;
+    Clock::time_point _last_time;
+    bool _running;
 
 public:
     sine_generator(prec frequency, bool start = false) :
         _frequency(frequency),
-        _running_cycle(0.0),
+        _phase(0.0),
         _running(start)
     {
-        _last_time = std::chrono::system_clock::now();
+        _last_time = Clock::now();
     }
 
     // Get the frequency (Hz) at which the generated sine runs
-    prec get_frequency()
-    {
+    prec get_frequency() {
         return _frequency;
     }
 
     // Set the frequency (Hz) at which the generated sine runs
-    void set_frequency(prec freq)
-    {
+    void set_frequency(prec freq) {
         // Update the current value using the current frequency up to this point
         value();
         // Register new frequency
         _frequency = freq;
     }
 
-    // Start the generator and get the current value of the generated sine
-    prec start()
-    {
-        prec value = value();
+    // Start the generator
+    void start() {
         _running = true;
-        return value;
     }
 
-    // Pause the generator and get the current value of the generated sine
-    prec pause()
-    {
+    // Pause the generator
+    void pause() {
         prec value = value();
         _running = false;
-        return value;
     }
 
     // Get the current value of the generated sine
-    prec value()
-    {
-        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-        if (_running)
-        {
-            std::chrono::duration<prec> delta = now - _last_time;
-            _running_cycle += _frequency * delta.count();
-            _constrain_phase();
+    prec value() {
+        if (_running) {
+            auto now = Clock::now();
+            auto delta = std::chrono::duration_cast<std::chrono::seconds>(now - _last_time);
+            _last_time = now;
+            _phase += _frequency * delta.count();
         }
-        _last_time = now;
-        return std::sin(_running_cycle);
+        return std::sin(_phase);
     }
 
     // Set the state of the current generator cycle to a given value (will be mod'ed inside ]-Pi;Pi])
-    void set_phase(prec value)
-    {
-        _running_cycle = value;
-        _constrain_phase();
+    void set_phase(prec value) {
+        _phase = std::fmod(value + pi, pi * 2) - pi;
     }
 };
 
-} // namespace tools::math
+} // namespace tools
 
 #endif//CPPTOOLS_MATH_SINE_GENERATOR_HPP
