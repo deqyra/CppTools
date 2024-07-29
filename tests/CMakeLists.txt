@@ -44,6 +44,7 @@ add_executable( cpptools_tests
     container/tree_test_utilities.hpp
     utility/test_string.cpp
     utility/test_predicate.cpp
+    utility/test_ranges.cpp
 )
 target_include_directories( cpptools_tests PUBLIC
     ${CMAKE_SOURCE_DIR}

@@ -47,10 +47,12 @@ add_library( cpptools_objects OBJECT
     utility/map.hpp
     utility/merge_strategy.hpp
     utility/predicate.hpp
+    utility/ranges.hpp
     utility/string.cpp
     utility/string.hpp
     utility/to_string.cpp
     utility/to_string.hpp
+    utility/detail/range_base.hpp
 )
 
 set( CPPTOOLS_ENABLE_DEBUG $<CONFIG:Debug,RelWithDebInfo> )
