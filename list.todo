@@ -2,6 +2,8 @@ CppTools:
     (partially imported from RenderBoi on 20-11-25 09:28)
     ✔ Go over basically everything to see what needs improving @done(22-09-06 13:32)
     ✔ Put documentation EVERYWHERE @done(24-04-07 23:16)
+    ☐ `noexcept` everything, ESPECIALLY MOVE CONSTRUCTORS
+    ☐ `constexpr` everything
     Iterable Tools:
         ✘ In `stripElementFromIterable` the iterator may be invalidated @cancelled(22-09-06 13:32)
         ✔ useless now lol, remove @done(24-06-28 14:03)
@@ -33,4 +35,4 @@ CppTools:
     CLI:
         ✘ Figure out std::initializer_list constructors for std::unique_ptr @cancelled(24-01-01 22:23)
         ☐ Store command help strings ?
-        ☐ Arg parsing facility
+        ✔ Arg parsing facility @done(24-07-26 23:22)
