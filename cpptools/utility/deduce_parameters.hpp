@@ -1,7 +1,7 @@
 #ifndef CPPTOOLS_UTILITY_DEDUCE_PARAMETERS_HPP
 #define CPPTOOLS_UTILITY_DEDUCE_PARAMETERS_HPP
 
-#include <utility>
+#include <tuple>
 
 namespace tools {
 

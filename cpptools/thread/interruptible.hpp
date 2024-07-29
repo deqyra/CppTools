@@ -1,14 +1,10 @@
 #ifndef CPPTOOLS_THREAD_INTERFACES_INTERRUPTIBLE_HPP
 #define CPPTOOLS_THREAD_INTERFACES_INTERRUPTIBLE_HPP
 
-#include <memory>
-
-namespace tools
-{
+namespace tools {
 
 /// @brief Interface for a class implementing an interruptible process.
-class interruptible
-{
+class interruptible {
 public:
     /// @brief Ask for the threaded process to stop processing and cleanly exit.
     virtual void finalize() = 0;
@@ -55,8 +51,6 @@ public:
     /// requested to resume.
     virtual void wait_until_running(bool pause_now = true) = 0;
 };
-
-using interruptible_ptr = std::unique_ptr<interruptible>;
 
 } // namespace tools
 

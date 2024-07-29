@@ -33,9 +33,9 @@ add_library( cpptools_objects OBJECT
     exception/parameter_exception.hpp 
     exception/lookup_exception.hpp 
     math/sine_generator.hpp
+    thread/interruptible.hpp
     thread/worker.cpp
     thread/worker.hpp
-    thread/interfaces/interruptible.hpp
     utility/bitwise_enum_ops.hpp
     utility/concepts.hpp
     utility/deduce_parameters.hpp
@@ -49,7 +49,9 @@ add_library( cpptools_objects OBJECT
     utility/string.cpp
     utility/string.hpp
     utility/to_string.hpp
+    utility/type_traits.hpp
     utility/unary.hpp
+    utility/detail/allocator.hpp
     utility/detail/range_base.hpp
 )
 

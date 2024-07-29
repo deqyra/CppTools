@@ -14,11 +14,10 @@
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
 #include <cpptools/exception/iterator_exception.hpp>
-#include <cpptools/utility/allocator.hpp>
 #include <cpptools/utility/heterogenous_lookup.hpp>
 #include <cpptools/utility/merge_strategy.hpp>
+#include <cpptools/utility/detail/allocator.hpp>
 
-#include "cpptools/container/tree/node.hpp"
 #include "node.hpp"
 
 #ifndef CPPTOOLS_DEBUG_UNSAFE_TREE

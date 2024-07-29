@@ -3,11 +3,10 @@
 
 #include <condition_variable>
 #include <future>
-#include <memory>
 #include <mutex>
 
 #include <cpptools/api.hpp>
-#include <cpptools/thread/interfaces/interruptible.hpp>
+#include <cpptools/thread/interruptible.hpp>
 
 namespace tools {
 

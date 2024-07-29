@@ -2,7 +2,6 @@
 #define CPPTOOLS_UTILITY_PREDICATE_HPP
 
 #include <concepts>
-#include <utility>
 
 #include <cpptools/utility/deduce_parameters.hpp>
 
