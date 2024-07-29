@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "command.hpp"
-#include "input.hpp"
 
 namespace tools::cli {
 
@@ -41,7 +40,7 @@ public:
     }
 
     // Run the command sequence.
-    virtual code run(Context& state, streams& streams = input::default_streams) override {
+    virtual code run(Context& state, streams& streams = default_streams) override {
         // Run all commands in order.
         for (auto& command : _commands) {
             code status;

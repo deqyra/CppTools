@@ -25,24 +25,21 @@ using test_menu_command = menu_command<test_state, N>;
 template<std::size_t N>
 using test_command_sequence = command_sequence<test_state, N>;
 
-class test_command1 : public test_command
-{
+class test_command1 : public test_command {
 public:
     test_command1() : test_command() {}
     std::string_view tooltip() const override;
     code run(test_state& state, streams& streams) override;
 };
 
-class test_command2 : public test_command
-{
+class test_command2 : public test_command {
 public:
     test_command2() : test_command() {}
     std::string_view tooltip() const override;
     code run(test_state& state, streams& streams) override;
 };
 
-class test_exit_command : public test_command
-{
+class test_exit_command : public test_command {
 public:
     test_exit_command() : test_command() {}
     std::string_view tooltip() const override;
@@ -56,34 +53,31 @@ using test_shell = shell<test_state>;
 using test_shell_command = typename shell<test_state>::command;
 using test_shell_command_ptr = std::unique_ptr<test_shell_command>;
 
-class test_shell_command1 : public test_shell_command
-{
+class test_shell_command1 : public test_shell_command {
     public:
         test_shell_command1() = default;
         virtual std::string name() const override;
         virtual std::string description() const override;
         virtual std::string help() const override;
-        virtual code process_input(std::string_view command, test_state& state, streams& streams = input::default_streams) override;
+        virtual code process_input(std::string_view command, test_state& state, streams& streams = default_streams) override;
 };
 
-class test_shell_command2 : public test_shell_command
-{
+class test_shell_command2 : public test_shell_command {
     public:
         test_shell_command2() = default;
         virtual std::string name() const override;
         virtual std::string description() const override;
         virtual std::string help() const override;
-        virtual code process_input(std::string_view command, test_state& state, cli::streams& streams = cli::input::default_streams) override;
+        virtual code process_input(std::string_view command, test_state& state, streams& streams = default_streams) override;
 };
 
-class test_shell_exit_command : public test_shell_command
-{
+class test_shell_exit_command : public test_shell_command {
     public:
         test_shell_exit_command() = default;
         virtual std::string name() const override;
         virtual std::string description() const override;
         virtual std::string help() const override;
-        virtual code process_input(std::string_view command, test_state& state, cli::streams& streams = cli::input::default_streams) override;
+        virtual code process_input(std::string_view command, test_state& state, streams& streams = default_streams) override;
 };
 
 } // namespace tools::cli

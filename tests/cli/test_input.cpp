@@ -9,7 +9,7 @@
 
 #define TAGS "[cli][input]"
 
-namespace tools::cli
+namespace tools::cli::test
 {
 
 TEST_CASE("CLI input", TAGS)
@@ -21,11 +21,11 @@ TEST_CASE("CLI input", TAGS)
         std::stringstream ss;
         streams s = streams{f, ss, ss};
 
-        REQUIRE(input::prompt<int>("input1: ", s) == 30);
-        REQUIRE(input::prompt<int>("input2: ", s) == -20);
-        REQUIRE(input::prompt_min<int>("min: ", 40, s) == 40);
-        REQUIRE(input::prompt_max<int>("max: ", 40, s) == 40);
-        REQUIRE(input::prompt_bounded<int>("bounded: ", 15, 25, s) == 20);
+        REQUIRE(prompt<int>("input1: ", s) == 30);
+        REQUIRE(prompt<int>("input2: ", s) == -20);
+        REQUIRE(prompt_min<int>("min: ", 40, s) == 40);
+        REQUIRE(prompt_max<int>("max: ", 40, s) == 40);
+        REQUIRE(prompt_bounded<int>("bounded: ", 15, 25, s) == 20);
 
         std::string expected =
             "input1: Please enter a integer.\n"
@@ -47,12 +47,12 @@ TEST_CASE("CLI input", TAGS)
         std::stringstream ss;
         streams s = streams{f, ss, ss};
 
-        REQUIRE(input::prompt<bool>("inputY: ", s));
-        REQUIRE(input::prompt<bool>("input_yes: ", s));
-        REQUIRE(input::prompt<bool>("input_true: ", s));
-        REQUIRE_FALSE(input::prompt<bool>("inputN: ", s));
-        REQUIRE_FALSE(input::prompt<bool>("input_no: ", s));
-        REQUIRE_FALSE(input::prompt<bool>("input_false: ", s));
+        REQUIRE(prompt<bool>("inputY: ", s));
+        REQUIRE(prompt<bool>("input_yes: ", s));
+        REQUIRE(prompt<bool>("input_true: ", s));
+        REQUIRE_FALSE(prompt<bool>("inputN: ", s));
+        REQUIRE_FALSE(prompt<bool>("input_no: ", s));
+        REQUIRE_FALSE(prompt<bool>("input_false: ", s));
 
         std::string expected =
             "inputY: Please enter a boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\").\n"

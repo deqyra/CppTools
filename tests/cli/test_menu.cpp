@@ -26,7 +26,7 @@ TEST_CASE("menu end-to-end", TAGS)
     test_menu<2> menu = make_basic_test_menu();
     menu.show(state, s);
 
-    std::string expected = string::from_file("resources/cli/menu_output.txt");
+    std::string expected = from_file("resources/cli/menu_output.txt");
 
     REQUIRE(ss.str() == expected);
 
