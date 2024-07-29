@@ -22,9 +22,24 @@ enum class shell_command_code {
     not_found = 3,
 };
 
-CPPTOOLS_API std::string to_string(shell_command_code c);
+CPPTOOLS_API inline std::string to_string(shell_command_code c) {
+    switch (c) {
+        case shell_command_code::exit:
+            return "exit";
+        case shell_command_code::success:
+            return "success";
+        case shell_command_code::failure:
+            return "failure";
+        case shell_command_code::bad_arguments:
+            return "bad_arguments";
+        case shell_command_code::not_found:
+            return "not_found";
+        default:
+            return "???";
+    }
+}
 
-struct shell_command_keywords {
+namespace shell_command_keywords {
     static constexpr std::string_view help = "help";
     static constexpr std::string_view exit = "exit";
     static constexpr std::string_view _all_keywords = "help, exit";
@@ -45,11 +60,10 @@ public:
         virtual std::string name() const = 0;
         virtual std::string description() const = 0;
         virtual std::string help() const = 0;
-        virtual code process_input(std::string_view command, context_t& state, streams& streams = input::default_streams) = 0;
+        virtual code process_input(std::string_view command, context_t& state, streams& streams = default_streams) = 0;
     };
 
     using command_ptr = std::unique_ptr<command>;
-    using keywords = shell_command_keywords;
     using code = typename command::code;
 
 private:
@@ -148,11 +162,11 @@ public:
     }
 
     // Run the shell.
-    code run(context_t& state, streams& streams = input::default_streams) {
+    code run(context_t& state, streams& streams = default_streams) {
         // Run the shell: prompt the user repeatedly and interpret the commands that were entered.
         code shell_code = code::success;
         while (shell_code != code::exit) {
-            std::string command_line = input::prompt<std::string>("$ ", streams);
+            std::string command_line = prompt<std::string>("$ ", streams);
             shell_code = _process_input(command_line, state, streams);
         }
 
@@ -163,7 +177,7 @@ private:
     // Process user input.
     code _process_input(const std::string& input, context_t& state, streams& streams) {
         // Tokenise the string on spaces to extract the command and its arguments.
-        std::vector<std::string> tokens = string::tokenize(input, ' ', true);
+        std::vector<std::string> tokens = tokenize(input, ' ', true);
         if (!tokens.size()) {
             return code::not_found;
         }
@@ -196,8 +210,7 @@ private:
         // ...and run that command.
         try {
             return it->second->process_input(input, state, streams);
-        }
-        catch(const std::exception& e) {
+        } catch (const std::exception& e) {
             // Informative error logging.
             streams.err << "Exception thrown by command \"" + it->second->name() + "\":\n";
             streams.err << e.what() << '\n';

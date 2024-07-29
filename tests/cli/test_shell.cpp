@@ -67,7 +67,7 @@ TEST_CASE("shell")
         streams s = streams{f, ss, ss};
         test_state state = test_state();
 
-        std::string expected = string::from_file("resources/cli/shell_output.txt");
+        std::string expected = from_file("resources/cli/shell_output.txt");
         REQUIRE_NOTHROW(shell.run(state, s));
         REQUIRE(ss.str() == expected);
     }

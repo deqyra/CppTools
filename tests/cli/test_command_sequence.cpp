@@ -31,7 +31,7 @@ TEST_CASE("command_sequence end-to-end", TAGS)
 
     command_sequence.run(state, s);
 
-    std::string expected = string::from_file("resources/cli/menu_output.txt");
+    std::string expected = from_file("resources/cli/menu_output.txt");
     expected += "test_command1 was run.\n"
                 "test_command2 was run.\n";
 

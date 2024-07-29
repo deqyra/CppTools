@@ -60,7 +60,7 @@ public:
     }
 
     // Print the menu and handle input.
-    void show(Context& state, cli::streams& streams = cli::input::default_streams) {
+    void show(Context& state, cli::streams& streams = cli::default_streams) {
         // While user did not ask to exit...
         while (true) {
             // Print menu header and options.
@@ -70,7 +70,7 @@ public:
 
             // Prompt the user.
             int n_options = (int)_commands.size();
-            int input = cli::input::prompt_bounded<int>("Please make a choice: ", 0, n_options, streams);
+            int input = cli::prompt_bounded<int>("Please make a choice: ", 0, n_options, streams);
 
             // Handle exit if required.
             if (input == 0) {
