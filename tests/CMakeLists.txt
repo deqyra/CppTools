@@ -43,9 +43,10 @@ add_executable( cpptools_tests
     container/test_tree.cpp
     container/tree_test_utilities.cpp
     container/tree_test_utilities.hpp
-    utility/test_string.cpp
+    utility/test_bitwise_enum_ops.cpp
     utility/test_predicate.cpp
     utility/test_ranges.cpp
+    utility/test_string.cpp
 )
 target_include_directories( cpptools_tests PUBLIC
     ${CMAKE_SOURCE_DIR}
