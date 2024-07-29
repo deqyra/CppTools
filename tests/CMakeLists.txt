@@ -44,6 +44,7 @@ add_executable( cpptools_tests
     container/tree_test_utilities.cpp
     container/tree_test_utilities.hpp
     utility/test_bitwise_enum_ops.cpp
+    utility/test_clamped_value.cpp
     utility/test_predicate.cpp
     utility/test_ranges.cpp
     utility/test_string.cpp
