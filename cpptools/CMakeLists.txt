@@ -12,10 +12,9 @@ add_library( cpptools_objects OBJECT
     _internal/debug_macros.hpp
     _internal/undef_debug_macros.hpp
     _internal/utility_macros.hpp
-    cli/command.cpp
+    cli/argument_parsing.hpp
     cli/command.hpp
     cli/command_sequence.hpp
-    cli/input.cpp
     cli/input.hpp
     cli/menu.hpp
     cli/menu_command.hpp
@@ -25,33 +24,32 @@ add_library( cpptools_objects OBJECT
     container/tree/node.hpp
     container/tree/traversal.hpp
     container/tree/unsafe_tree.hpp
-    exception/error_category.cpp
+    exception/arg_parse_exception.hpp
     exception/error_category.hpp 
-    exception/exception.cpp
     exception/exception.hpp
     exception/internal_exception.hpp 
-    exception/io_exception.cpp
     exception/io_exception.hpp
     exception/iterator_exception.hpp 
-    exception/parameter_exception.cpp 
     exception/parameter_exception.hpp 
-    exception/range_exception.hpp 
-    exception/range_exception.hpp 
+    exception/lookup_exception.hpp 
     math/sine_generator.hpp
     thread/worker.cpp
     thread/worker.hpp
     thread/interfaces/interruptible.hpp
     utility/bitwise_enum_ops.hpp
     utility/concepts.hpp
+    utility/deduce_parameters.hpp
     utility/hash_combine.hpp
+    utility/heterogenous_lookup.hpp
     utility/map.hpp
     utility/merge_strategy.hpp
+    utility/monitored_value.hpp
     utility/predicate.hpp
     utility/ranges.hpp
     utility/string.cpp
     utility/string.hpp
-    utility/to_string.cpp
     utility/to_string.hpp
+    utility/unary.hpp
     utility/detail/range_base.hpp
 )
 

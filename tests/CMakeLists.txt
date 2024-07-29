@@ -30,6 +30,7 @@ add_executable( cpptools_tests
     catch2_custom_generators.hpp
     debugging_tools.cpp
     debugging_tools.hpp
+    cli/test_argument_parsing.cpp
     cli/test_classes.cpp
     cli/test_classes.hpp
     cli/test_command_sequence.cpp
