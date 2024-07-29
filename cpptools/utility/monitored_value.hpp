@@ -13,7 +13,7 @@ class monitored_value {
     bool& _flag;
 
 public:
-    monitored_value(T v, bool& raise_on_modification) :
+    monitored_value(bool& raise_on_modification, T v = {}) :
         _value(std::move(v)),
         _flag(raise_on_modification)
     {

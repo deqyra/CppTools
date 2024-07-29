@@ -37,6 +37,7 @@ add_library( cpptools_objects OBJECT
     thread/worker.cpp
     thread/worker.hpp
     utility/bitwise_enum_ops.hpp
+    utility/clamped_value.hpp
     utility/concepts.hpp
     utility/deduce_parameters.hpp
     utility/hash_combine.hpp
@@ -51,6 +52,7 @@ add_library( cpptools_objects OBJECT
     utility/to_string.hpp
     utility/type_traits.hpp
     utility/unary.hpp
+    utility/wrapping_value.hpp
     utility/detail/allocator.hpp
     utility/detail/range_base.hpp
 )
