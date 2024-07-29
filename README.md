@@ -1,27 +1,35 @@
 # cpptools
 A collection of C++ tools.  
 
-Non-exhaustive summary of the cool stuff in there:
-| Thing                                      | Summary                                                                                                                                                                                |
-|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [**`tree`**][tree]                         | An allocator-aware arbitrary tree to store hierarchies of objects. STL-compatible, comes with traversal utilities.                                                                     |
-| [**`exception`**][ex]                      | An exception model and a collection of exception types with convenient macros to throw them.                                                                                           |
-| [**`cli`**][cli]                           | Convenient CLI menu builder. Bundled with basic building blocks and a (mostly failproof) input model. See project [**PicrossEngine**][picross_cli] for an example usage.               |
-| [**`shell`**][shell]                       | Shell emulator taking in user input to run registered commands. Works with the input model from [**`cli`**][cli]. See project [**PicrossEngine**][picross_shell] for an example usage. |
-| [**`interruptible`**][interruptible]       | Interface for an entity able to run a threaded task and handle requests to pause, resume and stop.                                                                                     |
-| [**`worker`**][worker]                     | A proposed, all-purpose implementation of the **`interruptible`** interface.                                                                                                           |
-| [**`bitwise_enum_ops`**][bitwise_enum_ops] | Scoped, concept-enabled operator overloads for bitwise operations on enum types.                                                                                                       |
-| [**`concepts`**][concepts]                 | A collection of concepts.                                                                                                                                                              |
-| [**`predicate`**][predicate]               | A library of parametric lambda functions for common numerical comparisons and functional combinatorics.                                                                                |
-| [**`string`**][string]                     | Basic string processing: tokenization, char removal, etc.                                                                                                |
+Non-exhaustive summary of the cool stuff in there (ordered by decreasing coolness, to my own appreciation):
+| Thing                                      | Summary                                                                                                                                                                                                                                        |
+|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [**`tree`**][tree]                         | An allocator-aware arbitrary tree to store hierarchies of objects. STL-compatible, comes with traversal utilities.                                                                                                                             |
+| [**`ranges`**][ranges]                     | A collection of range adaptors.                                                                                                                                                                                                                |
+| [**`exception`**][ex]                      | An exception model and a collection of exception types with convenient macros to throw them.                                                                                                                                                   |
+| [Predicates][predicate]                    | A collection of predicate generators for common numerical comparisons and functional combinatorics.                                                                                                                                            |
+| [**`bitwise_enum_ops`**][bitwise_enum_ops] | Scoped, concept-enabled operator overloads for bitwise operations on enum types.                                                                                                                                                               |
+| [**`cli`**][cli]                           | Convenient CLI menu builder. Bundled with basic building blocks and a (mostly failproof) input model. See project [**PicrossEngine**][picross_cli] for an example usage. Also packs a **[command-line argument parsing facility][arg_parse]**. |
+| [**`shell`**][shell]                       | Shell emulator taking in user input to run registered commands. Works with the input model from [**`cli`**][cli]. See project [**PicrossEngine**][picross_shell] for an example usage.                                                         |
+| [**`interruptible`**][interruptible]       | Interface for an entity able to run a threaded task and handle requests to pause, resume and stop.                                                                                                                                             |
+| [**`worker`**][worker]                     | A proposed, all-purpose implementation of the **`interruptible`** interface.                                                                                                                                                                   |
+| [String toolbox][string]                   | Basic string processing: tokenization, char removal, etc.                                                                                                |
 
 See [**`list.todo`**][todo] for a quick overview of what is likely to be worked
 on at present.
 
+### Troubleshooting
+
+> **The unit tests for stuff in `cli` fail: _file "xxx" not found_.**  
+
+Copy folder `resources` (located in folder `tests`) next to the unit tests executable. CMake should be doing that as post-build task, so if you're encountering that problem as part of building through CMake, please file an issue.
+
 [tree]:             https://github.com/deqyra/CppTools/blob/master/cpptools/container
+[ranges]:           https://github.com/deqyra/CppTools/blob/master/cpptools/utility/ranges.hpp
 [ex]:               https://github.com/deqyra/CppTools/blob/master/cpptools/exception/exception.hpp
 [cli]:              https://github.com/deqyra/CppTools/tree/master/cpptools/cli
 [picross_cli]:      https://github.com/deqyra/PicrossEngine/blob/master/main.cpp#L48
+[arg_parse]:        https://github.com/deqyra/CppTools/blob/master/cpptools/cli/argument_parsing.hpp
 [shell]:            https://github.com/deqyra/CppTools/tree/master/cpptools/cli/shell.hpp
 [picross_shell]:    https://github.com/deqyra/PicrossEngine/blob/master/picross_cli/cli_modify_grid_command.cpp#L41
 [interruptible]:    https://github.com/deqyra/CppTools/blob/master/cpptools/thread/interfaces/interruptible.hpp

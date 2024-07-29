@@ -29,7 +29,7 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 project( cpptools
     DESCRIPTION "C++ tools developed for use in other projects"
     LANGUAGES CXX
-    VERSION 1.0
+    VERSION 1.1
 )
 
 message( VERBOSE "         cpptools v${CMAKE_PROJECT_VERSION}" )
