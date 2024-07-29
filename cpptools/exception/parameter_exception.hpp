@@ -22,7 +22,12 @@ public:
         null_parameter  = 1
     };
 
-    CPPTOOLS_API parameter_exception(std::string_view parameter_name, std::string parameter_value = "<undefined>");
+    CPPTOOLS_API parameter_exception(std::string_view parameter_name, std::string parameter_value = "<undefined>") :
+        base_exception(),
+        _parameter_name(parameter_name),
+        _parameter_value(parameter_value)
+    {
+    }
 
     template<stringable T>
     parameter_exception(std::string_view parameter_name, const T& parameter_value) :
@@ -42,10 +47,15 @@ public:
         _parameter_value = "<" + tools::to_string(&parameter_value) + ">";
     }
 
-    CPPTOOLS_API std::string_view parameter_name() const;
-    CPPTOOLS_API std::string_view parameter_value() const;
+    CPPTOOLS_API std::string_view parameter_name()  const { return _parameter_name; }
+    CPPTOOLS_API std::string_view parameter_value() const { return _parameter_value; }
 
-    CPPTOOLS_API std::string_view to_string() const override;
+    CPPTOOLS_API std::string_view to_string() const override {
+        base_exception::_str = std::string(base_exception::to_string()) + '\n' +
+            "Parameter: " + _parameter_name + ", value: " + _parameter_value;
+
+        return base_exception::_str;
+    }
 
 private:
     std::string _parameter_name;
