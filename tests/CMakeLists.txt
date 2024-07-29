@@ -48,6 +48,7 @@ add_executable( cpptools_tests
     utility/test_predicate.cpp
     utility/test_ranges.cpp
     utility/test_string.cpp
+    utility/test_wrapping_value.cpp
 )
 target_include_directories( cpptools_tests PUBLIC
     ${CMAKE_SOURCE_DIR}
