@@ -19,8 +19,7 @@ FetchContent_Declare(
     URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.5.1.zip
 )
 
-FetchContent_MakeAvailable(Catch2)
-list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+FetchContent_MakeAvailable( Catch2 )
 
 include( CTest )
 include( Catch )
@@ -61,4 +60,13 @@ target_link_libraries( cpptools_tests
 
 catch_discover_tests(cpptools_tests
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests"
+)
+
+add_custom_command(
+    TARGET
+        cpptools_tests POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources
+        $<TARGET_FILE_DIR:cpptools_tests>/resources
 )

@@ -71,7 +71,7 @@ target_compile_definitions( cpptools_objects
 )
 
 target_compile_options( cpptools_objects
-    INTERFACE $<$<CXX_COMPILER_ID:MSVC>:"/wd4068;">
+    INTERFACE $<$<CXX_COMPILER_ID:MSVC>:/wd4068;>
 )
 
 # Usage interface
@@ -88,7 +88,7 @@ target_compile_definitions( cpptools_interface
 )
 
 target_compile_options( cpptools_interface
-    INTERFACE $<$<CXX_COMPILER_ID:MSVC>:"/wd4068;">
+    INTERFACE $<$<CXX_COMPILER_ID:MSVC>:/wd4068;>
 )
 
 # Static library
@@ -130,6 +130,12 @@ install(
         PATTERN "*.hpp"
         PATTERN "*.config.hpp"      EXCLUDE
         PATTERN "_internal/config/" EXCLUDE
+)
+
+# Install modules
+install(
+    DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/../extras"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cpptools"
 )
 
 # Export targets
