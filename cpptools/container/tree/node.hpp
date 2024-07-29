@@ -9,8 +9,8 @@
 #include <cpptools/exception/exception.hpp>
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
-#include <cpptools/utility/allocator.hpp>
 #include <cpptools/utility/merge_strategy.hpp>
+#include <cpptools/utility/detail/allocator.hpp>
 
 #ifndef CPPTOOLS_DEBUG_NODE
 # define CPPTOOLS_DEBUG_NODE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH
