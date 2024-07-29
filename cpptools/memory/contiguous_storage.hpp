@@ -21,20 +21,21 @@ class uninitialized_storage_proxy {
     T* _ptr;
 
 public:
-    uninitialized_storage_proxy(T* ptr) : _ptr(ptr) {}
+    constexpr uninitialized_storage_proxy(T* ptr) : _ptr(ptr) {}
 
     static constexpr bool has_implicit_lifetime = true;
 
-    T& value() {
+    constexpr T& value() {
         return *_ptr;
     }
 
-    const T& value() const {
+    constexpr const T& value() const {
         return *_ptr;
     }
 
-    uninitialized_storage_proxy& operator=(T v) {
-        *_ptr = std::move(v);
+    template<typename U>
+    constexpr uninitialized_storage_proxy& operator=(U&& v) {
+        *_ptr = v;
         return *this;
     }
 };
@@ -49,11 +50,11 @@ public:
 
     static constexpr bool has_implicit_lifetime = false;
 
-    array_t& value() {
+    constexpr array_t& value() {
         return *_ptr;
     }
 
-    const array_t& value() const {
+    constexpr const array_t& value() const {
         return *_ptr;
     }
 
@@ -74,30 +75,6 @@ public:
     constexpr const T& operator[](std::size_t index) const {
         return (*_ptr)[index];
     }
-
-    constexpr T* begin() {
-        return &(_ptr[0]);
-    }
-
-    constexpr const T* begin() const {
-        return &(_ptr[0]);
-    }
-
-    constexpr const T* cbegin() const {
-        return &(_ptr[0]);
-    }
-
-    constexpr T* end() {
-        return &(_ptr[0]) + N;
-    }
-
-    constexpr const T* end() const {
-        return &(_ptr[0]) + N;
-    }
-
-    constexpr const T* cend() const {
-        return &(_ptr[0]) + N;
-    }
 };
 
 template<implicit_lifetime_type T, std::size_t N>
@@ -110,28 +87,30 @@ public:
     
     static constexpr bool has_implicit_lifetime = true;
 
-    array_t& value() {
+    constexpr array_t& value() {
         return *_ptr;
     }
 
-    const array_t& value() const {
+    constexpr const array_t& value() const {
         return *_ptr;
     }
 
-    T& operator[](std::size_t index) {
+    constexpr T& operator[](std::size_t index) {
         return (*_ptr)[index];
     }
 
-    const T& operator[](std::size_t index) const {
+    constexpr const T& operator[](std::size_t index) const {
         return (*_ptr)[index];
     }
 };
 
 template<std::size_t N>
 consteval std::array<std::size_t, N> accumulate_leftwards(const std::array<std::size_t, N>& array) {
-    auto result = array;
-    for (std::size_t i = 1; i < N; ++i) {
-        result[i] += result[i - 1];
+    std::array<std::size_t, N> result;
+    std::size_t sum_of_previous = 0;
+    for (std::size_t i = 0; i < N; ++i) {
+        result[i] = sum_of_previous;
+        sum_of_previous += array[i];
     }
     return result;
 }
@@ -164,11 +143,14 @@ private:
     alignas(std::max({alignof(Ts)...})) std::byte _storage[Size];
     std::tuple<detail::uninitialized_storage_proxy<Ts>...> _accessors;
 
+    template<typename T>
+    using proxy = detail::uninitialized_storage_proxy<T>;
+
 public:
     static constexpr std::array<std::size_t, sizeof...(Ts)> Sizes = { sizeof(Ts)... };
     static constexpr std::array<std::size_t, sizeof...(Ts)> Offsets = detail::accumulated_offsets<Ts...>();
 
-    static constexpr bool has_implicit_lifetime = (detail::uninitialized_storage_proxy<Ts>::has_implicit_lifetime && ...);
+    static constexpr bool has_implicit_lifetime = (proxy<Ts>::has_implicit_lifetime && ...);
 
     constexpr contiguous_storage() :
         _storage{},
@@ -178,8 +160,13 @@ public:
     }
 
     template<typename T>
-    detail::uninitialized_storage_proxy<T>& get() {
-        return std::get<detail::uninitialized_storage_proxy<T>>(_accessors);
+    proxy<T>& get() {
+        return std::get<proxy<T>>(_accessors);
+    }
+
+    template<typename T>
+    const proxy<T>& get() const {
+        return std::get<proxy<T>>(_accessors);
     }
 
     template<std::size_t I>
