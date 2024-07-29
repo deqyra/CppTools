@@ -1,18 +1,9 @@
 #ifndef CPPTOOLS_UTILITY_CONCEPTS_HPP
 #define CPPTOOLS_UTILITY_CONCEPTS_HPP
 
-#include <concepts>
 #include <type_traits>
 
 namespace tools {
-
-/// @brief Satisfied by any type on which a \c to_string function can be called.
-/// Such a function must be visible (possibly through ADL) at the point of usage
-/// of this concept.
-template<typename T>
-concept stringable = requires (T v) {
-    to_string(v);
-};
 
 /// @brief Satisfied if T and U are the same types, notwithstanding cv- and
 /// reference-qualifiers

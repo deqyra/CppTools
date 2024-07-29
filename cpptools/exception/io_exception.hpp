@@ -21,10 +21,29 @@ public:
         invalid_output_stream   = 3,
     };
 
-    CPPTOOLS_API io_exception(std::string stream_name);
-    CPPTOOLS_API io_exception(std::filesystem::path stream_path);
+    CPPTOOLS_API io_exception(std::string stream_name) :
+        base_exception(),
+        _stream_name(stream_name)
+    {
 
-    CPPTOOLS_API std::string_view to_string() const override;
+    }
+
+    CPPTOOLS_API io_exception(std::filesystem::path stream_path) :
+        base_exception(),
+        _stream_name(stream_path.string())
+    {
+
+    }
+
+    CPPTOOLS_API std::string_view to_string() const override {
+        base_exception::_str = std::string(base_exception::to_string()) + '\n' + "Stream name: " + _stream_name;
+
+        return base_exception::_str;
+    }
+
+    CPPTOOLS_API std::string_view stream_name() const {
+        return _stream_name;
+    }
 
 private:
     std::string _stream_name;

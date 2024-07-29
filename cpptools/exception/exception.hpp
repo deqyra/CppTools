@@ -9,6 +9,7 @@
 #include <utility>
 
 #include <cpptools/api.hpp>
+#include <cpptools/utility/to_string.hpp>
 
 #include "error_category.hpp"
 
@@ -90,7 +91,7 @@ public:
     ///
     /// @param message The new message
     exception& with_message(std::string_view message) {
-        _message = message;
+        _message += "\nCustom message: " + std::string(message);
         return *this;
     }
 };
@@ -109,15 +110,27 @@ public:
     virtual       std::string_view      message()         const = 0;
     virtual       std::string&          message()               = 0;
 
-    CPPTOOLS_API virtual const char* what() const override;
+    CPPTOOLS_API virtual const char* what() const override {
+        return to_string().data();
+    }
 
-    CPPTOOLS_API virtual std::string_view to_string() const;
+    CPPTOOLS_API virtual std::string_view to_string() const {
+        _str =
+            "Category: " + std::string(error_category_name(category())) +
+            ", error: (" + std::to_string(error_code()) + ") " + std::string(ecode_to_string()) + '\n' +
+            "Location: " + tools::to_string(source_location()) + '\n' +
+            "Message: "  + std::string(message());
+
+        return _str;
+    }
 
 protected:
     mutable std::string _str;
 };
 
-CPPTOOLS_API std::ostream& operator<<(std::ostream& out, const base_exception& e);
+CPPTOOLS_API inline std::ostream& operator<<(std::ostream& out, const base_exception& e) {
+    return out << e.to_string();
+}
 
 class unknown_exception : public base_exception {
 public:
