@@ -58,7 +58,7 @@ target_link_libraries( cpptools_tests
     cpptools_static Catch2::Catch2WithMain
 )
 
-catch_discover_tests(cpptools_tests
+catch_discover_tests( cpptools_tests
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests"
 )
 
@@ -69,4 +69,10 @@ add_custom_command(
         ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/resources
         $<TARGET_FILE_DIR:cpptools_tests>/resources
+)
+
+add_test(
+    NAME run_cpptools_tests
+    COMMAND cpptools_tests
+    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
 )
