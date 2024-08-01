@@ -22,7 +22,11 @@ on at present.
 
 > **The unit tests for stuff in `cli` fail: _file "xxx" not found_.**  
 
-Copy folder `resources` (located in folder `tests`) next to the unit tests executable. CMake should be doing that as post-build task, so if you're encountering that problem as part of building through CMake, please file an issue.
+Make sure you're running the test executable through CTest. If for some reason
+you need to run the test executable manually, make sure that folder `resources`
+(located in folder `tests`) is copied next to the unit tests executable. CMake
+should be doing that as a post-build task though, so if you're encountering that
+problem as part of building through CMake, please file an issue.
 
 [tree]:             https://github.com/deqyra/CppTools/blob/master/cpptools/container
 [ranges]:           https://github.com/deqyra/CppTools/blob/master/cpptools/utility/ranges.hpp

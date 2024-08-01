@@ -25,7 +25,7 @@ public:
     CPPTOOLS_API parameter_exception(std::string_view parameter_name, std::string parameter_value = "<undefined>") :
         base_exception(),
         _parameter_name(parameter_name),
-        _parameter_value(parameter_value)
+        _parameter_value(std::move(parameter_value))
     {
     }
 

@@ -9,68 +9,66 @@
 
 #include "streams.hpp"
 
-namespace tools {
+namespace tools::cli {
 
 namespace detail {
 
-template<typename T>
-T parse_as(std::string_view input) = delete;
+    template<typename T>
+    T parse_as(std::string_view input) = delete;
 
-template<typename T>
-std::string_view type_name() = delete;
+    template<typename T>
+    std::string_view type_name() = delete;
 
-//
-// Specializations of parse_string
-//
+    //
+    // Specializations of parse_string
+    //
 
-template<>
-CPPTOOLS_API inline std::string parse_as(std::string_view input) {
-    return std::string(input);
-}
-
-template<>
-CPPTOOLS_API inline int parse_as(std::string_view input) {
-    if (!is_integer(input)) {
-        throw std::invalid_argument("parse_string<int>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
-    }
-    return std::stoi(std::string(input));
-}
-
-template<>
-CPPTOOLS_API inline bool parse_as(std::string_view input) {
-    if (input == "y" || input == "yes" || input == "true") {
-        return true;
+    template<>
+    CPPTOOLS_API inline std::string parse_as(std::string_view input) {
+        return std::string(input);
     }
 
-    if (input == "n" || input == "no" || input == "false") {
-        return false;
+    template<>
+    CPPTOOLS_API inline int parse_as(std::string_view input) {
+        if (!is_integer(input)) {
+            throw std::invalid_argument("parse_string<int>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
+        }
+        return std::stoi(std::string(input));
     }
 
-    throw std::invalid_argument("parse_string<bool>: Invalid string value for expected bool input.");
-}
+    template<>
+    CPPTOOLS_API inline bool parse_as(std::string_view input) {
+        if (input == "y" || input == "yes" || input == "true") {
+            return true;
+        }
 
-//
-// Specializations of type_name
-//
+        if (input == "n" || input == "no" || input == "false") {
+            return false;
+        }
 
-template <>
-CPPTOOLS_API inline std::string_view type_name<std::string>() {
-    return "string";
-}
+        throw std::invalid_argument("parse_string<bool>: Invalid string value for expected bool input.");
+    }
 
-template <>
-CPPTOOLS_API inline std::string_view type_name<int>() {
-    return "integer";
-}
+    //
+    // Specializations of type_name
+    //
 
-template <>
-CPPTOOLS_API inline std::string_view type_name<bool>() {
-    return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
-}
+    template <>
+    CPPTOOLS_API inline std::string_view type_name<std::string>() {
+        return "string";
+    }
+
+    template <>
+    CPPTOOLS_API inline std::string_view type_name<int>() {
+        return "integer";
+    }
+
+    template <>
+    CPPTOOLS_API inline std::string_view type_name<bool>() {
+        return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
+    }
 
 } // namespace detail
-
-namespace cli {
 
 template<typename T>
 T read_input(cli::streams& streams) {
@@ -133,8 +131,6 @@ T prompt_bounded(std::string_view title, T min, T max, cli::streams& streams) {
         streams.out << "Please enter a value between " << min << " and " << max << "." << std::endl;
     }
 }
-
-} // namespace cli
 
 } // namespace tools
 
