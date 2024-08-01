@@ -5,13 +5,7 @@ set( CPPTOOLS_TEMPLATE_CONFIG_FILE "${CMAKE_CURRENT_LIST_DIR}/../cmake/cpptools-
 set( CPPTOOLS_OUTPUT_CONFIG_FILE   "${CMAKE_CURRENT_BINARY_DIR}/cpptools-config.cmake" )
 set( CPPTOOLS_VERSION_FILE         "${CMAKE_CURRENT_BINARY_DIR}/cpptools-config-version.cmake" )
 
-# Compile library
-add_library( cpptools_objects OBJECT
-    _internal/assume.hpp
-    _internal/debug_log.hpp
-    _internal/debug_macros.hpp
-    _internal/undef_debug_macros.hpp
-    _internal/utility_macros.hpp
+set( CPPTOOLS_HEADERS
     cli/argument_parsing.hpp
     cli/command.hpp
     cli/command_sequence.hpp
@@ -34,7 +28,6 @@ add_library( cpptools_objects OBJECT
     exception/lookup_exception.hpp 
     math/sine_generator.hpp
     thread/interruptible.hpp
-    thread/worker.cpp
     thread/worker.hpp
     utility/bitwise_enum_ops.hpp
     utility/clamped_value.hpp
@@ -47,7 +40,6 @@ add_library( cpptools_objects OBJECT
     utility/monitored_value.hpp
     utility/predicate.hpp
     utility/ranges.hpp
-    utility/string.cpp
     utility/string.hpp
     utility/to_string.hpp
     utility/type_traits.hpp
@@ -55,6 +47,28 @@ add_library( cpptools_objects OBJECT
     utility/wrapping_value.hpp
     utility/detail/allocator.hpp
     utility/detail/range_base.hpp
+)
+
+set( CPPTOOLS_INCLUDE_HEADERS "" )
+
+foreach( HEADER ${CPPTOOLS_HEADERS} )
+    set( CPPTOOLS_INCLUDE_HEADERS "${CPPTOOLS_INCLUDE_HEADERS}\n#include \"${HEADER}\"")
+endforeach()
+
+# Trick to force compilation of inline definitions located in headers
+configure_file( cpptools.config.cpp ${CMAKE_CURRENT_LIST_DIR}/cpptools.cpp )
+
+# Compile library
+add_library( cpptools_objects OBJECT
+    cpptools.cpp
+    _internal/assume.hpp
+    _internal/debug_log.hpp
+    _internal/debug_macros.hpp
+    _internal/undef_debug_macros.hpp
+    _internal/utility_macros.hpp
+    ${CPPTOOLS_HEADERS}
+    thread/worker.cpp
+    utility/string.cpp
 )
 
 set( CPPTOOLS_ENABLE_DEBUG $<CONFIG:Debug,RelWithDebInfo> )

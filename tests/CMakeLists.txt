@@ -17,6 +17,7 @@ include( FetchContent )
 FetchContent_Declare(
     Catch2
     URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.5.1.zip
+    FIND_PACKAGE_ARGS
 )
 
 FetchContent_MakeAvailable( Catch2 )
@@ -51,15 +52,12 @@ add_executable( cpptools_tests
     utility/test_string.cpp
     utility/test_wrapping_value.cpp
 )
-target_include_directories( cpptools_tests PUBLIC
-    ${CMAKE_SOURCE_DIR}
-)
 target_link_libraries( cpptools_tests
     cpptools_static Catch2::Catch2WithMain
 )
 
 catch_discover_tests( cpptools_tests
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 add_custom_command(

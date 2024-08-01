@@ -56,6 +56,7 @@ void strip_cr(std::string& str) {
 void strip_c_comments(std::string& str) {
     const auto npos = std::string::npos;
 
+    // character ranges that belong to comments, in formet {start, count}
     std::vector<std::pair<std::size_t, std::size_t>> comment_ranges;
 
     // find all comments
@@ -66,20 +67,27 @@ void strip_c_comments(std::string& str) {
         if (str.at(pos + 1) == '/') { // found "//"
             // find eol
             auto end_pos = str.find('\n', pos + 2);
-            if (end_pos != npos) ++end_pos;
+            auto count = (end_pos != npos)
+                ? end_pos - pos
+                : npos;
 
-            comment_ranges.push_back(std::make_pair(pos, end_pos - pos));
-            pos = end_pos + 1;
-        } else if (str.at(pos + 1) == '*') {// found "/*"
+            comment_ranges.push_back(std::make_pair(pos, count));
+            pos = (end_pos != npos)
+                ? end_pos + 1
+                : npos;
+        } else if (str.at(pos + 1) == '*') { // found "/*"
             // find "*/"
-            auto end_pos = str.find('*', pos + 2);
-            if (end_pos != npos) ++end_pos;
-            if (end_pos == npos || str.at(end_pos) == '/')
-            {
-                ++end_pos;
-                comment_ranges.push_back(std::make_pair(pos, end_pos - pos));
-            }
-            pos = end_pos;
+            auto end_pos = str.find("*/", pos + 2);
+            auto count = (end_pos != npos)
+                ? end_pos - pos + 2
+                : npos;
+            
+            comment_ranges.push_back(std::make_pair(pos, count)); 
+            pos = (end_pos != npos)
+                ? end_pos + 3
+                : npos;
+        } else {
+            ++pos;
         }
 
         pos = str.find('/', pos);

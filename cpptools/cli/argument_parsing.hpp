@@ -221,6 +221,18 @@ public:
             return *this;
         }
 
+        operator std::basic_string_view<Char>() {
+            return at(0);
+        }
+
+        [[nodiscard]] constexpr decltype(auto) operator[](this auto&& self, std::size_t idx) noexcept {
+            return self._values[idx];
+        }
+
+        [[nodiscard]] constexpr decltype(auto) at(this auto&& self, std::size_t idx) {
+            return self._values.at(idx);
+        }
+
         [[nodiscard]] constexpr auto begin(this auto&& self) noexcept {
             return self._values.begin();
         }
