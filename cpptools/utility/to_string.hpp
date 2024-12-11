@@ -30,17 +30,17 @@ CPPTOOLS_API inline std::string to_string(std::nullptr_t) {
 template<typename T>
 std::string to_string(T* ptr) {
     if (ptr == nullptr) {
-        return "nullptr";
+        return to_string(nullptr);
     }
 
     std::ostringstream ss;
     ss << "0x" << std::hex << std::setfill('0') << std::setw(sizeof(std::intptr_t) * 2) << reinterpret_cast<std::intptr_t>(ptr);
 
-    return ss.str();
+    return std::move(ss).str();
 }
 
 CPPTOOLS_API inline std::string to_string(char c) {
-    return std::string{} + c;
+    return std::string(1, c);
 }
 
 CPPTOOLS_API inline std::string to_string(std::string_view v) {
@@ -67,7 +67,7 @@ using std::to_string;
 
 struct to_string_cpo {
     template<typename T>
-    std::string operator()(T&& t) const {
+    auto operator()(T&& t) const {
         return to_string(std::forward<T>(t));
     }
 };
@@ -86,6 +86,27 @@ template<typename T>
 concept stringable = requires (T v) {
     to_string(v);
 };
+
+
+template<typename E>
+concept stringable_enum = requires (E v) {
+    std::is_enum_v<E>;
+    { to_string(v) } -> std::same_as<std::string_view>;
+};
+
+namespace ostream_dump {
+
+    template<typename T>
+    concept ostream_insertable = requires (std::ostream& os, const T& v) {
+        { os << v };
+    };
+
+    template<stringable T> requires (!ostream_insertable<T>)
+    std::ostream& operator<<(std::ostream& os, T&& v) {
+        return os << to_string(std::forward<T>(v));
+    }
+
+}
 
 } // namespace tools
 

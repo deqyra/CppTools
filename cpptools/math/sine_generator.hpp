@@ -1,6 +1,7 @@
 #ifndef CPPTOOLS_MATH_SINE_GENERATOR_HPP
 #define CPPTOOLS_MATH_SINE_GENERATOR_HPP
 
+#include <cmath>
 #include <chrono>
 #include <numbers>
 

@@ -8,14 +8,16 @@
 #include <cpptools/utility/to_string.hpp>
 
 #include "exception.hpp"
-#include "error_category.hpp"
+#include "error_category_t.hpp"
 
 namespace tools::exception {
 
-class lookup_exception : public base_exception {
+class lookup_exception : public base_exception<error_category_t> {
 public:
-    static constexpr error_category error_category = error_category::lookup;
-    enum class ecode {
+    using error_category_t = tools::exception::error_category_t;
+    static constexpr error_category_t category = error_category_t::lookup;
+
+    enum class error_code_t {
         index_out_of_bounds = 0,
         no_such_element     = 1
     };
@@ -40,13 +42,13 @@ private:
 };
 
 template<>
-constexpr std::string_view default_error_message(const lookup_exception::ecode& code) {
-    using e = lookup_exception::ecode;
+constexpr std::string_view default_error_message(const lookup_exception::error_code_t& code) {
+    using enum lookup_exception::error_code_t;
 
     switch (code) {
-    case e::index_out_of_bounds:
+    case index_out_of_bounds:
         return "The provided index was out of bounds";
-    case e::no_such_element:
+    case no_such_element:
         return "No such item exists";
 
     default:
@@ -55,13 +57,13 @@ constexpr std::string_view default_error_message(const lookup_exception::ecode& 
 }
 
 template<>
-constexpr std::string_view to_string(const lookup_exception::ecode& code) {
-    using e = lookup_exception::ecode;
+constexpr std::string_view to_string(const lookup_exception::error_code_t& code) {
+    using enum lookup_exception::error_code_t;
 
     switch (code) {
-    case e::index_out_of_bounds:
+    case index_out_of_bounds:
         return "index_out_of_bounds";
-    case e::no_such_element:
+    case no_such_element:
         return "no_such_element";
 
     default:
@@ -69,11 +71,13 @@ constexpr std::string_view to_string(const lookup_exception::ecode& code) {
     }
 }
 
-namespace lookup {
-    using e = lookup_exception::ecode;
+static_assert(concrete_exception<lookup_exception>);
 
-    using index_out_of_bounds_error = exception<lookup_exception, e::index_out_of_bounds>;
-    using no_such_element_error     = exception<lookup_exception, e::no_such_element>;
+namespace lookup {
+    using enum lookup_exception::error_code_t;
+
+    using index_out_of_bounds_error = exception<lookup_exception, index_out_of_bounds>;
+    using no_such_element_error     = exception<lookup_exception, no_such_element>;
 }
 
 } // namespace tools::exception

@@ -75,7 +75,7 @@ struct basic_argument {
     /// @brief Name of the argument, in short or long form, or both forms
     basic_argument_name<Char> name;
     /// @brief Whether the argument is required or not
-    necessity necessity;
+    cli::necessity necessity;
     /// @brief The number of values to be provided immediately after the argument. -1 consumes the rest of the arguments
     int value_count;
 };

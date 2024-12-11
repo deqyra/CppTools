@@ -14,6 +14,7 @@
 #include <cpptools/exception/internal_exception.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
 #include <cpptools/exception/iterator_exception.hpp>
+#include <cpptools/utility/attributes.hpp>
 #include <cpptools/utility/heterogenous_lookup.hpp>
 #include <cpptools/utility/merge_strategy.hpp>
 #include <cpptools/utility/detail/allocator.hpp>
@@ -49,12 +50,8 @@ private:
     using _al_traits        = std::allocator_traits<_al_node>;
 
     struct _deleter_t {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-attributes"
         /// @brief Allocator
-        [[no_unique_address]] [[msvc::no_unique_address]]
-        mutable _al_node _alloc;
-#pragma clang diagnostic pop
+        NO_UNIQUE_ADDR mutable _al_node _alloc;
 
         void operator()(node_t* node) const {
             _al_traits::destroy(_alloc, node);
@@ -151,12 +148,7 @@ private:
     /// @brief View over the const values of the nodes
     value_view_t _values;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-attributes"
-    /// @brief Allocator for nodes
-    [[no_unique_address]] [[msvc::no_unique_address]]
-    _al_node _alloc;
-#pragma clang diagnostic pop
+    NO_UNIQUE_ADDR _al_node _alloc;
 
     /// @brief Deleter
     _deleter_t _deleter;

@@ -19,7 +19,7 @@ set( CPPTOOLS_HEADERS
     container/tree/traversal.hpp
     container/tree/unsafe_tree.hpp
     exception/arg_parse_exception.hpp
-    exception/error_category.hpp 
+    exception/error_category_t.hpp 
     exception/exception.hpp
     exception/internal_exception.hpp 
     exception/io_exception.hpp
@@ -29,6 +29,7 @@ set( CPPTOOLS_HEADERS
     math/sine_generator.hpp
     thread/interruptible.hpp
     thread/worker.hpp
+    utility/attributes.hpp
     utility/bitwise_enum_ops.hpp
     utility/clamped_value.hpp
     utility/concepts.hpp
@@ -85,7 +86,8 @@ target_compile_definitions( cpptools_objects
 )
 
 target_compile_options( cpptools_objects
-    INTERFACE $<$<CXX_COMPILER_ID:MSVC>:/wd4068;>
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fPIC> # required for the shared lib build on gcc
 )
 
 # Usage interface
@@ -99,10 +101,6 @@ target_include_directories( cpptools_interface
 
 target_compile_definitions( cpptools_interface
     INTERFACE CPPTOOLS_ENABLE_DEBUG_MASTER_SWITCH=${CPPTOOLS_ENABLE_DEBUG}
-)
-
-target_compile_options( cpptools_interface
-    INTERFACE $<$<CXX_COMPILER_ID:MSVC>:/wd4068;>
 )
 
 # Static library

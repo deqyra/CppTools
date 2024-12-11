@@ -4,14 +4,16 @@
 #include <string_view>
 
 #include "exception.hpp"
-#include "error_category.hpp"
+#include "error_category_t.hpp"
 
 namespace tools::exception {
 
-class iterator_exception : public base_exception {
+class iterator_exception : public base_exception<error_category_t> {
 public:
-    static constexpr enum error_category error_category = error_category::iterator;
-    enum class ecode {
+    using error_category_t = tools::exception::error_category_t;
+    static constexpr error_category_t error_category = error_category_t::iterator;
+
+    enum class error_code_t {
         incremented_past_end    = 0,
         decremented_past_begin  = 1,
         illegal_dereference     = 2,
@@ -24,8 +26,8 @@ template<typename It>
 class template_iterator_exception : public base_exception
 {
 public:
-    static constexpr enum error_category error_category = iterator_exception::error_category;
-    using ecode = iterator_exception::ecode;
+    static constexpr enum error_category_t error_category_t = iterator_exception::error_category_t;
+    using error_code_t = iterator_exception::error_code_t;
     using it_type = It;
 
     template_iterator_exception(It iterator);
@@ -40,13 +42,15 @@ private:
 */
 
 template<>
-constexpr std::string_view default_error_message<iterator_exception::ecode>(const iterator_exception::ecode& code) {
+constexpr std::string_view default_error_message<iterator_exception::error_code_t>(const iterator_exception::error_code_t& code) {
+    using enum iterator_exception::error_code_t;
+
     switch (code) {
-    case iterator_exception::ecode::incremented_past_end:
+    case incremented_past_end:
         return "Iterator was incremented past end of container";
-    case iterator_exception::ecode::decremented_past_begin:
+    case decremented_past_begin:
         return "Iterator was decremented past begin of container";
-    case iterator_exception::ecode::illegal_dereference:
+    case illegal_dereference:
         return "Invalid iterator was dereferenced";
 
     default:
@@ -55,13 +59,15 @@ constexpr std::string_view default_error_message<iterator_exception::ecode>(cons
 }
 
 template<>
-constexpr std::string_view to_string<iterator_exception::ecode>(const iterator_exception::ecode& code) {
+constexpr std::string_view to_string<iterator_exception::error_code_t>(const iterator_exception::error_code_t& code) {
+    using enum iterator_exception::error_code_t;
+
     switch (code) {
-    case iterator_exception::ecode::incremented_past_end:
+    case incremented_past_end:
         return "incremented_past_end";
-    case iterator_exception::ecode::decremented_past_begin:
+    case decremented_past_begin:
         return "decremented_past_begin";
-    case iterator_exception::ecode::illegal_dereference:
+    case illegal_dereference:
         return "illegal_dereference";
 
     default:
@@ -69,13 +75,15 @@ constexpr std::string_view to_string<iterator_exception::ecode>(const iterator_e
     }
 }
 
-namespace iterator {
-    using e = iterator_exception::ecode;
+static_assert(concrete_exception<iterator_exception>);
 
-    using incremented_past_end_error = exception<iterator_exception, e::incremented_past_end>;
-    using decremented_past_begin_error = exception<iterator_exception, e::decremented_past_begin>;
-    using illegal_dereference_error = exception<iterator_exception, e::illegal_dereference>;
-    using operation_while_invalid_error = exception<iterator_exception, e::operation_while_invalid>;
+namespace iterator {
+    using enum iterator_exception::error_code_t;
+
+    using incremented_past_end_error    = exception<iterator_exception, incremented_past_end>;
+    using decremented_past_begin_error  = exception<iterator_exception, decremented_past_begin>;
+    using illegal_dereference_error     = exception<iterator_exception, illegal_dereference>;
+    using operation_while_invalid_error = exception<iterator_exception, operation_while_invalid>;
 }
 
 } // namespace tools::exception

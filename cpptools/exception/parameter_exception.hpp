@@ -10,14 +10,16 @@
 #include <cpptools/api.hpp>
 
 #include "exception.hpp"
-#include "error_category.hpp"
+#include "error_category_t.hpp"
 
 namespace tools::exception {
 
-class parameter_exception : public base_exception {
+class parameter_exception : public base_exception<error_category_t> {
 public:
-    static constexpr enum error_category error_category = error_category::parameter;
-    enum class ecode {
+    using error_category_t = tools::exception::error_category_t;
+    static constexpr error_category_t error_category = error_category_t::parameter;
+
+    enum class error_code_t {
         invalid_value   = 0,
         null_parameter  = 1
     };
@@ -63,11 +65,13 @@ private:
 };
 
 template<>
-constexpr std::string_view default_error_message<parameter_exception::ecode>(const parameter_exception::ecode& code) {
+constexpr std::string_view default_error_message<parameter_exception::error_code_t>(const parameter_exception::error_code_t& code) {
+    using enum parameter_exception::error_code_t;
+
     switch (code) {
-    case parameter_exception::ecode::invalid_value:
+    case invalid_value:
         return "Parameter has invalid value";
-    case parameter_exception::ecode::null_parameter:
+    case null_parameter:
         return "Parameter is null";
 
     default:
@@ -76,11 +80,13 @@ constexpr std::string_view default_error_message<parameter_exception::ecode>(con
 }
 
 template<>
-constexpr std::string_view to_string<parameter_exception::ecode>(const parameter_exception::ecode& code) {
+constexpr std::string_view to_string<parameter_exception::error_code_t>(const parameter_exception::error_code_t& code) {
+    using enum parameter_exception::error_code_t;
+
     switch (code) {
-    case parameter_exception::ecode::invalid_value:
+    case invalid_value:
         return "invalid_value";
-    case parameter_exception::ecode::null_parameter:
+    case null_parameter:
         return "null_parameter";
 
     default:
@@ -88,11 +94,13 @@ constexpr std::string_view to_string<parameter_exception::ecode>(const parameter
     }
 }
 
-namespace parameter {
-    using e = parameter_exception::ecode;
+static_assert(concrete_exception<parameter_exception>);
 
-    using invalid_value_error = exception<parameter_exception, e::invalid_value>;
-    using null_parameter_error = exception<parameter_exception, e::null_parameter>;
+namespace parameter {
+    using enum parameter_exception::error_code_t;
+
+    using invalid_value_error  = exception<parameter_exception, invalid_value>;
+    using null_parameter_error = exception<parameter_exception, null_parameter>;
 }
 
 } // namespace tools::exception

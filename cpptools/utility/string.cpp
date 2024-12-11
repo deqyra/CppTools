@@ -251,7 +251,11 @@ std::string narrow(std::wstring_view wstr) {
     auto src = wstr.data();
     
     std::size_t size;
+#ifdef _MSC_VER
     auto status = wcsrtombs_s(&size, nullptr, 0, &src, 0, &s);
+#else
+    auto status = wcsrtombs(nullptr, &src, 0, &s);
+#endif
     if (status != 0) {
         CPPTOOLS_THROW(exception::internal::unexpected_error).with_message("wcsrtombs_s failed on char count retrieval, returned " + std::to_string(status));
     }
@@ -259,7 +263,11 @@ std::string narrow(std::wstring_view wstr) {
 
     std::string result;
     result.reserve(size);
+#ifdef _MSC_VER
     status = wcsrtombs_s(&size, result.data(), size, &src, size, &s);
+#else
+    status = wcsrtombs(result.data(), &src, size, &s);
+#endif
     if (status != 0) {
         CPPTOOLS_THROW(exception::internal::unexpected_error).with_message("wcsrtombs_s failed on char conversion, returned " + std::to_string(status));
     }

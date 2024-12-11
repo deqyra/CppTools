@@ -9,10 +9,12 @@
 
 namespace tools::exception {
 
-class arg_parse_exception : public base_exception {
+class arg_parse_exception : public base_exception<error_category_t> {
 public:
-    static constexpr enum error_category error_category = error_category::arg_parse;
-    enum class ecode {
+    using error_category_t = tools::exception::error_category_t;
+    static constexpr error_category_t error_category = error_category_t::arg_parse;
+
+    enum class error_code_t {
         multiple_params_consume_remaining_args = 0,
         multiple_params_with_same_name         = 1,
         param_with_no_name                     = 2,
@@ -53,17 +55,19 @@ private:
 };
 
 template<>
-constexpr std::string_view default_error_message<arg_parse_exception::ecode>(const arg_parse_exception::ecode& code) {
+constexpr std::string_view default_error_message<arg_parse_exception::error_code_t>(const arg_parse_exception::error_code_t& code) {
+    using enum arg_parse_exception::error_code_t;
+
     switch (code) {
-    case arg_parse_exception::ecode::multiple_params_consume_remaining_args:
+    case multiple_params_consume_remaining_args:
         return "Multiple parameters were specified to consume all remaining arguments";
-    case arg_parse_exception::ecode::multiple_params_with_same_name:
+    case multiple_params_with_same_name:
         return "Multiple parameters were specified with the same name";
-    case arg_parse_exception::ecode::param_with_no_name:
+    case param_with_no_name:
         return "A parameter was specified with no name";
-    case arg_parse_exception::ecode::not_enough_args_supplied:
+    case not_enough_args_supplied:
         return "Not enough arguments were supplied to satisfy a parameter";
-    case arg_parse_exception::ecode::required_arg_missing:
+    case required_arg_missing:
         return "No argument was found for a parameter specified as required";
 
     default:
@@ -72,17 +76,19 @@ constexpr std::string_view default_error_message<arg_parse_exception::ecode>(con
 }
 
 template<>
-constexpr std::string_view to_string<arg_parse_exception::ecode>(const arg_parse_exception::ecode& code) {
+constexpr std::string_view to_string<arg_parse_exception::error_code_t>(const arg_parse_exception::error_code_t& code) {
+    using enum arg_parse_exception::error_code_t;
+
     switch (code) {
-    case arg_parse_exception::ecode::multiple_params_consume_remaining_args:
+    case multiple_params_consume_remaining_args:
         return "multiple_consume_remaining_args";
-    case arg_parse_exception::ecode::multiple_params_with_same_name:
+    case multiple_params_with_same_name:
         return "multiple_params_with_same_name";
-    case arg_parse_exception::ecode::param_with_no_name:
+    case param_with_no_name:
         return "param_with_no_name";
-    case arg_parse_exception::ecode::not_enough_args_supplied:
+    case not_enough_args_supplied:
         return "not_enough_arguments_supplied";
-    case arg_parse_exception::ecode::required_arg_missing:
+    case required_arg_missing:
         return "required_arg_missing";
 
     default:
@@ -90,16 +96,17 @@ constexpr std::string_view to_string<arg_parse_exception::ecode>(const arg_parse
     }
 }
 
+static_assert(concrete_exception<arg_parse_exception>);
+
 namespace arg_parse {
-    using e = arg_parse_exception::ecode;
+    using enum arg_parse_exception::error_code_t;
 
-    using multiple_consume_remaining_args_error = exception<arg_parse_exception, e::multiple_params_consume_remaining_args>;
-    using multiple_params_with_same_name_error  = exception<arg_parse_exception, e::multiple_params_with_same_name>;
-    using param_with_no_name_error              = exception<arg_parse_exception, e::param_with_no_name>;
-    using not_enough_arguments_supplied_error   = exception<arg_parse_exception, e::not_enough_args_supplied>;
-    using required_arg_missing_error            = exception<arg_parse_exception, e::required_arg_missing>;
+    using multiple_consume_remaining_args_error = exception<arg_parse_exception, multiple_params_consume_remaining_args>;
+    using multiple_params_with_same_name_error  = exception<arg_parse_exception, multiple_params_with_same_name>;
+    using param_with_no_name_error              = exception<arg_parse_exception, param_with_no_name>;
+    using not_enough_arguments_supplied_error   = exception<arg_parse_exception, not_enough_args_supplied>;
+    using required_arg_missing_error            = exception<arg_parse_exception, required_arg_missing>;
 }
-
 
 } // namespace tools::exception
 

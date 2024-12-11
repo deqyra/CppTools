@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <source_location>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -11,7 +12,7 @@
 #include <cpptools/api.hpp>
 #include <cpptools/utility/to_string.hpp>
 
-#include "error_category.hpp"
+#include "error_category_t.hpp"
 
 namespace tools::exception
 {
@@ -20,20 +21,18 @@ namespace tools::exception
 ///
 /// - In the following, T is a "concrete" exception type but is not meant to be throwable in and of itself
 /// - Instead, T represents an *error category*, a category of throwable exception classes
-/// - The possible error categories are grouped as literals in enum type error_category
+/// - The possible error categories are grouped as literals in enum type error_category_t
 /// - Any T must satisfy the concrete_exception concept, which has the following characteristics:
 ///     - T inherits from base_exception
-///     - T provides a public, static constexpr member named "error_category", of enum type error_category
-///     - The value of T::error_category is a literal that represents the error category which T is meant for
-///     - T provides a public enum type named "ecode"
-///     - The literals in T::ecode describe error cases in the category of errors that T represents
-///     - A specialization of tools::exception::default_error_message for T::ecode is visible alongside T
-///     - A specialization of tools::exception::to_string for T::ecode is visible alongside T
+///     - T provides a public, static constexpr member named "error_category_t", of enum type error_category_t
+///     - The value of T::error_category_t is a literal that represents the error category which T is meant for
+///     - T provides a public enum type named "error_code_t"
+///     - The literals in T::error_code_t describe error cases in the category of errors that T represents
+///     - A specialization of tools::exception::default_error_message for T::error_code_t is visible alongside T
+///     - A specialization of tools::exception::to_string for T::error_code_t is visible alongside T
 /// - Every exception class meant to be throwable must be a specialization of the `exception` template, which:
 ///     - uses CRTP to inherit from a type T as described above
 ///     - is also template-parameterized on a specific error code literal in T::error_code
-
-class base_exception;
 
 template<typename E>
 consteval std::string_view default_error_message(const E& code) = delete;
@@ -41,23 +40,67 @@ consteval std::string_view default_error_message(const E& code) = delete;
 template<typename E>
 consteval std::string_view to_string(const E& code) = delete;
 
+/// @brief Base class which has to be inherited by all new exception classes
+/// @tparam Category Enum whose literals represent different error categories
+template<stringable_enum Category>
+class base_exception : public std::exception {
+public:
+    base_exception() = default;
+    virtual ~base_exception() = default;
+
+    using error_category_t = Category;
+
+    virtual error_category_t category()       const noexcept = 0;
+    virtual std::size_t      code()           const noexcept = 0;
+    virtual std::string_view code_to_string() const noexcept = 0;
+
+    virtual const std::source_location& source_location() const noexcept = 0;
+    virtual       std::string_view      message()         const noexcept = 0;
+    virtual       std::string&          message()               noexcept = 0;
+
+    CPPTOOLS_API virtual const char* what() const noexcept override {
+        return to_string().data();
+
+        // Yes, should the call to to_string throw, std::terminate will be called
+        // Not ideal but if this ever happens then there are worse concerns to be had
+    }
+
+    CPPTOOLS_API virtual std::string_view to_string() const {
+        using namespace ::tools::ostream_dump;
+
+        std::ostringstream ss;
+        ss  << "Category: " << category() << ", error: (" << code() << ") " << code_to_string() << '\n'
+            << "Location: " << source_location() << '\n'
+            << "Message: "  << message();
+
+        _str = std::move(ss).str();
+        return _str;
+    }
+
+protected:
+    mutable std::string _str;
+};
+
+template<typename ErrCat>
+CPPTOOLS_API inline std::ostream& operator<<(std::ostream& out, const base_exception<ErrCat>& e) {
+    return out << e.to_string();
+}
+
 template<typename T>
 concept concrete_exception = requires {
-    std::is_base_of_v<base_exception, T>;
-    std::is_enum_v<typename T::ecode>;
-    std::is_same_v<decltype(T::error_category), error_category>;
+    std::is_enum_v<typename T::error_code_t>;
+    std::is_enum_v<typename T::error_category_t>;
+    std::is_base_of_v<base_exception<typename T::error_category_t>, T>;
 
-    { default_error_message<typename T::ecode>(static_cast<typename T::ecode>(0)) }
-        -> std::convertible_to<std::string_view>;
-    {             to_string<typename T::ecode>(static_cast<typename T::ecode>(0)) }
-        -> std::convertible_to<std::string_view>;
+    { default_error_message<typename T::error_code_t>(static_cast<typename T::error_code_t>(0)) } -> std::same_as<std::string_view>;
+    {             to_string<typename T::error_code_t>(static_cast<typename T::error_code_t>(0)) } -> std::same_as<std::string_view>;
 };
 
 /// @brief Specialize to instantiate concrete exception classes.
 ///
 /// @tparam T Parent exception class. Must satisfy concrete_exception.
-/// @tparam code Error code related to T's handled error category.
-template<concrete_exception T, typename T::ecode code>
+/// @tparam Code Error code related to T's handled error category.
+template<concrete_exception T, typename T::error_code_t Code>
 class exception : public T {
 private:
     std::source_location _source_location;
@@ -71,7 +114,7 @@ public:
     explicit exception(std::source_location&& source_location, ArgTypes&&... args) :
         T(std::forward<ArgTypes&&>(args)...),
         _source_location(std::move(source_location)),
-        _message(default_error_message(code))
+        _message(default_error_message(Code))
     {
     }
 
@@ -79,72 +122,37 @@ public:
 
     // Overrides from base_exception
 
-    error_category   category()        const override { return T::error_category; }
-    std::size_t      error_code()      const override { return static_cast<std::size_t>(code); }
-    std::string_view ecode_to_string() const override { return tools::exception::to_string(code); }
+    error_category_t  category()       const noexcept override { return T::error_category; }
+    std::size_t       code()           const noexcept override { return static_cast<std::size_t>(Code); }
+    std::string_view  code_to_string() const noexcept override { return to_string(Code); }
 
-    const std::source_location& source_location() const override { return _source_location; }
-          std::string_view      message()         const override { return _message; }
-          std::string&          message()               override { return _message; }
+    const std::source_location& source_location() const noexcept override { return _source_location; }
+          std::string_view      message()         const noexcept override { return _message; }
+          std::string&          message()               noexcept override { return _message; }
 
     /// @brief Set a new message for this exception
     ///
     /// @param message The new message
-    exception& with_message(std::string_view message) {
-        _message += "\nCustom message: " + std::string(message);
+    exception& with_message(std::string_view custom_message) {
+        message() += "\nCustom message: " + std::string(custom_message);
         return *this;
     }
 };
 
-/// @brief Base class which has to be inherited by all new exception classes
-class base_exception : public std::exception {
+class unknown_exception : public base_exception<error_category_t> {
 public:
-    base_exception() = default;
-    virtual ~base_exception() = default;
+    using error_category_t = tools::exception::error_category_t;
+    static constexpr error_category_t category = error_category_t::unknown;
 
-    virtual error_category   category()        const = 0;
-    virtual std::size_t      error_code()      const = 0;
-    virtual std::string_view ecode_to_string() const = 0;
-
-    virtual const std::source_location& source_location() const = 0;
-    virtual       std::string_view      message()         const = 0;
-    virtual       std::string&          message()               = 0;
-
-    CPPTOOLS_API virtual const char* what() const override {
-        return to_string().data();
-    }
-
-    CPPTOOLS_API virtual std::string_view to_string() const {
-        _str =
-            "Category: " + std::string(error_category_name(category())) +
-            ", error: (" + std::to_string(error_code()) + ") " + std::string(ecode_to_string()) + '\n' +
-            "Location: " + tools::to_string(source_location()) + '\n' +
-            "Message: "  + std::string(message());
-
-        return _str;
-    }
-
-protected:
-    mutable std::string _str;
-};
-
-CPPTOOLS_API inline std::ostream& operator<<(std::ostream& out, const base_exception& e) {
-    return out << e.to_string();
-}
-
-class unknown_exception : public base_exception {
-public:
-    static constexpr error_category error_category = error_category::unknown;
-
-    enum class ecode {
+    enum class error_code_t {
         unknown = 0
     };
 };
 
 template<>
-consteval std::string_view default_error_message<unknown_exception::ecode>(const unknown_exception::ecode &code) {
+consteval std::string_view default_error_message<unknown_exception::error_code_t>(const unknown_exception::error_code_t& code) {
     switch (code) {
-    case unknown_exception::ecode::unknown:
+    case unknown_exception::error_code_t::unknown:
         return "An unknown error occurred";
 
     default:
@@ -153,9 +161,9 @@ consteval std::string_view default_error_message<unknown_exception::ecode>(const
 }
 
 template<>
-consteval std::string_view to_string<unknown_exception::ecode>(const unknown_exception::ecode &code) {
+consteval std::string_view to_string<unknown_exception::error_code_t>(const unknown_exception::error_code_t &code) {
     switch (code) {
-    case unknown_exception::ecode::unknown:
+    case unknown_exception::error_code_t::unknown:
         return "unknown";
 
     default:
@@ -163,7 +171,9 @@ consteval std::string_view to_string<unknown_exception::ecode>(const unknown_exc
     }
 }
 
-using unknown_error = exception<unknown_exception, unknown_exception::ecode::unknown>;
+static_assert(concrete_exception<unknown_exception>);
+
+using unknown_error = exception<unknown_exception, unknown_exception::error_code_t::unknown>;
 
 } // namespace tools::exception
 
