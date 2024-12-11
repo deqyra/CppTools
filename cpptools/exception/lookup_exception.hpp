@@ -15,7 +15,7 @@ namespace tools::exception {
 class lookup_exception : public base_exception<error_category_t> {
 public:
     using error_category_t = tools::exception::error_category_t;
-    static constexpr error_category_t category = error_category_t::lookup;
+    static constexpr error_category_t error_category = error_category_t::lookup;
 
     enum class error_code_t {
         index_out_of_bounds = 0,

@@ -91,6 +91,7 @@ concept concrete_exception = requires {
     std::is_enum_v<typename T::error_code_t>;
     std::is_enum_v<typename T::error_category_t>;
     std::is_base_of_v<base_exception<typename T::error_category_t>, T>;
+    std::is_same_v<decltype(T::error_category), typename T::error_category_t>;
 
     { default_error_message<typename T::error_code_t>(static_cast<typename T::error_code_t>(0)) } -> std::same_as<std::string_view>;
     {             to_string<typename T::error_code_t>(static_cast<typename T::error_code_t>(0)) } -> std::same_as<std::string_view>;
@@ -142,7 +143,7 @@ public:
 class unknown_exception : public base_exception<error_category_t> {
 public:
     using error_category_t = tools::exception::error_category_t;
-    static constexpr error_category_t category = error_category_t::unknown;
+    static constexpr error_category_t error_category = error_category_t::unknown;
 
     enum class error_code_t {
         unknown = 0
