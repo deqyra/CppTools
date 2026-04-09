@@ -1,11 +1,5 @@
 #include <catch2/catch_all.hpp>
 
-#include <memory>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
 #include "test_classes.hpp"
 
 #include <cpptools/cli/streams.hpp>
@@ -18,58 +12,44 @@ namespace tools::cli
 
 TEST_CASE("shell")
 {
-    test_shell_command1 com1{};
-    test_shell_command2 com2{};
-    test_shell_exit_command exit{};
-    test_shell shell{
-        std::array<test_shell_command_ptr, 1>{std::make_unique<test_shell_command2>(com2)},
-        std::make_unique<test_shell_exit_command>(exit)
-    };
+    test_shell_cmd cmd;
+    test_shell_cmd_throw cmd_throw;
+    test_shell_help_command help;
+    test_shell_exit_command exit;
 
-    SECTION("add_command")
-    {
-        REQUIRE_NOTHROW(shell.add_command(std::make_unique<test_shell_command1>(com1)));
-    }
+    test_shell shell;
+    shell.set_command("test_shell_cmd_throw", cmd_throw);
+    shell.set_command("help", help);
+    shell.set_command("exit", exit);
 
-    SECTION("has_command")
+    SECTION("set_command")
     {
-        REQUIRE_FALSE(shell.has_command("test_shell_command1"));
-        REQUIRE_NOTHROW(shell.add_command(std::make_unique<test_shell_command1>(com1)));
-        REQUIRE(shell.has_command("test_shell_command1"));
-    }
-
-    SECTION("get_command")
-    {
-        REQUIRE_NOTHROW(shell.add_command(std::make_unique<test_shell_command1>(com1)));
-        REQUIRE(shell.get_command("test_shell_command1").name() == com1.name());
-    }
-
-    SECTION("set and get_exit_command")
-    {
-        REQUIRE_NOTHROW(shell.set_exit_command(std::make_unique<test_shell_exit_command>(exit)));
-        REQUIRE(shell.get_exit_command().name() == exit.name());
+        REQUIRE_NOTHROW(shell.set_command("test_shell_cmd", cmd));
     }
 
     SECTION("remove_command")
     {
-        REQUIRE_NOTHROW(shell.add_command(std::make_unique<test_shell_command1>(com1)));
-        REQUIRE_NOTHROW(shell.remove_command("test_shell_command1"));
-        REQUIRE_FALSE(shell.has_command("test_shell_command1"));
+        REQUIRE_NOTHROW(shell.remove_command("test_shell_cmd_throw"));
+    }
+
+    SECTION("add_default_exit_command")
+    {
+        REQUIRE_NOTHROW(shell.add_default_exit_command());
+        REQUIRE_NOTHROW(shell.add_default_exit_command("test"));
     }
 
     SECTION("End to end")
     {
-        REQUIRE_NOTHROW(shell.add_command(std::make_unique<test_shell_command1>(com1)));
+        REQUIRE_NOTHROW(shell.set_command("test_shell_cmd", cmd));
 
-        std::ifstream f = std::ifstream("resources/cli/shell_input.txt", std::ios::in);
-        REQUIRE(f);
-        std::stringstream ss;
-        streams s = streams{f, ss, ss};
-        test_state state = test_state();
+        auto env = test_env("resources/cli/shell_input.txt");
 
-        std::string expected = from_file("resources/cli/shell_output.txt");
-        REQUIRE_NOTHROW(shell.run(state, s));
-        REQUIRE(ss.str() == expected);
+        auto expected = from_file("resources/cli/shell_output.txt");
+        auto expected_err = from_file("resources/cli/shell_error_output.txt");
+
+        REQUIRE_NOTHROW(shell.run(env));
+        REQUIRE(env.out.str() == expected);
+        REQUIRE(env.err.str() == expected_err);
     }
 }
 

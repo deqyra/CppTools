@@ -5,10 +5,6 @@
 #include <cpptools/cli/streams.hpp>
 #include <cpptools/utility/string.hpp>
 
-#include <string>
-#include <fstream>
-#include <sstream>
-
 #define TAGS "[cli][command]"
 
 namespace tools::cli
@@ -16,21 +12,14 @@ namespace tools::cli
 
 TEST_CASE("menu end-to-end", TAGS)
 {
-    std::ifstream f = std::ifstream("resources/cli/menu_input.txt", std::ios::in);
-    REQUIRE(f);
-    std::stringstream ss;
+    auto env = test_env("resources/cli/menu_input.txt");
 
-    streams s = streams{f, ss, ss};
-    test_state state = test_state();
+    test_menu menu = make_basic_test_menu();
+    menu.show(env);
 
-    test_menu<2> menu = make_basic_test_menu();
-    menu.show(state, s);
+    auto expected = from_file("resources/cli/menu_output.txt");
 
-    std::string expected = from_file("resources/cli/menu_output.txt");
-
-    REQUIRE(ss.str() == expected);
-
-    f.close();
+    REQUIRE(env.out.str() == expected);
 }
 
 } // namespace tools::cli

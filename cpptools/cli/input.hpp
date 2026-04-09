@@ -1,7 +1,9 @@
 #ifndef CPPTOOLS_CLI_INPUT
 #define CPPTOOLS_CLI_INPUT
 
+#include <concepts>
 #include <iostream>
+#include <limits>
 #include <string>
 
 #include <cpptools/api.hpp>
@@ -11,64 +13,115 @@
 
 namespace tools::cli {
 
-namespace detail {
+template<typename F, typename T>
+concept parse_func = requires(const F& f) {
+    { f(std::string_view{}) } -> std::convertible_to<T>;
+};
 
-    template<typename T>
-    T parse_as(std::string_view input) = delete;
+template<typename F, typename T>
+concept type_name_func = requires(const F& f) {
+    { f() } -> std::same_as<std::string>;
+};
 
-    template<typename T>
-    std::string_view type_name() = delete;
+template<typename T>
+struct parse{};
 
-    //
-    // Specializations of parse_string
-    //
+template<typename T>
+struct type_name{};
 
-    template<>
-    CPPTOOLS_API inline std::string parse_as(std::string_view input) {
+// Specializations of parse_as / type_name for std::string
+
+template<>
+struct parse<std::string> {
+    CPPTOOLS_API std::string operator()(std::string_view input) const {
         return std::string(input);
     }
+};
+static_assert(parse_func<parse<std::string>, std::string>);
 
-    template<>
-    CPPTOOLS_API inline int parse_as(std::string_view input) {
-        if (!is_integer(input)) {
-            throw std::invalid_argument("parse_string<int>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
-        }
-        return std::stoi(std::string(input));
+template<>
+struct type_name<std::string> {
+    CPPTOOLS_API std::string operator()() const {
+        return "a string";
     }
+};
+static_assert(type_name_func<type_name<std::string>, std::string>);
 
-    template<>
-    CPPTOOLS_API inline bool parse_as(std::string_view input) {
-        if (input == "y" || input == "yes" || input == "true") {
+// Specializations of parse_as / type_name for integers
+
+template<std::integral T>
+struct parse<T> {
+    CPPTOOLS_API T operator()(std::string_view input) const {
+        if (!is_integer(input)) {
+            throw std::invalid_argument("parse_string<integer>: String to parse is not exclusively made of digits and a minus sign, or it is at a wrong position.");
+        }
+
+        long long result = std::stoll(std::string(input));
+        if (result > std::numeric_limits<T>::max() ||
+            result < std::numeric_limits<T>::min())
+        {
+            throw std::invalid_argument("parse_string<integer>: parsed result does not fit in return type.");
+        }
+
+        return static_cast<T>(result);
+    }
+};
+static_assert(parse_func<parse<char>, char>);
+static_assert(parse_func<parse<signed char>, signed char>);
+static_assert(parse_func<parse<unsigned char>, unsigned char>);
+static_assert(parse_func<parse<short>, short>);
+static_assert(parse_func<parse<unsigned short>, unsigned short>);
+static_assert(parse_func<parse<int>, int>);
+static_assert(parse_func<parse<unsigned int>, unsigned int>);
+static_assert(parse_func<parse<long long>, long long>);
+static_assert(parse_func<parse<unsigned long long>, unsigned long long>);
+
+template<std::integral T> requires (not std::same_as<T, bool>)
+struct type_name<T> {
+    CPPTOOLS_API std::string operator()() const {
+        return std::format(
+            "an integer ({} to {})",
+            std::numeric_limits<T>::min(),
+            std::numeric_limits<T>::max()
+        );
+    }
+};
+
+static_assert(type_name_func<type_name<char>, char>);
+static_assert(type_name_func<type_name<signed char>, signed char>);
+static_assert(type_name_func<type_name<unsigned char>, unsigned char>);
+static_assert(type_name_func<type_name<short>, short>);
+static_assert(type_name_func<type_name<unsigned short>, unsigned short>);
+static_assert(type_name_func<type_name<int>, int>);
+static_assert(type_name_func<type_name<unsigned int>, unsigned int>);
+static_assert(type_name_func<type_name<long long>, long long>);
+static_assert(type_name_func<type_name<unsigned long long>, unsigned long long>);
+
+// Specializations of parse_as / type_name for bool
+
+template<>
+struct parse<bool> {
+    CPPTOOLS_API bool operator()(std::string_view input) const {
+        if (input == "y") {
             return true;
         }
 
-        if (input == "n" || input == "no" || input == "false") {
+        if (input == "n") {
             return false;
         }
 
-        throw std::invalid_argument("parse_string<bool>: Invalid string value for expected bool input.");
+        throw std::invalid_argument("parse_string<parse_yn_boolean>: Invalid string value for expected bool input.");
     }
+};
+static_assert(parse_func<parse<bool>, bool>);
 
-    //
-    // Specializations of type_name
-    //
-
-    template <>
-    CPPTOOLS_API inline std::string_view type_name<std::string>() {
-        return "string";
+template<>
+struct type_name<bool> {
+    CPPTOOLS_API std::string operator()() const {
+        return "(y/n)";
     }
-
-    template <>
-    CPPTOOLS_API inline std::string_view type_name<int>() {
-        return "integer";
-    }
-
-    template <>
-    CPPTOOLS_API inline std::string_view type_name<bool>() {
-        return "boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\")";
-    }
-
-} // namespace detail
+};
+static_assert(type_name_func<type_name<bool>, bool>);
 
 template<typename T>
 T read_input(cli::streams& streams) {
@@ -77,7 +130,7 @@ T read_input(cli::streams& streams) {
     std::getline(streams.in, input);
     pop_cr(input);
 
-    return detail::parse_as<T>(input);
+    return parse<T>{}(input);
 }
 
 template<typename T>
@@ -86,10 +139,9 @@ T prompt(std::string_view title, streams& streams) {
         try {
             streams.out << title;
             return read_input<T>(streams);
+        } catch(const std::invalid_argument&) {
+            streams.out << "Please enter " << type_name<T>{}() << "." << std::endl;
         }
-        catch(const std::invalid_argument&) {
-            streams.out << "Please enter a " << detail::type_name<T>() << "." << std::endl;
-        }            
     }
 }
 

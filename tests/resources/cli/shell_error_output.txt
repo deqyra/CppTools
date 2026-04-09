@@ -1,0 +1,1 @@
+Exception thrown by command "test_shell_cmd_throw": prout

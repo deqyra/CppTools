@@ -1,12 +1,5 @@
 $ Available commands:
-  - test_shell_command1: Run test_shell_command1
-  - test_shell_command2: Run test_shell_command2
-Type 'help <command>' to get help about one command.
-
-$ 'test_shell_command1' help:
-test_shell_command1: no arguments expected.
-$ 'test_shell_command2' help:
-test_shell_command2: no arguments expected.
-$ test_shell_command1 was run.
-$ test_shell_command2 was run.
-$ test_shell_exit_command was run.
+  - test_shell_cmd: Run test_shell_cmd
+  - test_shell_cmd_throw: Run test_shell_cmd_throw
+$ test_shell_cmd was run.
+$ $ test_shell_exit_command was run.

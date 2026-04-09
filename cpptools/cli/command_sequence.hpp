@@ -3,34 +3,45 @@
 
 #include <memory>
 #include <string>
-#include <string_view>
 #include <utility>
+#include <vector>
+
+#include <cpptools/exception/parameter_exception.hpp>
 
 #include "command.hpp"
 
 namespace tools::cli {
 
 // Extended command allowing to run several commands in a row.
-template <typename Context, std::size_t N>
-class command_sequence : public command<Context> {
+template <cli_environment env_t>
+class command_sequence : public command<env_t> {
 public:
-    using command_ptr = std::unique_ptr<command<Context>>;
-    using code = typename command<Context>::code;
+    using command_ptr = std::unique_ptr<command<env_t>>;
+    using code = typename command<env_t>::code;
 
 private:
     // Ordered commands to run.
-    std::array<command_ptr, N> _commands;
+    std::vector<command_ptr> _commands;
 
     // Display name of the command sequence.
     std::string _tooltip;
 
 public:
-    command_sequence(std::array<command_ptr, N>&& commands, std::string tooltip = "") :
-        command<Context>(),
-        _commands(std::move(commands)),
+    template<std::size_t N>
+    command_sequence(command_ptr(&&commands)[N], std::string tooltip) :
+        command<env_t>(),
+        _commands(),
         _tooltip(std::move(tooltip))
     {
-
+        std::size_t i = 0;
+        _commands.reserve(N);
+        for (auto& c : commands) {
+            if (c == nullptr) {
+                CPPTOOLS_THROW(exception::parameter::null_parameter_error, "commands[" + std::to_string(i) + "]");
+            }
+            ++i;
+            _commands.push_back(std::move(c));
+        }
     }
 
     virtual ~command_sequence() = default;
@@ -39,26 +50,22 @@ public:
         return _tooltip;
     }
 
-    // Run the command sequence.
-    virtual code run(Context& state, streams& streams = default_streams) override {
-        // Run all commands in order.
+    virtual code run(env_t& env) override {
+        auto& streams = env.cli_streams();
+
         for (auto& command : _commands) {
             code status;
             try {
-                status = command->run(state, streams);
+                status = command->run(env);
             } catch (const std::exception& e) {
-                // Informative error logging.
-                streams.err << "Exception thrown:\n";
-                streams.err << e.what() << '\n';
-                streams.out << "Command sequence \"" << _tooltip << "\" aborted." << std::endl;
+                streams.err << std::format("Exception thrown by command \"{}\":\n{}", command->tooltip(), e.what()) << std::endl;
+                streams.out << std::format("Command sequence \"{}\" aborted.", _tooltip) << std::endl;
                 return code::failure;
             }
 
-            // If the command failed (but didn't throw)...
             if (status != code::success) {
-                // Log error and return prematurely.
-                streams.out << "Command \"" << command->tooltip() << "\" returned with value " << to_string(status) << "\n";
-                streams.out << "Command sequence \"" << _tooltip << "\" aborted." << std::endl;
+                streams.err << std::format("Command \"{}\" returned status code {}.", command->tooltip(), std::to_underlying(status)) << std::endl;
+                streams.out << std::format("Command sequence \"{}\" aborted.", _tooltip) << std::endl;
                 return status;
             }
         }

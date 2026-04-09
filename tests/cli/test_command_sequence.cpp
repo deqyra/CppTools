@@ -6,11 +6,6 @@
 #include <cpptools/cli/streams.hpp>
 #include <cpptools/utility/string.hpp>
 
-#include <filesystem>
-#include <string>
-#include <fstream>
-#include <sstream>
-
 #define TAGS "[cli][command]"
 
 namespace tools::cli
@@ -18,28 +13,17 @@ namespace tools::cli
 
 TEST_CASE("command_sequence end-to-end", TAGS)
 {
-    auto a = std::filesystem::current_path();
+    test_env env = test_env("resources/cli/menu_input.txt");
 
-    std::ifstream f = std::ifstream("resources/cli/menu_input.txt", std::ios::in);
-    REQUIRE(f);
-    std::stringstream ss;
+    test_command_sequence command_sequence = make_basic_test_command_sequence();
 
-    streams s = streams{f, ss, ss};
-    test_state state = test_state();
+    command_sequence.run(env);
 
-    test_command_sequence<3> command_sequence = make_basic_test_command_sequence();
+    auto expected = from_file("resources/cli/menu_output.txt");
+    expected += "test_command1 was run."
+                "test_command2 was run.";
 
-    command_sequence.run(state, s);
-
-    std::string expected = from_file("resources/cli/menu_output.txt");
-    expected += "test_command1 was run.\n"
-                "test_command2 was run.\n";
-
-    std::string str = ss.str();
-
-    REQUIRE(ss.str() == expected);
-
-    f.close();
+    REQUIRE(env.out.str() == expected);
 }
 
 } // namespace tools::cli

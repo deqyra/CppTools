@@ -1,55 +1,55 @@
 #ifndef CPPTOOLS_CLI_MENU_HPP
 #define CPPTOOLS_CLI_MENU_HPP
 
-#include <array>
+#include <memory>
 #include <string>
 #include <string_view>
-#include <memory>
+#include <vector>
 
 #include <cpptools/utility/string.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
 
-#include "streams.hpp"
 #include "command.hpp"
 #include "input.hpp"
 
 namespace tools::cli {
 
-template<typename Context, std::size_t N>
+template<cli_environment env_t>
 class menu {
 public:
-    using command_ptr = std::unique_ptr<cli::command<Context>>;
+    using command_ptr = std::unique_ptr<command<env_t>>;
 
 private:
     // Commands to be available in the menu.
-    std::array<command_ptr, N> _commands;
+    std::vector<command_ptr> _commands;
     // Display name of the menu.
     std::string _tooltip;
     // Display name of the exit option.
-    std::string _exit_name;
+    std::string _exit_command_label;
     // Custom exit command (can be nullptr).
     command_ptr _exit_command;
 
 public:
+    template<std::size_t N>
     menu(
-        std::array<command_ptr, N>&& commands,
+        command_ptr(&&commands)[N],
         std::string tooltip,
-        std::string exit_name,
+        std::string exit_command_label,
         command_ptr exit_command = nullptr
     ) :
-        _commands(std::move(commands)),
-        _tooltip(tooltip),
-        _exit_name(exit_name),
+        _commands(),
+        _tooltip(std::move(tooltip)),
+        _exit_command_label(std::move(exit_command_label)),
         _exit_command(std::move(exit_command))
     {
         std::size_t i = 0;
-        for (auto& c : _commands)
-        {
-            if (c == nullptr)
-            {
+        _commands.reserve(N);
+        for (auto& c : commands) {
+            if (c == nullptr) {
                 CPPTOOLS_THROW(exception::parameter::null_parameter_error, "commands[" + std::to_string(i) + "]");
             }
             ++i;
+            _commands.push_back(std::move(c));
         }
     }
 
@@ -60,22 +60,21 @@ public:
     }
 
     // Print the menu and handle input.
-    void show(Context& state, cli::streams& streams = cli::default_streams) {
-        // While user did not ask to exit...
-        while (true) {
-            // Print menu header and options.
-            streams.out << '\n';
-            streams.out << tooltip() << ":" << std::endl;
-            streams.out << _all_option_strings();
+    void show(env_t& env) {
+        auto& streams = env.cli_streams();
 
+        bool exit_requested = false;
+        while (not exit_requested) {
+            // Print menu header and options.
+            streams.out << std::format("\n{}:\n{}", _tooltip, _all_option_strings());
             // Prompt the user.
-            int n_options = (int)_commands.size();
-            int input = cli::prompt_bounded<int>("Please make a choice: ", 0, n_options, streams);
+            int input = cli::prompt_bounded<std::size_t>("Please make a choice: ", 0, _commands.size(), streams);
 
             // Handle exit if required.
             if (input == 0) {
+                exit_requested = true;
                 if (_exit_command) {
-                    _exit_command->run(state, streams);
+                    _exit_command->run(env);
                 }
                 break;
             }
@@ -85,12 +84,10 @@ public:
             streams.out << _commands[input - 1]->tooltip() << ":" << std::endl;
 
             try {
-                _commands[input - 1]->run(state, streams);
+                _commands[input - 1]->run(env);
             } catch (const std::exception& e) {
                 // Informative error logging.
-                streams.err << "Exception thrown by command \"" << _commands[input - 1]->tooltip() << "\":\n";
-                streams.err << e.what() << '\n';
-                streams.out << "Aborting." << std::endl;
+                streams.err << std::format("Exception thrown by command \"{}\":\n{}", _commands[input - 1]->tooltip(), e.what()) << std::endl;
             }
         }
     }
@@ -98,7 +95,7 @@ public:
 private:
     // Generate display string for a given tooltip.
     std::string _option_string(int n, std::string_view tooltip) {
-        return std::to_string(n) + ". " + std::string(tooltip) + "\n";
+        return std::format("{}. {}\n", n, tooltip);
     }
 
     // Generate display strings for all options.
@@ -108,7 +105,7 @@ private:
             for (int i = 0; i < _commands.size(); i++) {
                 result += _option_string(i + 1, _commands[i]->tooltip());
             }
-            result += _option_string(0, _exit_name);
+            result += _option_string(0, _exit_command_label);
 
             return result;
         }();

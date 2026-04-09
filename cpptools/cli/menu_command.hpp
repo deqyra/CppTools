@@ -5,22 +5,21 @@
 
 #include "command.hpp"
 #include "menu.hpp"
-#include "streams.hpp"
 
 namespace tools::cli {
 
 // Extended command wrapping a menu.
-template<typename Context, std::size_t N>
-class menu_command : public command<Context> {
+template<cli_environment env_t>
+class menu_command : public command<env_t> {
 public:
-    using code = typename command<Context>::code;
+    using code = typename command<env_t>::code;
 
 private:
-    menu<Context, N> _inner_menu;
+    menu<env_t> _inner_menu;
 
 public: 
-    menu_command(menu<Context, N>&& inner_menu) :
-        command<Context>(),
+    menu_command(menu<env_t>&& inner_menu) :
+        command<env_t>(),
         _inner_menu(std::move(inner_menu))
     {
 
@@ -35,8 +34,8 @@ public:
     }
 
     // Run the menu_command (show the inner menu).
-    virtual code run(Context& state, cli::streams& streams) override {
-        _inner_menu.show(state, streams);
+    virtual code run(env_t& env) override {
+        _inner_menu.show(env);
         return code::success;
     }
 };

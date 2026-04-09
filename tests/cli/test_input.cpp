@@ -19,7 +19,7 @@ TEST_CASE("CLI input", TAGS)
         std::ifstream f = std::ifstream("resources/cli/int_input.txt", std::ios::in);
         REQUIRE(f);
         std::stringstream ss;
-        streams s = streams{f, ss, ss};
+        auto s = streams{f, ss, ss};
 
         REQUIRE(prompt<int>("input1: ", s) == 30);
         REQUIRE(prompt<int>("input2: ", s) == -20);
@@ -28,7 +28,7 @@ TEST_CASE("CLI input", TAGS)
         REQUIRE(prompt_bounded<int>("bounded: ", 15, 25, s) == 20);
 
         std::string expected =
-            "input1: Please enter a integer.\n"
+            "input1: Please enter an integer (-2147483648 to 2147483647).\n"
             "input1: input2: min: Please enter a value greater than 40.\n"
             "min: max: Please enter a value less than 40.\n"
             "max: bounded: Please enter a value between 15 and 25.\n"
@@ -48,15 +48,11 @@ TEST_CASE("CLI input", TAGS)
         streams s = streams{f, ss, ss};
 
         REQUIRE(prompt<bool>("inputY: ", s));
-        REQUIRE(prompt<bool>("input_yes: ", s));
-        REQUIRE(prompt<bool>("input_true: ", s));
         REQUIRE_FALSE(prompt<bool>("inputN: ", s));
-        REQUIRE_FALSE(prompt<bool>("input_no: ", s));
-        REQUIRE_FALSE(prompt<bool>("input_false: ", s));
 
         std::string expected =
-            "inputY: Please enter a boolean (\"y\", \"yes\", \"true\", \"n\", \"no\", \"false\").\n"
-            "inputY: input_yes: input_true: inputN: input_no: input_false: ";
+            "inputY: Please enter (y/n).\n"
+            "inputY: inputN: ";
 
         REQUIRE(ss.str() == expected);
 

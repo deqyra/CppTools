@@ -1,16 +1,17 @@
 #ifndef CPPTOOLS_CLI_SHELL_HPP
 #define CPPTOOLS_CLI_SHELL_HPP
 
-#include <algorithm>
+#include <concepts>
 #include <map>
-#include <set>
 #include <string>
 
 #include <cpptools/api.hpp>
 #include <cpptools/cli/streams.hpp>
 #include <cpptools/cli/input.hpp>
 #include <cpptools/utility/string.hpp>
+#include <cpptools/utility/heterogenous_lookup.hpp>
 #include <cpptools/exception/parameter_exception.hpp>
+#include <string_view>
 
 namespace tools::cli {
 
@@ -22,252 +23,157 @@ enum class shell_command_code {
     not_found = 3,
 };
 
-CPPTOOLS_API inline std::string to_string(shell_command_code c) {
-    switch (c) {
-        case shell_command_code::exit:
-            return "exit";
-        case shell_command_code::success:
-            return "success";
-        case shell_command_code::failure:
-            return "failure";
-        case shell_command_code::bad_arguments:
-            return "bad_arguments";
-        case shell_command_code::not_found:
-            return "not_found";
-        default:
-            return "???";
-    }
-}
-
-namespace shell_command_keywords {
-    static constexpr std::string_view help = "help";
-    static constexpr std::string_view exit = "exit";
-    static constexpr std::string_view _all_keywords = "help, exit";
+template<typename E>
+concept shell_environment = requires(const E& cenv, E& env) {
+    { cenv.shell_prompt_head() } -> std::same_as<std::string_view>;
+    { env.shell_streams() }      -> std::same_as<streams&>;
+    { env.get_last_exit_code() } -> std::same_as<shell_command_code>;
+    { env.set_last_exit_code(shell_command_code{}) };
 };
 
-template<typename context_t>
+class default_shell_environment {
+    shell_command_code _last_exit_code;
+
+public:
+    virtual ~default_shell_environment() = default;
+
+    virtual std::string_view shell_prompt_head() const {
+        return "$ ";
+    }
+
+    virtual streams& shell_streams() {
+        return default_streams;
+    }
+
+    virtual void set_last_exit_code(shell_command_code code) {
+        _last_exit_code = code;
+    }
+
+    virtual shell_command_code get_last_exit_code() {
+        return _last_exit_code;
+    }
+};
+static_assert(shell_environment<default_shell_environment>);
+
+template<shell_environment env_t>
 class shell {
 public:
     class command {
     public: 
         using code = shell_command_code;
-        
+
         command() = default;
         command(const command&) = default;
         command(command&&) = default;
         virtual ~command() = default;
 
-        virtual std::string name() const = 0;
-        virtual std::string description() const = 0;
-        virtual std::string help() const = 0;
-        virtual code process_input(std::string_view command, context_t& state, streams& streams = default_streams) = 0;
+        virtual code run(std::string_view command, env_t& env) = 0;
     };
 
-    using command_ptr = std::unique_ptr<command>;
     using code = typename command::code;
 
 private:
+    using command_list = std::map<std::string, command*, any_transparent_less>;
     // Registered commands
-    std::map<std::string, command_ptr> _commands;
-    // Custom exit command (can be nullptr).
-    command_ptr _exit_command;
+    command_list _commands;
 
 public:
-    template<size_t N>
-    shell(std::array<command_ptr, N>&& commands, command_ptr exit_command = nullptr) :
-        _commands(),
-        _exit_command(std::move(exit_command))
-    {
-        std::set<std::string_view> command_names;
+    shell() = default;
 
-        for (const auto& c : commands) {
-            const auto& name = c->name();
-            if (_is_forbidden_command_name(name)) {
-                CPPTOOLS_THROW(exception::parameter::invalid_value_error, "commands[...]", std::string{name});
-            }
-            if(command_names.find(name) != command_names.end()) {
-                CPPTOOLS_THROW(exception::parameter::invalid_value_error, "commands[...]", std::string{name});
-            }
-            command_names.insert(name);
-        }
-
-        for (auto& c : commands) {
-            _commands.insert_or_assign(std::string{c->name()}, std::move(c));
-        }
+    void set_command(std::string name, command& command) {
+        _commands.insert({std::move(name), &command});
     }
 
-    //
-    // Command chain manipulation
-    //
-
-    void add_command(command_ptr&& command) {
-        // Do not accept several commands with the same name, nor any command named 'exit' or 'help'.
-        auto name = command->name();
-
-        if (!_is_valid_command_name(name)) {
-            CPPTOOLS_THROW(exception::parameter::invalid_value_error, "command", std::string{name});
-        }
-
-        _commands.insert({std::string{name}, std::move(command)});
-    }
-
-    command_ptr remove_command(const std::string& name) {
-        auto it = _commands.find(name);
-        if (it == _commands.end()) {
-            CPPTOOLS_THROW(exception::parameter::invalid_value_error, "name", std::string{name});
-        }
-
-        command_ptr removed = std::move(it->second); 
-        // Remove command.
+    void remove_command(std::string_view name) {
         _commands.erase(name);
-
-        return removed;
     }
 
-    command_ptr set_exit_command(command_ptr&& command) {
-        command_ptr previous_exit_command = std::move(_exit_command);
-        _exit_command = std::move(command);
-
-        return previous_exit_command;
+    void set_default_command(command& command) {
+        _commands.insert({"", &command});
     }
 
-    void clear_commands() {
-        _commands.clear();
+    void remove_default_command() {
+        remove("");
     }
 
-    //
-    // Getters
-    //
-
-    command& get_command(const std::string& name) {
-        // Try to fetch the command at provided index.
-        auto it = _commands.find(name);
-        if (it == _commands.end()) {
-            CPPTOOLS_THROW(exception::parameter::invalid_value_error, "name", std::string{name});
-        }
-
-        return *(it->second);
-    }
-
-    command& get_exit_command() {
-        return *_exit_command;
-    }
-
-    //
-    // Command chain inspection
-    //
-
-    bool has_command(const std::string& name) {
-        return _commands.find(name) != _commands.end();
-    }
+    void add_default_exit_command(std::string exit_command_name = "exit");
 
     // Run the shell.
-    code run(context_t& state, streams& streams = default_streams) {
-        // Run the shell: prompt the user repeatedly and interpret the commands that were entered.
+    code run(env_t& env) {
         code shell_code = code::success;
         while (shell_code != code::exit) {
-            std::string command_line = prompt<std::string>("$ ", streams);
-            shell_code = _process_input(command_line, state, streams);
+            auto command_line = prompt<std::string>(env.shell_prompt_head(), env.shell_streams());
+            shell_code = _process_command_line(command_line, env);
+            env.set_last_exit_code(shell_code);
         }
 
         return code::exit;
     }
 
 private:
-    // Process user input.
-    code _process_input(const std::string& input, context_t& state, streams& streams) {
-        // Tokenise the string on spaces to extract the command and its arguments.
-        std::vector<std::string> tokens = tokenize(input, ' ', true);
-        if (!tokens.size()) {
+    code _process_command_line(std::string_view input, env_t& env) {
+        static constexpr std::string_view Whitespace = " \t\r\n\f\v";
+        input = trim(input);
+        if (input.empty()) {
             return code::not_found;
         }
 
-        // If help was requested, respond accordingly.
-        if (tokens[0] == shell_command_keywords::help) {
-            // If more than one token was extracted, the second one is
-            // probably the command the user want to get help about.
-            if (tokens.size() > 1) {
-                streams.out << _command_help_string(tokens[1]) << std::endl;;
-            } else { // Otherwise, display an informative list of commands.
-                streams.out << _global_help_string() << std::endl;
+        auto space_pos = input.find_first_of(Whitespace);
+        auto command = input.substr(0, space_pos);
+        auto rest = std::string_view{};
+        if (space_pos != std::string_view::npos) {
+            rest = input.substr(space_pos + 1);
+        }
+
+        // run default command if not matching registered command
+        auto it = _commands.find(command);
+        if (it == _commands.end()) {
+            auto it_default = _commands.find(""); // default command
+            if (it_default != _commands.end()) {
+                return _run_command(it_default, input, env);
             }
 
-            return code::success;
-        }
-
-        // If exit was entered, handle the exit procedure.
-        if (tokens[0] == shell_command_keywords::exit) {
-            return _handle_exit(input, state, streams);
-        }
-
-        // Otherwise, search for a command sharing the name of the first token...
-        auto it = _commands.find(tokens[0]);
-        if (it == _commands.end()) {
-            streams.out << tokens[0] << ": command not found.\n";
+            auto& streams = env.shell_streams();
+            streams.out << command << ": command not found.\n";
             return code::not_found;
         }
 
-        // ...and run that command.
+        // run found command otherwise
+        return _run_command(it, input, env);
+    }
+
+    code _run_command(command_list::iterator it, std::string_view input, env_t& env) {
+        auto& [name, command] = *it;
         try {
-            return it->second->process_input(input, state, streams);
+            return command->run(input, env);
         } catch (const std::exception& e) {
-            // Informative error logging.
-            streams.err << "Exception thrown by command \"" + it->second->name() + "\":\n";
-            streams.err << e.what() << '\n';
-            streams.out << "Warning shell state may be corrupted.\n";
-            streams.out << "Resuming normally..." << std::endl;
+            env.shell_streams().err << std::format("Exception thrown by command \"{}\": {}\n", name, e.what());
+            return code::failure;
+        } catch (...) {
+            env.shell_streams().err << std::format("Exception thrown by command \"{}\"\n", name);
             return code::failure;
         }
     }
-
-    // Generate a docstring descriptive of all contained commands.
-    std::string _global_help_string() {
-        // List available commands.
-        std::string s = "Available commands:\n";
-        for (auto& [name, command] : _commands) {
-            s += "  - " + command->name() + ": " + command->description() + "\n";
-        }
-        s += "Type 'help <command>' to get help about one command.\n";
-
-        return s;
-    }
-
-    // Generate the docstring for a given command.
-    std::string _command_help_string(const std::string& name) {
-        std::string s;
-
-        auto it = _commands.find(name);
-        if (it == _commands.end()) {
-            CPPTOOLS_THROW(exception::parameter::invalid_value_error, "command_name", std::string{name});
-        }
-
-        // Get the docstring of the command which was requested.
-        s = "'" + std::string(name) + "' help:\n";
-        s += _commands[name]->help();
-
-        return s;
-    }
-
-    // Handle exit procedure.
-    code _handle_exit(const std::string& name, context_t& state, streams& streams) {
-        // If not exit command was provided, just exit immediately.
-        if (!_exit_command) {
-            return code::exit;
-        }
-        // Otherwise run the provided exit command.
-        return _exit_command->process_input(name, state, streams);
-    }
-
-    bool _is_valid_command_name(const std::string& name) {
-        return !_is_forbidden_command_name(name) 
-            && (_commands.find(name) == _commands.end());
-    }
-
-    static bool _is_forbidden_command_name(const std::string& name) {
-        return (name == shell_command_keywords::exit)
-            || (name == shell_command_keywords::help);
-    }
 };
+
+template<typename env_t>
+class default_exit_command : public shell<env_t>::command {
+    using base = shell<env_t>::command;
+    using code = base::code;
+
+public:
+    default_exit_command() = default;
+
+    virtual code run(std::string_view command, env_t& env) override {
+        return code::exit;
+    };
+};
+
+template<shell_environment env_t>
+void shell<env_t>::add_default_exit_command(std::string exit_command_name) {
+    static auto exit = default_exit_command<env_t>();
+    set_command(std::move(exit_command_name), exit);
+}
 
 } // namespace tools::cli
 

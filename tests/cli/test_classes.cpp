@@ -15,9 +15,9 @@ std::string_view test_command1::tooltip() const
     return "test_command1";
 }
 
-auto test_command1::run(test_state& state, streams& streams) -> code
+auto test_command1::run(test_env& env) -> code
 {
-    streams.out << "test_command1 was run.\n";
+    env.cli_streams().out << "test_command1 was run.";
     return code::success;
 }
 
@@ -26,9 +26,9 @@ std::string_view test_command2::tooltip() const
     return "test_command2";
 }
 
-auto test_command2::run(test_state& state, streams& streams) -> code
+auto test_command2::run(test_env& env) -> code
 {
-    streams.out << "test_command2 was run.\n";
+    env.cli_streams().out << "test_command2 was run.";
     return code::success;
 }
 
@@ -37,25 +37,25 @@ std::string_view test_exit_command::tooltip() const
     return "Exit";
 }
 
-auto test_exit_command::run(test_state& state, streams& streams) -> code
+auto test_exit_command::run(test_env& env) -> code
 {
-    streams.out << "Successful exit.\n";
+    env.cli_streams().out << "Successful exit.";
     return code::success;
 }
 
-test_menu<2> make_basic_test_menu()
+test_menu make_basic_test_menu()
 {
-    return test_menu<2>(
+    return test_menu(
         {std::make_unique<test_command1>(), std::make_unique<test_command2>()},
         "Test menu", "Exit", std::make_unique<test_exit_command>()
     );
 }
 
-test_command_sequence<3> make_basic_test_command_sequence()
+test_command_sequence make_basic_test_command_sequence()
 {
-    return test_command_sequence<3>(
+    return test_command_sequence(
         {
-            std::make_unique<test_menu_command<2>>(make_basic_test_menu()),
+            std::make_unique<test_menu_command>(make_basic_test_menu()),
             std::make_unique<test_command1>(),
             std::make_unique<test_command2>()
         },
@@ -63,68 +63,36 @@ test_command_sequence<3> make_basic_test_command_sequence()
     );
 }
 
-std::string test_shell_command1::name() const
-{
-    return "test_shell_command1";
-}
-
-std::string test_shell_command1::description() const
-{
-    return "Run test_shell_command1";
-}
-
-std::string test_shell_command1::help() const
-{
-    return "test_shell_command1: no arguments expected.";
-}
-
-auto test_shell_command1::process_input(std::string_view command, test_state& state, streams& streams) -> code
-{
-    streams.out << "test_shell_command1 was run.\n";
+auto test_shell_cmd::run(std::string_view command, test_env& env) -> code {
+    env.shell_streams().out << "test_shell_cmd was run.\n";
     return code::success;
 }
 
-std::string test_shell_command2::name() const
-{
-    return "test_shell_command2";
+auto test_shell_cmd_throw::run(std::string_view command, test_env& env) -> code {
+    struct ex : std::exception {
+        const char* what() const noexcept {
+            return "prout";
+        }
+    };
+
+    throw ex{};
 }
 
-std::string test_shell_command2::description() const
-{
-    return "Run test_shell_command2";
-}
-
-std::string test_shell_command2::help() const
-{
-    return "test_shell_command2: no arguments expected.";
-}
-
-auto test_shell_command2::process_input(std::string_view command, test_state& state, streams& streams) -> code
-{
-    streams.out << "test_shell_command2 was run.\n";
-    return code::success;
-}
-
-std::string test_shell_exit_command::name() const
-{
-    return "test_shell_exit_command";
-}
-
-std::string test_shell_exit_command::description() const
-{
-    return "Run test_shell_exit_command";
-}
-
-std::string test_shell_exit_command::help() const
-{
-    return "test_shell_exit_command: no arguments expected.";
-}
-
-auto test_shell_exit_command::process_input(std::string_view command, test_state& state, streams& streams) -> code
-{
-    streams.out << "test_shell_exit_command was run.\n";
+auto test_shell_exit_command::run(std::string_view command, test_env& env) -> code {
+    env.shell_streams().out << "test_shell_exit_command was run.\n";
     return code::exit;
 }
 
+auto test_shell_help_command::run(std::string_view command, test_env& env) -> code {
+    static constexpr std::string_view GlobalText =
+R"(Available commands:
+  - test_shell_cmd: Run test_shell_cmd
+  - test_shell_cmd_throw: Run test_shell_cmd_throw
+)";
+
+    env.shell_streams().out << GlobalText;
+
+    return code::success;
+}
 
 } // namespace tools::cli

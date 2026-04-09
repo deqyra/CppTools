@@ -9,26 +9,28 @@
 
 namespace tools::cli {
 
-enum class command_code {
+enum class menu_option_code {
     success = 0,
-    failure = -1
+    failure = 1
 };
 
-CPPTOOLS_API inline std::string_view to_string(command_code c) {
-    switch (c) {
-        case command_code::success:
-            return "success";
-        case command_code::failure:
-            return "failure";
-        default:
-            return "???";
-    }
-}
+template<typename E>
+concept cli_environment = requires(E& env) {
+    { env.cli_streams() } -> std::same_as<streams&>;
+};
 
-template<typename Context>
+class default_cli_environment {
+public:
+    virtual streams& cli_streams() {
+        return default_streams;
+    }
+};
+static_assert(cli_environment<default_cli_environment>);
+
+template<cli_environment env_t>
 class command {
 public:
-    using code = command_code;
+    using code = menu_option_code;
 
     virtual ~command() = default;
 
@@ -36,7 +38,7 @@ public:
     virtual std::string_view tooltip() const = 0;
 
     // Run the command.
-    virtual code run(Context& state, streams& streams = default_streams) = 0;
+    virtual code run(env_t& env) = 0;
 };
 
 } // namespace tools::cli
