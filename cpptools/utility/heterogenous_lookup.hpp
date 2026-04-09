@@ -19,7 +19,7 @@ struct unique_ptr_transparent_equality {
     }
 
     bool operator()(T* raw, const ptr_t& ptr) const {
-        return (*this)(ptr, raw);
+        return ptr.get() == raw;
     }
 };
 
@@ -49,6 +49,15 @@ using unique_ptr_transparent_hash_t =
         typename U::element_type,
         typename U::deleter_type
     >;
+
+struct any_transparent_less {
+    using is_transparent = void;
+
+    template<typename L, typename R>
+    bool operator()(const L& left, const R& right) const {
+        return left < right;
+    }
+};
 
 } // namespace tools
 
