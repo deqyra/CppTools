@@ -3,7 +3,6 @@
 
 #include <ostream>
 #include <source_location>
-#include <sstream>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -65,15 +64,22 @@ public:
         // Not ideal but if this ever happens then there are worse concerns to be had
     }
 
+    static std::string source_loc_to_string(const std::source_location& loc) {
+        return std::format("{} ({}:{}) `{}`", loc.file_name(), loc.line(), loc.column(), loc.function_name());
+    }
+
     CPPTOOLS_API virtual std::string_view to_string() const {
-        using namespace ::tools::ostream_dump;
+        _str = std::format(
+R"(Category: {}, error: ({}) {}
+Location: {}
+Message: {})",
+            error_category_name(category()),
+            std::to_string(error_code()),
+            ecode_to_string(),
+            source_loc_to_string(source_location()),
+            message()
+        );
 
-        std::ostringstream ss;
-        ss  << "Category: " << category() << ", error: (" << code() << ") " << code_to_string() << '\n'
-            << "Location: " << source_location() << '\n'
-            << "Message: "  << message();
-
-        _str = std::move(ss).str();
         return _str;
     }
 

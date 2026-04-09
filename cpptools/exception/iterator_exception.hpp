@@ -21,26 +21,6 @@ public:
     };
 };
 
-/*
-template<typename It>
-class template_iterator_exception : public base_exception
-{
-public:
-    static constexpr enum error_category_t error_category_t = iterator_exception::error_category_t;
-    using error_code_t = iterator_exception::error_code_t;
-    using it_type = It;
-
-    template_iterator_exception(It iterator);
-
-    std::string to_string() const override;
-
-    const It& iterator() const;
-
-private:
-    It _iterator;
-};
-*/
-
 template<>
 constexpr std::string_view default_error_message<iterator_exception::error_code_t>(const iterator_exception::error_code_t& code) {
     using enum iterator_exception::error_code_t;

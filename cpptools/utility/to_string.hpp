@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <format>
 #include <iomanip>
 #include <source_location>
 #include <sstream>
