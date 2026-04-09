@@ -2,6 +2,7 @@
 #include <cwchar>
 #include <iostream>
 #include <fstream>
+#include <iterator>
 #include <ranges>
 #include <sstream>
 #include <string>
@@ -16,11 +17,11 @@
 namespace tools {
 
 void pop_char(std::string& str, char c) {
-    if (str.size() == 0) { return; }
+    if (not str.empty() and str.back() == c) { str.pop_back(); }
+}
 
-    if (str.back() == c) {
-        str.pop_back();
-    }
+void pop_char(std::string_view& str, char c) {
+    if (not str.empty() and str.back() == c) { str.remove_suffix(1); }
 }
 
 void pop_string(std::string& str, std::string_view sub) {
@@ -33,16 +34,38 @@ void pop_string(std::string& str, std::string_view sub) {
 }
 
 void pop_cr(std::string& str) {
-    if (str.back() == '\r') { str.pop_back(); }
+     pop_char(str, '\r');
+}
+
+void pop_cr(std::string_view& str) {
+     pop_char(str, '\r');
 }
 
 void pop_lf(std::string& str) {
-    if (str.back() == '\n') { str.pop_back(); }
+     pop_char(str, '\n');
+}     
+
+void pop_lf(std::string_view& str) {
+     pop_char(str, '\n');
 }
 
 void pop_crlf(std::string& str) {
-    if (str.back() == '\n') { str.pop_back(); }
-    if (str.back() == '\r') { str.pop_back(); }
+    if (str.size() > 2) {
+        auto suffix = std::string_view(str).substr(str.size() - 2);
+        if (suffix == "\r\n") {
+            str.pop_back();
+            str.pop_back();
+        }
+    }
+}
+
+void pop_crlf(std::string_view& str) {
+    if (str.size() > 2) {
+        auto suffix = str.substr(str.size() - 2);
+        if (suffix == "\r\n") {
+            str.remove_suffix(2);
+        }
+    }
 }
 
 void strip_cr(std::string& str) {
@@ -125,8 +148,7 @@ bool contains(std::string_view str, char sub, std::size_t n, bool exact) {
     }
 }
 
-bool is_integer(std::string_view str, bool accept_minus)
-{
+bool is_integer(std::string_view str, bool accept_minus) {
     if (str.size() == 0) return false;
 
     auto it = str.cbegin();
@@ -142,8 +164,7 @@ bool is_integer(std::string_view str, bool accept_minus)
     return true;
 }
 
-bool is_whitespace(std::string_view str)
-{
+bool is_whitespace(std::string_view str) {
     for (auto it = str.cbegin(); it != str.cend(); ++it) {
         if (!std::isspace(*it)) { return false; }
     }
@@ -151,53 +172,32 @@ bool is_whitespace(std::string_view str)
     return true;
 }
 
-void trim(std::string& str)
-{
-    static auto not_whitespace = [](unsigned char ch) {
+void trim(std::string& str) {
+    str = std::string(trim(std::string_view(str)));
+}
+
+std::string_view trim(std::string_view str) {
+    static auto not_whitespace = [](char ch) {
         return !std::isspace(ch);
     };
 
-    auto it_first = std::find_if(str.begin(), str.end(), not_whitespace);
-    str.erase(str.begin(), it_first);
+    namespace stdr = std::ranges;
+    namespace stdv = std::views;
 
-    auto it_last = std::find_if(str.rbegin(), str.rend(), not_whitespace).base();
-    str.erase(it_last, str.end());
+    auto it_first = stdr::find_if(str, not_whitespace);
+    auto d = std::distance(str.begin(), it_first);
+    str.remove_prefix(d);
+
+    auto it_last  = stdr::find_if(str | stdv::reverse, not_whitespace).base();
+    d = std::distance(it_last, str.end());
+    str.remove_suffix(d);
+
+    return str;
 }
 
-std::vector<std::string> tokenize(
-    std::string_view str,
-    char delimiter,
-    bool discard_empty
-)
-{
-    if (!contains(str, delimiter)) {
-        if (str == "" && discard_empty) { return {}; }
-
-        return {std::string{str}};
-    }
-
-    std::vector<std::string> tokens;
-    std::string token;
-    std::istringstream token_stream(std::string{str});
-
-    while (std::getline(token_stream, token, delimiter)) {
-        if (discard_empty && token == "") continue;
-
-        tokens.push_back(token);
-    }
-
-    if (str.back() == delimiter && !discard_empty) {
-        // If required, add empty token if the string ends with the delimiter
-        tokens.push_back("");
-    }
-
-    return tokens;
-}
-
-std::vector<std::size_t> parse_integer_sequence(std::string_view str, char delimiter, non_integer_action action)
-{
+std::vector<std::size_t> parse_integer_sequence(std::string_view str, char delimiter, non_integer_action action) {
     std::vector<std::size_t> ints;
-    std::vector<std::string> tokens = tokenize(str, delimiter, /* discardEmpty */ true);
+    std::vector<std::string_view> tokens = tokenize(str, delimiter, /* discardEmpty */ true);
 
     for (auto it = tokens.cbegin(); it != tokens.cend(); it++) {
         std::size_t i = 0;
@@ -215,7 +215,7 @@ std::vector<std::size_t> parse_integer_sequence(std::string_view str, char delim
                 throw std::invalid_argument("Substring" + std::to_string(n) + " is not an integer.");
             }
         } else {
-            i = std::stoi(*it);
+            std::ignore = std::from_chars(it->data(), it->data() + it->size(), i); //< TODO: handle return! refactor this anyway
         }
 
         ints.push_back(i);
@@ -224,8 +224,7 @@ std::vector<std::size_t> parse_integer_sequence(std::string_view str, char delim
     return ints;
 }
 
-std::string from_file(const std::filesystem::path& path, bool strip_cr)
-{
+std::string from_file(const std::filesystem::path& path, bool strip_cr) {
     // Open the file for reading.
     std::ifstream f(path.c_str(), std::ios::in);
     if (f) {
@@ -280,11 +279,10 @@ std::wstring widen(std::string_view str) {
     return std::wstring( widened.begin(), widened.end() );
 }
 
-std::string multiline_concatenate(std::string_view first, std::string_view second)
-{
+std::string multiline_concatenate(std::string_view first, std::string_view second) {
     // split along new lines
-    std::vector<std::string> first_tokens = tokenize(first, '\n');
-    std::vector<std::string> second_tokens = tokenize(second, '\n');
+    std::vector<std::string_view> first_tokens = tokenize(first, '\n');
+    std::vector<std::string_view> second_tokens = tokenize(second, '\n');
 
     // strip cr
     for (auto& str : first_tokens) {
@@ -321,13 +319,13 @@ std::string multiline_concatenate(std::string_view first, std::string_view secon
     // append remaining lines
     if (!first_end) {
         while (it_first != first_tokens.cend()) {
-            result += *(it_first++) + '\n';
+            result += std::string(*(it_first++)) + '\n';
         }
     }
     // vvv these ^^^ are mutually exclusive
     if (!second_end) {
         while (it_second != second_tokens.cend()) {
-            result += *(it_second++) + '\n';
+            result += std::string(*(it_second++)) + '\n';
         }
     }
 

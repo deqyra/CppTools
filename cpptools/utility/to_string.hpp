@@ -10,18 +10,12 @@
 #include <string>
 
 #include <cpptools/api.hpp>
-#include <cpptools/utility/string.hpp>
+#include <cpptools/utility/widen_narrow.hpp>
 
 namespace tools::detail::to_string { // additional namespace because there's a using directive in there, and namespace detail should not be polluted by it
 
-CPPTOOLS_API inline std::string to_string(const std::source_location& location) {
-    std::ostringstream ss;
-    ss  << location.file_name() << "("
-        << location.line() << ":"
-        << location.column() << ") `"
-        << location.function_name() << "`";
-
-    return std::move(ss).str();
+CPPTOOLS_API inline std::string to_string(const std::source_location& loc) {
+    return std::format("{} ({}:{}) `{}`", loc.file_name(), loc.line(), loc.column(), loc.function_name());
 }
 
 CPPTOOLS_API inline std::string to_string(std::nullptr_t) {

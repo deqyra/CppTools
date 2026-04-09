@@ -6,11 +6,13 @@
 #include <limits>
 #include <ranges>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 #include <cpptools/api.hpp>
+#include <cpptools/exception/parameter_exception.hpp>
 
 namespace tools {
 
@@ -18,23 +20,28 @@ namespace tools {
 /// @param str String to process
 /// @param c Char to pop off the string
 CPPTOOLS_API void pop_char(std::string& str, char c);
+CPPTOOLS_API void pop_char(std::string_view& str, char c);
 
 /// @brief Remove any given trailing substring at the end of a string
 /// @param str String to process
 /// @param sub String to pop off str
 CPPTOOLS_API void pop_string(std::string& str, std::string_view sub);
+CPPTOOLS_API void pop_string(std::string_view& str, std::string_view sub);
 
 /// @brief Remove any single trailing '\r' at the end of a string
 /// @param str String to process
 CPPTOOLS_API void pop_cr(std::string& str);
+CPPTOOLS_API void pop_cr(std::string_view& str);
 
 /// @brief Remove any single trailing '\n' at the end of a string
 /// @param str String to process
 CPPTOOLS_API void pop_lf(std::string& str);
+CPPTOOLS_API void pop_lf(std::string_view& str);
 
 /// @brief Remove any trailing '\r\n' at the end of a string
 /// @param str String to process
 CPPTOOLS_API void pop_crlf(std::string& str);
+CPPTOOLS_API void pop_crlf(std::string_view& str);
 
 /// @brief Remove all carriage return characters in the provided string
 /// @param str String to process
@@ -72,16 +79,54 @@ CPPTOOLS_API bool is_whitespace(std::string_view str);
 /// @param str String to process
 CPPTOOLS_API void trim(std::string& str);
 
+/// @brief Remove whitespace characters from both ends of the string
+/// @param str String to process
+CPPTOOLS_API std::string_view trim(std::string_view str);
+
+/// @brief Split a string into substrings based on a predicate which identifies delimiting characters
+/// @param str String to process
+/// @param delimiter Char between substrings
+/// @param discard_empty Whether or not to discard empty tokens
+/// @return A vector filled with the found tokens
+template<typename F>
+std::vector<std::string_view> tokenize(
+    std::string_view str,
+    F&& is_delimiter,
+    bool discard_empty = false
+) {
+    std::size_t pos = 0;
+    std::size_t last_token_start = 0;
+    std::vector<std::string_view> result;
+
+    for (char c : str) {
+        if (is_delimiter(c)) {
+            if ((pos != last_token_start) or (not discard_empty)) {
+                result.push_back(std::string_view(str.data() + last_token_start, str.data() + pos));
+            }
+            last_token_start = pos + 1;
+        }
+        pos++;
+    }
+
+    if ((pos != last_token_start) or (not discard_empty)) {
+        result.push_back(std::string_view(str.data() + last_token_start, str.data() + pos));
+    }
+
+    return result;
+}
+
 /// @brief Split a string into substrings based on a given delimiter
 /// @param str String to process
 /// @param delimiter Char between substrings
 /// @param discard_empty Whether or not to discard empty tokens
 /// @return A vector filled with the found tokens
-CPPTOOLS_API std::vector<std::string> tokenize(
+inline CPPTOOLS_API std::vector<std::string_view> tokenize(
     std::string_view str,
     char delimiter,
     bool discard_empty = false
-);
+) {
+    return tokenize(str, [=](char c){ return c == delimiter; }, discard_empty);
+}
 
 /// @brief Available behaviours for function parse_integer_sequence upon
 /// encountering a non-integer token
@@ -164,15 +209,18 @@ std::pair<int_t, int_t> parse_int_range(std::string_view str, char delimiter)
 
     using max_t = typename std::conditional_t<is_signed, long long int, unsigned long long int>;
 
-    std::vector<std::string> tokens = tokenize(str, delimiter, false /* discard_empty */);
+    std::vector<std::string_view> tokens = tokenize(str, delimiter, false /* discard_empty */);
 
     // no delimiter
     if (tokens.size() == 1)
     {
         if (!is_integer(tokens[0], accept_minus))
         {
-            std::string str = "parse_int_range: \"" + tokens[0] + "\" is not numeric and cannot be parsed.";
-            throw std::invalid_argument(str.c_str());
+            CPPTOOLS_THROW(
+                exception::parameter::invalid_value_error,
+                "tokens[0]",
+                tokens[0]
+            ).with_message("value is not numeric and cannot be parsed.");
         }
 
         int_t parsed = std::stoi(tokens[0]);
@@ -191,14 +239,20 @@ std::pair<int_t, int_t> parse_int_range(std::string_view str, char delimiter)
 
         if (left_present  && !is_integer(tokens[0], accept_minus))
         {
-            std::string err = "parse_int_range: \"" + tokens[0] + "\" is not numeric and cannot be parsed.";
-            throw std::invalid_argument(err.c_str());
+            CPPTOOLS_THROW(
+                exception::parameter::invalid_value_error,
+                "tokens[0]",
+                tokens[0]
+            ).with_message("value is not numeric and cannot be parsed.");
         }
 
         if (right_present && !is_integer(tokens[1], accept_minus))
         {
-            std::string err = "parse_int_range: \"" + tokens[0] + "\" is not numeric and cannot be parsed.";
-            throw std::invalid_argument(err.c_str());
+            CPPTOOLS_THROW(
+                exception::parameter::invalid_value_error,
+                "tokens[0]",
+                tokens[0]
+            ).with_message("value is not numeric and cannot be parsed.");
         }
 
         max_t parsed_left  = 0;

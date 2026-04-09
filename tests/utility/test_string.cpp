@@ -163,7 +163,7 @@ TEST_CASE("String tokenization", TAGS) {
     std::string str = "Hello, world. Bleeep bloop, am robot.";
 
     SECTION("Tokenizing on spaces") {
-        std::vector<std::string> space_tokens = {"Hello,", "world.", "Bleeep", "bloop,", "am", "robot."};
+        std::vector<std::string_view> space_tokens = {"Hello,", "world.", "Bleeep", "bloop,", "am", "robot."};
         REQUIRE(tokenize(str, ' ', false) == space_tokens);
 
         // Discarding empty tokens makes no difference.
@@ -171,12 +171,12 @@ TEST_CASE("String tokenization", TAGS) {
     }
 
     SECTION("Tokenizing on commas") {
-        std::vector<std::string> comma_tokens = {"Hello", " world. Bleeep bloop", " am robot."};
+        std::vector<std::string_view> comma_tokens = {"Hello", " world. Bleeep bloop", " am robot."};
         REQUIRE(tokenize(str, ',', false) == comma_tokens);
     }
 
     SECTION("Tokenizing on 'e'") {
-        std::vector<std::string> e_tokens = {"H", "llo, world. Bl", "", "", "p bloop, am robot."};
+        std::vector<std::string_view> e_tokens = {"H", "llo, world. Bl", "", "", "p bloop, am robot."};
         REQUIRE(tokenize(str, 'e', false) == e_tokens);
 
         // Discarding empty tokens works.
@@ -185,17 +185,17 @@ TEST_CASE("String tokenization", TAGS) {
     }
 
     SECTION("String ending with delimiter") {
-        std::vector<std::string> dot_tokens = {"Hello, world", " Bleeep bloop, am robot", ""};
+        std::vector<std::string_view> dot_tokens = {"Hello, world", " Bleeep bloop, am robot", ""};
         REQUIRE(tokenize(str, '.', false) == dot_tokens);
     }
 
     SECTION("String starting with delimiter") {
-        std::vector<std::string> h_tokens = {"", "ello, world. Bleeep bloop, am robot."};
+        std::vector<std::string_view> h_tokens = {"", "ello, world. Bleeep bloop, am robot."};
         REQUIRE(tokenize(str, 'H', false) == h_tokens);
     }
 
     SECTION("Stringconsisting of delimiter") {
-        std::vector<std::string> h_tokens = {"", ""};
+        std::vector<std::string_view> h_tokens = {"", ""};
         REQUIRE(tokenize("a", 'a', false) == h_tokens);
     }
 }
