@@ -17,7 +17,7 @@ enum class disabled {
 };
 
 template<>
-static constexpr bool enable_bitwise_enum_v<enabled> = true;
+constexpr bool enable_bitwise_enum_v<enabled> = true;
 
 bool fallback_operator_was_called = false;
 

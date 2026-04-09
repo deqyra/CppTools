@@ -73,13 +73,13 @@ public:
     const_node_handle left_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
 
-        return const_node_handle(_node->left_sibling());
+        return _node->left_sibling();
     }
 
     const_node_handle right_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
 
-        return const_node_handle(_node->right_sibling());
+        return _node->right_sibling();
     }
 
     bool is_leftmost_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
@@ -95,7 +95,7 @@ public:
     }
 
     const_node_handle parent() const CPPTOOLS_NOEXCEPT_RELEASE {
-        return const_node_handle(_node->parent());
+        return _node->parent();
     }
 
     bool has_parent(const const_node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
@@ -113,13 +113,13 @@ public:
     const_node_handle child(size_type index) const {
         CPPTOOLS_DEBUG_ASSERT(not_null(_node),              "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
         CPPTOOLS_DEBUG_ASSERT(index < _node->child_count(), "const_node_handle", critical, "index out of bounds", exception::parameter::invalid_value_error, "index", index);
-        
-        return const_node_handle(_node->children()[index]);
+
+        return _node->children()[index];
     };
 
     auto children() const {
         CPPTOOLS_DEBUG_ASSERT(not_null(_node), "const_node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-        
+
         return _node->children() | std::views::transform([](node_t* n) { return const_node_handle(n); });
     }
 
@@ -168,10 +168,6 @@ private:
     using node_t   = typename base::node_t;
     using node_ptr = node_t*;
 
-    node_ptr ptr() const {
-        return const_cast<node_t*>(this->_node);
-    }
-
     node_handle(const base&  other)            = delete;
     node_handle(      base&& other)            = delete;
     node_handle& operator=(const base&  other) = delete;
@@ -179,6 +175,10 @@ private:
 
     template<typename>
     friend class tools::tree;
+
+    node_ptr ptr() const {
+        return const_cast<node_t*>(this->_node);
+    }
 
 public:
     using base::const_node_handle;
@@ -206,25 +206,25 @@ public:
     node_handle left_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(not_null(this->_node), "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
 
-        return node_handle(const_cast<node_t*>(this->_node->left_sibling()));
+        return ptr()->left_sibling();
     }
 
     node_handle right_sibling() const CPPTOOLS_NOEXCEPT_RELEASE {
         CPPTOOLS_DEBUG_ASSERT(not_null(this->_node), "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
 
-        return node_handle(const_cast<node_t*>(this->_node->right_sibling()));
+        return ptr()->right_sibling();
     }
 
     node_handle parent() const CPPTOOLS_NOEXCEPT_RELEASE {
-        return node_handle(const_cast<node_t*>(this->_node->parent()));
+        return ptr()->parent();
     }
 
     bool has_parent(const node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
-        return base::has_parent(static_cast<const base&>(other));
+        return base::has_parent(other);
     }
 
     bool is_parent_of(const node_handle& other) const CPPTOOLS_NOEXCEPT_RELEASE {
-        return base::is_parent_of(static_cast<const base&>(other));
+        return base::is_parent_of(other);
     }
 
     using base::is_leftmost_sibling;
@@ -236,14 +236,14 @@ public:
     node_handle child(size_type index) const {
         CPPTOOLS_DEBUG_ASSERT(not_null(this->_node),              "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
         CPPTOOLS_DEBUG_ASSERT(index < this->_node->child_count(), "node_handle", critical, "index out of bounds", exception::parameter::invalid_value_error, "index", index);
-        
-        return node_handle(this->_node->children()[index]);
+
+        return ptr()->children()[index];
     };
 
     auto children() const {
         CPPTOOLS_DEBUG_ASSERT(not_null(this->_node), "node_handle", critical, "node handle is null", exception::internal::precondition_failure_error);
-        
-        return this->_node->children() | std::views::transform([](node_t* n) { return node_handle(n); });
+
+        return ptr()->children() | std::views::transform([](node_t* n) { return node_handle(n); });
     }
 
     reference operator*() const CPPTOOLS_NOEXCEPT_RELEASE {
